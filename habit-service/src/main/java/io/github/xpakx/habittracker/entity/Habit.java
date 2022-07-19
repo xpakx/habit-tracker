@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -27,4 +28,7 @@ public class Habit {
     @OneToOne
     @JoinColumn(name = "trigger_id")
     private HabitTrigger trigger;
+
+    private Integer interval;
+    private LocalDateTime start;
 }
