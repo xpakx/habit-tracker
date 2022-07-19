@@ -1,4 +1,4 @@
-package io.github.xpakx.habittracker.entity.dto;
+package io.github.xpakx.habittracker.habit.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

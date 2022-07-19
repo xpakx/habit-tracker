@@ -1,4 +1,4 @@
-package io.github.xpakx.habittracker.entity;
+package io.github.xpakx.habittracker.habit;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

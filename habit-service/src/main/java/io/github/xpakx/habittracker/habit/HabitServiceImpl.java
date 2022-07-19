@@ -1,11 +1,6 @@
-package io.github.xpakx.habittracker.service;
+package io.github.xpakx.habittracker.habit;
 
-import io.github.xpakx.habittracker.entity.Habit;
-import io.github.xpakx.habittracker.entity.HabitTrigger;
-import io.github.xpakx.habittracker.entity.dto.HabitRequest;
-import io.github.xpakx.habittracker.repo.HabitContextRepository;
-import io.github.xpakx.habittracker.repo.HabitRepository;
-import io.github.xpakx.habittracker.repo.HabitTriggerRepository;
+import io.github.xpakx.habittracker.habit.dto.HabitRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

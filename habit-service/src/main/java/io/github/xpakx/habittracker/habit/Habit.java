@@ -1,4 +1,4 @@
-package io.github.xpakx.habittracker.entity;
+package io.github.xpakx.habittracker.habit;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter
