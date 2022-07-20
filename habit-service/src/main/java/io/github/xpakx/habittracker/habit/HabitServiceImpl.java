@@ -1,10 +1,14 @@
 package io.github.xpakx.habittracker.habit;
 
+import io.github.xpakx.habittracker.habit.dto.DayRequest;
 import io.github.xpakx.habittracker.habit.dto.HabitRequest;
 import io.github.xpakx.habittracker.habit.dto.HabitUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,5 +39,12 @@ public class HabitServiceImpl implements HabitService {
         habit.setInterval(request.getInterval());
         habit.setStart(request.getStart());
         return null;
+    }
+
+    @Override
+    public List<Habit> getHabitsForDay(DayRequest request) {
+        LocalDateTime start = request.getDate().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime end = start.plusDays(1);
+        return habitRepository.findByNextDueBetween(start, end);
     }
 }
