@@ -30,4 +30,5 @@ public class Habit {
 
     private Integer interval;
     private LocalDateTime start;
+    private LocalDateTime nextDue;
 }

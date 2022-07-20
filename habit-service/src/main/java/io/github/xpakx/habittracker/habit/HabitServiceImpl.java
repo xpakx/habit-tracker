@@ -20,6 +20,7 @@ public class HabitServiceImpl implements HabitService {
         habit.setDescription(request.getDescription());
         habit.setInterval(request.getInterval());
         habit.setStart(request.getStart());
+        habit.setNextDue(request.getStart());
         habit.setContext(contextRepository.getReferenceById(request.getContextId()));
         HabitTrigger trigger = new HabitTrigger();
         trigger.setName(request.getTriggerName());
