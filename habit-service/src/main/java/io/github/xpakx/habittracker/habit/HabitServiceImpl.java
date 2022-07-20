@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class HabitServiceImpl implements HabitService {
     private final HabitRepository habitRepository;
     private final HabitContextRepository contextRepository;
-    private final HabitTriggerRepository triggerRepository;
 
     @Transactional
     public Habit addHabit(HabitRequest request) {
