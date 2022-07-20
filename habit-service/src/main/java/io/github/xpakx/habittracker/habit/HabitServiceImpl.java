@@ -1,6 +1,7 @@
 package io.github.xpakx.habittracker.habit;
 
 import io.github.xpakx.habittracker.habit.dto.HabitRequest;
+import io.github.xpakx.habittracker.habit.dto.HabitUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,5 +25,15 @@ public class HabitServiceImpl implements HabitService {
         trigger.setName(request.getTriggerName());
         habit.setTrigger(trigger);
         return habitRepository.save(habit);
+    }
+
+    @Override
+    public Habit updateHabit(Long habitId, HabitUpdateRequest request) {
+        Habit habit = habitRepository.findById(habitId).orElseThrow();
+        habit.setName(request.getName());
+        habit.setDescription(request.getDescription());
+        habit.setInterval(request.getInterval());
+        habit.setStart(request.getStart());
+        return null;
     }
 }
