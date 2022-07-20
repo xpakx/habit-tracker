@@ -19,4 +19,15 @@ public class HabitContextServiceImpl implements HabitContextService {
         context.setActiveEnd(request.getActiveEnd());
         return contextRepository.save(context);
     }
+
+    @Override
+    public HabitContext updateContext(Long contextId, HabitContextRequest request) {
+        HabitContext context = contextRepository.findById(contextId).orElseThrow();
+        context.setName(request.getName());
+        context.setDescription(request.getDescription());
+        context.setTimeBounded(request.isTimeBounded());
+        context.setActiveStart(request.getActiveStart());
+        context.setActiveEnd(request.getActiveEnd());
+        return contextRepository.save(context);
+    }
 }
