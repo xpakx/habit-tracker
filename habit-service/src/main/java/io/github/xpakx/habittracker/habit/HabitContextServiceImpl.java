@@ -36,7 +36,6 @@ public class HabitContextServiceImpl implements HabitContextService {
         return contextRepository.save(context);
     }
 
-
     @Override
     public List<Habit> getHabitsForDayAndContext(DayRequest request, Long contextId) {
         LocalDateTime start = request.getDate().withHour(0).withMinute(0).withSecond(0).withNano(0);
