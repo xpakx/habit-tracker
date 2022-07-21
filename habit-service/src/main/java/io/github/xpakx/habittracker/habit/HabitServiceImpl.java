@@ -56,4 +56,9 @@ public class HabitServiceImpl implements HabitService {
         LocalDateTime end = start.plusDays(1);
         return habitRepository.findByNextDueBetweenAndContextId(start, end, contextId);
     }
+
+    @Override
+    public List<Habit> getHabitsForContext(Long contextId) {
+        return habitRepository.findByContextId(contextId);
+    }
 }

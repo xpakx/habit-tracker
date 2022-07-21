@@ -31,11 +31,18 @@ public class HabitContextController {
         );
     }
 
-
-    @GetMapping("/{contextId}/habit")
+    @GetMapping("/{contextId}/habit/date")
     public ResponseEntity<List<Habit>> getHabitsForDayAndContext(@RequestBody DayRequest request, @PathVariable Long contextId) {
         return new ResponseEntity<>(
                 habitService.getHabitsForDayAndContext(request, contextId),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/{contextId}/habit")
+    public ResponseEntity<List<Habit>> getHabitsForContext(@PathVariable Long contextId) {
+        return new ResponseEntity<>(
+                habitService.getHabitsForContext(contextId),
                 HttpStatus.OK
         );
     }
