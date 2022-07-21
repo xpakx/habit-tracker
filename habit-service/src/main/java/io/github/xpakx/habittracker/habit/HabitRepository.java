@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface HabitRepository extends JpaRepository<Habit, Long> {
     List<Habit> findByNextDueBetween(LocalDateTime nextDueStart, LocalDateTime nextDueEnd);
+
+    List<Habit> findByNextDueBetweenAndContextId(LocalDateTime nextDueStart, LocalDateTime nextDueEnd, Long contextId);
 }

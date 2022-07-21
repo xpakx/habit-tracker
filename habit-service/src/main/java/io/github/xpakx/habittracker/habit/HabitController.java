@@ -32,7 +32,7 @@ public class HabitController {
         );
     }
 
-    @GetMapping("/habit")
+    @GetMapping
     public ResponseEntity<List<Habit>> getHabitsForDay(@RequestBody DayRequest request) {
         return new ResponseEntity<>(
                 service.getHabitsForDay(request),
