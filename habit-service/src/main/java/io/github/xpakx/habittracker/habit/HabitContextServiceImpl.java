@@ -1,13 +1,18 @@
 package io.github.xpakx.habittracker.habit;
 
+import io.github.xpakx.habittracker.habit.dto.DayRequest;
 import io.github.xpakx.habittracker.habit.dto.HabitContextRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class HabitContextServiceImpl implements HabitContextService {
     private final HabitContextRepository contextRepository;
+    private final HabitRepository habitRepository;
 
     @Override
     public HabitContext addContext(HabitContextRequest request) {
@@ -29,5 +34,18 @@ public class HabitContextServiceImpl implements HabitContextService {
         context.setActiveStart(request.getActiveStart());
         context.setActiveEnd(request.getActiveEnd());
         return contextRepository.save(context);
+    }
+
+
+    @Override
+    public List<Habit> getHabitsForDayAndContext(DayRequest request, Long contextId) {
+        LocalDateTime start = request.getDate().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime end = start.plusDays(1);
+        return habitRepository.findByNextDueBetweenAndContextId(start, end, contextId);
+    }
+
+    @Override
+    public List<Habit> getHabitsForContext(Long contextId) {
+        return habitRepository.findByContextId(contextId);
     }
 }

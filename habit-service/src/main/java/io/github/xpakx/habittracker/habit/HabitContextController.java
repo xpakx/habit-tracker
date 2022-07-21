@@ -14,7 +14,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HabitContextController {
     public final HabitContextService service;
-    public final HabitService habitService;
 
     @PostMapping
     public ResponseEntity<HabitContext> addContext(@RequestBody HabitContextRequest request) {
@@ -34,7 +33,7 @@ public class HabitContextController {
     @GetMapping("/{contextId}/habit/date")
     public ResponseEntity<List<Habit>> getHabitsForDayAndContext(@RequestBody DayRequest request, @PathVariable Long contextId) {
         return new ResponseEntity<>(
-                habitService.getHabitsForDayAndContext(request, contextId),
+                service.getHabitsForDayAndContext(request, contextId),
                 HttpStatus.OK
         );
     }
@@ -42,7 +41,7 @@ public class HabitContextController {
     @GetMapping("/{contextId}/habit")
     public ResponseEntity<List<Habit>> getHabitsForContext(@PathVariable Long contextId) {
         return new ResponseEntity<>(
-                habitService.getHabitsForContext(contextId),
+                service.getHabitsForContext(contextId),
                 HttpStatus.OK
         );
     }
