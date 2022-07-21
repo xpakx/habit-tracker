@@ -70,7 +70,7 @@ public class HabitServiceImpl implements HabitService {
     private boolean completedForDay(Long habitId, Habit habit, CompletionRequest request) {
         LocalDateTime start = request.getDate().withHour(0).withMinute(0).withSecond(0).withNano(0);
         LocalDateTime end = start.plusDays(1);
-        if(habit.getNextDue().isBefore(start) || habit.getNextDue().isAfter(end)) {
+        if(habit.getNextDue().isBefore(start)) {
             return false;
         }
         long count = completionRepository.countByDateBetweenAndHabitId(start, end, habitId);
