@@ -29,6 +29,7 @@ public class Habit {
     private HabitTrigger trigger;
 
     private Integer interval;
+    private Integer dailyCompletions;
     private LocalDateTime start;
     private LocalDateTime nextDue;
 }

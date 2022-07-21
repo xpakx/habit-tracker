@@ -22,6 +22,7 @@ public class HabitServiceImpl implements HabitService {
         habit.setName(request.getName());
         habit.setDescription(request.getDescription());
         habit.setInterval(request.getInterval());
+        habit.setDailyCompletions(request.getDailyCompletions());
         habit.setStart(request.getStart());
         habit.setNextDue(request.getStart());
         habit.setContext(contextRepository.getReferenceById(request.getContextId()));
@@ -37,6 +38,7 @@ public class HabitServiceImpl implements HabitService {
         habit.setName(request.getName());
         habit.setDescription(request.getDescription());
         habit.setInterval(request.getInterval());
+        habit.setDailyCompletions(request.getDailyCompletions());
         habit.setStart(request.getStart());
         return null;
     }

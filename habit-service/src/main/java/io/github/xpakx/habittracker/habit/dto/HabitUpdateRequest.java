@@ -15,5 +15,6 @@ public class HabitUpdateRequest {
     private String name;
     private String description;
     private Integer interval;
+    private Integer dailyCompletions;
     private LocalDateTime start;
 }
