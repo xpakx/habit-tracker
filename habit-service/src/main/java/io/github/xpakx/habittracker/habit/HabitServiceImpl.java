@@ -61,9 +61,9 @@ public class HabitServiceImpl implements HabitService {
         completion.setDate(request.getDate());
         completionRepository.save(completion);
         if(completedForDay(habitId, habit, request)) {
-            //TODO
+            habit.setNextDue(habit.getNextDue().plusDays(habit.getInterval()));
+            return habitRepository.save(habit);
         }
-
         return habit;
     }
 
