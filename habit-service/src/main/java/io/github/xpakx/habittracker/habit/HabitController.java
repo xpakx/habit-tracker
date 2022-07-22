@@ -1,10 +1,8 @@
 package io.github.xpakx.habittracker.habit;
 
-import io.github.xpakx.habittracker.habit.dto.DayRequest;
 import io.github.xpakx.habittracker.habit.dto.HabitRequest;
 import io.github.xpakx.habittracker.habit.dto.HabitUpdateRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
