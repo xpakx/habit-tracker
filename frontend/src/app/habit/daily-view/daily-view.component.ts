@@ -14,7 +14,7 @@ export class DailyViewComponent implements OnInit {
   constructor(private habitService: HabitService) { }
 
   ngOnInit(): void {
-    this.habitService.getHabitsForDate().subscribe({
+    this.habitService.getDailyHabits().subscribe({
       next: (response: Habit[]) => this.updateHabitList(response),
       error: (error: HttpErrorResponse) => this.showError(error)
 
