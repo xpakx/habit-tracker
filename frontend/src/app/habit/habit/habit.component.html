@@ -1,1 +1,4 @@
-<p>habit works!</p>
+<div class="habit" *ngIf="habit">
+    <div class="habit-name">{{ habit.name }}</div>
+    <div class="habit-desc">{{ habit.description }}</div>
+</div>
