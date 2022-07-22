@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { Habit } from '../dto/habit';
 
 @Component({
   selector: 'app-habit',
@@ -6,6 +7,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./habit.component.css']
 })
 export class HabitComponent implements OnInit {
+  @Input("habit") habit?: Habit;
 
   constructor() { }
 

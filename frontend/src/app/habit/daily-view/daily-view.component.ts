@@ -21,7 +21,6 @@ export class DailyViewComponent implements OnInit {
     });
   }
 
-
   updateHabitList(response: Habit[]): void {
     this.habits = response;
   }
