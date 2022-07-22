@@ -13,6 +13,6 @@ export class HabitService {
   constructor(private http: HttpClient) { }
 
   public getHabitsForDate():  Observable<Habit[]> {
-    return this.http.get<Habit[]>(`${this.apiServerUrl}/habit/date`);
+    return this.http.get<Habit[]>(`${this.apiServerUrl}/habit/daily`);
   }
 }

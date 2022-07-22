@@ -46,8 +46,8 @@ public class HabitServiceImpl implements HabitService {
     }
 
     @Override
-    public List<Habit> getHabitsForDay(DayRequest request) {
-        LocalDateTime start = request.getDate().withHour(0).withMinute(0).withSecond(0).withNano(0);
+    public List<Habit> getHabitsForDay(LocalDateTime date) {
+        LocalDateTime start = date.withHour(0).withMinute(0).withSecond(0).withNano(0);
         LocalDateTime end = start.plusDays(1);
         return habitRepository.findByNextDueBetween(start, end);
     }
