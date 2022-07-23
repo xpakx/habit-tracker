@@ -1,6 +1,5 @@
 package io.github.xpakx.habittracker.habit;
 
-import io.github.xpakx.habittracker.habit.Habit;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;

@@ -1,7 +1,6 @@
 package io.github.xpakx.habittracker.habit;
 
 import io.github.xpakx.habittracker.habit.dto.CompletionRequest;
-import io.github.xpakx.habittracker.habit.dto.DayRequest;
 import io.github.xpakx.habittracker.habit.dto.HabitRequest;
 import io.github.xpakx.habittracker.habit.dto.HabitUpdateRequest;
 import lombok.RequiredArgsConstructor;
