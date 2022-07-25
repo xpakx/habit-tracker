@@ -1,5 +1,8 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Habit } from '../dto/habit';
+import { HabitRequest } from '../dto/habit-request';
 import { HabitService } from '../habit.service';
 
 export interface HabitForm {
@@ -35,6 +38,29 @@ export class HabitModalComponent implements OnInit {
   }
 
   addHabit(): void {
+    if(this.form.valid) {
+      let request: HabitRequest = {
+        name: this.form.controls.name.value,
+        description: this.form.controls.description.value,
+        interval: this.form.controls.interval.value,
+        dailyCompletions: this.form.controls.dailyCompletions.value,
+        start: this.form.controls.start.value,
+        contextId: undefined,
+        triggerName: this.form.controls.triggerName.value
+      };
 
+      this.habitService.addHabit(request).subscribe({
+        next: (response: Habit) => this.onSuccess(response),
+        error: (error: HttpErrorResponse) => this.onError(error)
+      });
+    }
+  }
+
+  onSuccess(response: Habit): void {
+    //TODO
+  }
+
+  onError(error: HttpErrorResponse): void {
+    //TODO
   }
 }
