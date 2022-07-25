@@ -10,6 +10,7 @@ import { HabitComponent } from './habit/habit/habit.component';
 import { MenuComponent } from './navigation/menu/menu.component';
 import { HabitModalComponent } from './habit/habit-modal/habit-modal.component';
 import { AddButtonComponent } from './controls/add-button/add-button.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,9 @@ import { AddButtonComponent } from './controls/add-button/add-button.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

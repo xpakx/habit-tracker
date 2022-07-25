@@ -10,6 +10,7 @@ import { HabitService } from '../habit.service';
 })
 export class DailyViewComponent implements OnInit {
   habits: Habit[] = [];
+  showHabitModal: boolean = false;
 
   constructor(private habitService: HabitService) { }
 
@@ -27,6 +28,10 @@ export class DailyViewComponent implements OnInit {
 
   showError(error: HttpErrorResponse): void {
     //TODO
+  }
+
+  displayHabitModal(): void {
+    this.showHabitModal = true;
   }
 
 }

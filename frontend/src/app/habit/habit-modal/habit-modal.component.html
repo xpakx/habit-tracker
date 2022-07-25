@@ -1,1 +1,35 @@
-<p>habit-modal works!</p>
+<form id="form" [formGroup]="form">
+    <div>
+        <label for="name">Name</label>
+    </div>
+    <input id="name" formControlName="name"/>
+
+    <div>
+        <label for="description">Description</label>
+    </div>
+    <input id="description" formControlName="description"/>
+
+    <div>
+        <label for="interval">Interval</label>
+    </div>
+    <input id="interval" formControlName="interval"/>
+
+    <div>
+        <label for="dailyCompletions">Daily completions</label>
+    </div>
+    <input id="dailyCompletions" formControlName="dailyCompletions"/>
+
+    <div>
+        <label for="start">Start date</label>
+    </div>
+    <input id="start" formControlName="start"/>
+
+    <div>
+        <label for="triggerName">Trigger</label>
+    </div>
+    <input id="triggerName" formControlName="triggerName"/>
+
+</form>
+<button class="btn">
+    Add
+</button>
