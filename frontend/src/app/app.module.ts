@@ -8,6 +8,8 @@ import { DailyViewComponent } from './habit/daily-view/daily-view.component';
 import { HabitListComponent } from './habit/habit-list/habit-list.component';
 import { HabitComponent } from './habit/habit/habit.component';
 import { MenuComponent } from './navigation/menu/menu.component';
+import { HabitModalComponent } from './habit/habit-modal/habit-modal.component';
+import { AddButtonComponent } from './controls/add-button/add-button.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +17,9 @@ import { MenuComponent } from './navigation/menu/menu.component';
     DailyViewComponent,
     HabitListComponent,
     HabitComponent,
-    MenuComponent
+    MenuComponent,
+    HabitModalComponent,
+    AddButtonComponent
   ],
   imports: [
     BrowserModule,
