@@ -26,7 +26,7 @@ public class HabitServiceImpl implements HabitService {
         habit.setDailyCompletions(request.getDailyCompletions());
         habit.setStart(request.getStart());
         habit.setNextDue(request.getStart());
-        habit.setContext(contextRepository.getReferenceById(request.getContextId()));
+        habit.setContext(request.getContextId() != null ? contextRepository.getReferenceById(request.getContextId()) : null);
         HabitTrigger trigger = new HabitTrigger();
         trigger.setName(request.getTriggerName());
         habit.setTrigger(trigger);
