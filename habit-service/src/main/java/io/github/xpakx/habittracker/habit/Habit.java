@@ -24,7 +24,7 @@ public class Habit {
     @JoinColumn(name = "context_id")
     private HabitContext context;
 
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "trigger_id")
     private HabitTrigger trigger;
 
