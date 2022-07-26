@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HabitCompletionController {
     private final HabitCompletionService service;
 
-    @PostMapping("habit/{habitId}/completion")
+    @PostMapping("/habit/{habitId}/completion")
     public ResponseEntity<HabitCompletion> completeHabit(@RequestBody DayRequest request, @PathVariable Long habitId) {
         return new ResponseEntity<>(
                 service.completeHabit(habitId, request),
