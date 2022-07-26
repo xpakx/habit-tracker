@@ -1,4 +1,5 @@
 <div class="habit" *ngIf="habit">
+    <button class="complete" (click)="completeHabit()">Complete</button>
     <div class="habit-name">{{ habit.name }}</div>
     <div class="habit-desc">{{ habit.description }}</div>
 </div>
