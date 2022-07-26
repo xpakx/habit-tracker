@@ -2,6 +2,7 @@ package io.github.xpakx.habittracker.habit;
 
 import io.github.xpakx.habittracker.habit.dto.DayRequest;
 import io.github.xpakx.habittracker.habit.dto.HabitContextRequest;
+import io.github.xpakx.habittracker.habit.dto.HabitDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class HabitContextController {
     }
 
     @GetMapping("/{contextId}/habit/date")
-    public ResponseEntity<List<Habit>> getHabitsForDayAndContext(@RequestBody DayRequest request, @PathVariable Long contextId) {
+    public ResponseEntity<List<HabitDetails>> getHabitsForDayAndContext(@RequestBody DayRequest request, @PathVariable Long contextId) {
         return new ResponseEntity<>(
                 service.getHabitsForDayAndContext(request, contextId),
                 HttpStatus.OK

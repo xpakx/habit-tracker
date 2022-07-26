@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@NamedEntityGraph(name = "habit-details",
+        attributeNodes = {@NamedAttributeNode("context"), @NamedAttributeNode("trigger")}
+)
 public class Habit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
