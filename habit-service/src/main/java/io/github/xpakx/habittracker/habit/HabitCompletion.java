@@ -1,5 +1,6 @@
 package io.github.xpakx.habittracker.habit;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ public class HabitCompletion {
 
     @ManyToOne
     @JoinColumn(name = "habit_id")
+    @JsonIgnore
     private Habit habit;
 
 }
