@@ -11,6 +11,8 @@ import { HabitService } from '../habit.service';
 export class DailyViewComponent implements OnInit {
   habits: Habit[] = [];
   showHabitModal: boolean = false;
+  errorMessage: String = '';
+  errorOccured: boolean = false;
 
   constructor(private habitService: HabitService) { }
 
@@ -18,7 +20,6 @@ export class DailyViewComponent implements OnInit {
     this.habitService.getDailyHabits().subscribe({
       next: (response: Habit[]) => this.updateHabitList(response),
       error: (error: HttpErrorResponse) => this.showError(error)
-
     });
   }
 
@@ -27,7 +28,8 @@ export class DailyViewComponent implements OnInit {
   }
 
   showError(error: HttpErrorResponse): void {
-    //TODO
+    this.errorOccured = true;
+    this.errorMessage = error.error.message;
   }
 
   displayHabitModal(): void {
