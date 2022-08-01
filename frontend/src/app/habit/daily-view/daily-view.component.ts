@@ -13,6 +13,7 @@ export class DailyViewComponent implements OnInit {
   showHabitModal: boolean = false;
   errorMessage: String = '';
   errorOccured: boolean = false;
+  showContextModal: boolean = false;
 
   constructor(private habitService: HabitService) { }
 
@@ -34,6 +35,10 @@ export class DailyViewComponent implements OnInit {
 
   displayHabitModal(): void {
     this.showHabitModal = true;
+  }
+
+  displayContextModal(): void {
+    this.showContextModal = true;
   }
 
 }

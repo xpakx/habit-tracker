@@ -1,0 +1,30 @@
+<form id="form" [formGroup]="form">
+    <div>
+        <label for="name">Name</label>
+    </div>
+    <input id="name" formControlName="name"/>
+
+    <div>
+        <label for="description">Description</label>
+    </div>
+    <input id="description" formControlName="description"/>
+
+    <div>
+        <label for="timeBounded">Time bounded</label>
+    </div>
+    <input id="timeBounded" formControlName="timeBounded"/>
+
+    <div>
+        <label for="activeStart">Start</label>
+    </div>
+    <input id="activeStart" formControlName="activeStart"/>
+
+    <div>
+        <label for="activeEnd">End</label>
+    </div>
+    <input id="activeEnd" formControlName="activeEnd"/>
+
+</form>
+<button class="btn" (click)="addContext()">
+    Add
+</button>

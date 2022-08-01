@@ -11,6 +11,7 @@ import { MenuComponent } from './navigation/menu/menu.component';
 import { HabitModalComponent } from './habit/habit-modal/habit-modal.component';
 import { AddButtonComponent } from './controls/add-button/add-button.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ContextModalComponent } from './habit/context-modal/context-modal.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     HabitComponent,
     MenuComponent,
     HabitModalComponent,
-    AddButtonComponent
+    AddButtonComponent,
+    ContextModalComponent
   ],
   imports: [
     BrowserModule,
