@@ -12,6 +12,7 @@ import { HabitModalComponent } from './habit/habit-modal/habit-modal.component';
 import { AddButtonComponent } from './controls/add-button/add-button.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ContextModalComponent } from './habit/context-modal/context-modal.component';
+import { DailyContextViewComponent } from './habit/daily-context-view/daily-context-view.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { ContextModalComponent } from './habit/context-modal/context-modal.compo
     MenuComponent,
     HabitModalComponent,
     AddButtonComponent,
-    ContextModalComponent
+    ContextModalComponent,
+    DailyContextViewComponent
   ],
   imports: [
     BrowserModule,
