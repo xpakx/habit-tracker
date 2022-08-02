@@ -1,5 +1,6 @@
 package io.github.xpakx.habittracker.habit;
 
+import io.github.xpakx.habittracker.habit.dto.ContextDetails;
 import io.github.xpakx.habittracker.habit.dto.DayRequest;
 import io.github.xpakx.habittracker.habit.dto.HabitContextRequest;
 import io.github.xpakx.habittracker.habit.dto.HabitDetails;
@@ -52,6 +53,14 @@ public class HabitContextController {
     public ResponseEntity<List<Habit>> getHabitsForContext(@PathVariable Long contextId) {
         return new ResponseEntity<>(
                 service.getHabitsForContext(contextId),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<ContextDetails>> getAllContexts() {
+        return new ResponseEntity<>(
+                service.getAllContexts(),
                 HttpStatus.OK
         );
     }

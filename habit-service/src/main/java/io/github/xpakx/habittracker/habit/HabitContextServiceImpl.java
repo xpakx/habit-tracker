@@ -1,5 +1,6 @@
 package io.github.xpakx.habittracker.habit;
 
+import io.github.xpakx.habittracker.habit.dto.ContextDetails;
 import io.github.xpakx.habittracker.habit.dto.HabitContextRequest;
 import io.github.xpakx.habittracker.habit.dto.HabitDetails;
 import lombok.RequiredArgsConstructor;
@@ -46,5 +47,10 @@ public class HabitContextServiceImpl implements HabitContextService {
     @Override
     public List<Habit> getHabitsForContext(Long contextId) {
         return habitRepository.findByContextId(contextId);
+    }
+
+    @Override
+    public List<ContextDetails> getAllContexts() {
+        return contextRepository.findProjectedBy();
     }
 }
