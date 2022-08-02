@@ -26,6 +26,7 @@ public class HabitServiceImpl implements HabitService {
         habit.setDailyCompletions(request.getDailyCompletions());
         habit.setStart(request.getStart());
         habit.setNextDue(request.getStart());
+        habit.setCompletions(0);
         habit.setContext(request.getContextId() != null ? contextRepository.getReferenceById(request.getContextId()) : null);
         HabitTrigger trigger = new HabitTrigger();
         trigger.setName(request.getTriggerName());
@@ -59,11 +60,12 @@ public class HabitServiceImpl implements HabitService {
         completion.setHabit(habit);
         completion.setDate(request.getDate());
         completionRepository.save(completion);
+        habit.setCompletions(habit.getCompletions()+1);
         if(completedForDay(habitId, habit, request)) {
             habit.setNextDue(habit.getNextDue().plusDays(habit.getInterval()));
-            return habitRepository.save(habit);
+            habit.setCompletions(0);
         }
-        return habit;
+        return habitRepository.save(habit);
     }
 
     private boolean completedForDay(Long habitId, Habit habit, CompletionRequest request) {

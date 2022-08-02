@@ -36,6 +36,7 @@ public class Habit {
 
     private Integer interval;
     private Integer dailyCompletions;
+    private Integer completions;
     private LocalDateTime start;
     private LocalDateTime nextDue;
 }

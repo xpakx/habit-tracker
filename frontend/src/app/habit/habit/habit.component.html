@@ -7,7 +7,7 @@
         <div class="habit-trigger" *ngIf="habit.trigger">{{ habit.trigger.name }}</div>
         <div class="habit-desc">{{ habit.description }}</div>
         <div class="completion">
-            0/{{habit.dailyCompletions}}
+            {{habit.completions}}/{{habit.dailyCompletions}}
         </div>
     </div>
 </div>

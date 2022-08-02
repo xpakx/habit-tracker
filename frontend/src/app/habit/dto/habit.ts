@@ -10,6 +10,7 @@ export interface Habit {
 
     interval: number;
     dailyCompletions: number;
+    completions: number;
     start: Date;
     nextDue: Date;
 }
