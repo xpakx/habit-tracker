@@ -1,5 +1,6 @@
 package io.github.xpakx.habittracker.habit;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,10 +26,12 @@ public class Habit {
 
     @ManyToOne
     @JoinColumn(name = "context_id")
+    @JsonIgnore
     private HabitContext context;
 
     @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "trigger_id")
+    @JsonIgnore
     private HabitTrigger trigger;
 
     private Integer interval;

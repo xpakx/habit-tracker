@@ -29,6 +29,15 @@
     </div>
     <input id="triggerName" formControlName="triggerName"/>
 
+
+    <div>
+        <label>Context</label>
+    </div>
+    <div class="contexts">
+        <button (click)="selectContext(undefined)">No context</button>
+        <button *ngFor="let context of contexts" (click)="selectContext(context.id)" [class.selected]="context.id == selectedContext">{{ context.name }}</button>
+    </div>
+
 </form>
 <button class="btn" (click)="addHabit()">
     Add

@@ -24,6 +24,7 @@ export interface HabitForm {
 export class HabitModalComponent implements OnInit {
   form: FormGroup<HabitForm>;
   contexts: ContextDetails[] = [];
+  selectedContext?: number;
 
   constructor(private habitService: HabitService, private contextService: ContextService, private fb: FormBuilder) {
     this.form = this.fb.nonNullable.group({
@@ -55,7 +56,7 @@ export class HabitModalComponent implements OnInit {
         interval: this.form.controls.interval.value,
         dailyCompletions: this.form.controls.dailyCompletions.value,
         start: this.form.controls.start.value,
-        contextId: undefined,
+        contextId: this.selectedContext,
         triggerName: this.form.controls.triggerName.value
       };
 
@@ -72,5 +73,9 @@ export class HabitModalComponent implements OnInit {
 
   onError(error: HttpErrorResponse): void {
     //TODO
+  }
+
+  selectContext(id: number | undefined) {
+    this.selectedContext = id;
   }
 }
