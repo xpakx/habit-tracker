@@ -1,6 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ContextService } from '../context.service';
+import { ContextDetails } from '../dto/context-details';
 import { Habit } from '../dto/habit';
 import { HabitRequest } from '../dto/habit-request';
 import { HabitService } from '../habit.service';
@@ -21,8 +23,9 @@ export interface HabitForm {
 })
 export class HabitModalComponent implements OnInit {
   form: FormGroup<HabitForm>;
+  contexts: ContextDetails[] = [];
 
-  constructor(private habitService: HabitService, private fb: FormBuilder) {
+  constructor(private habitService: HabitService, private contextService: ContextService, private fb: FormBuilder) {
     this.form = this.fb.nonNullable.group({
       name: [new String(''), Validators.required],
       description: [new String(''), Validators.required],
@@ -35,6 +38,13 @@ export class HabitModalComponent implements OnInit {
   
 
   ngOnInit(): void {
+    this.contextService.getContexts().subscribe({
+      next: (response: ContextDetails[]) => this.saveContexts(response)
+    });
+  }
+
+  saveContexts(response: ContextDetails[]): void {
+    this.contexts = response;
   }
 
   addHabit(): void {

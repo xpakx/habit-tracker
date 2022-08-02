@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { ContextDetails } from './dto/context-details';
 import { ContextRequest } from './dto/context-request';
 import { Habit } from './dto/habit';
 import { HabitContext } from './dto/habit-context';
@@ -28,5 +29,9 @@ export class ContextService {
 
   public getHabitsForContext(contextId: number):  Observable<Habit[]> {
     return this.http.get<Habit[]>(`${this.apiServerUrl}/context/${contextId}/habit`);
+  }
+
+  public getContexts(): Observable<ContextDetails[]> {
+    return this.http.get<ContextDetails[]>(`${this.apiServerUrl}/context/all`);
   }
 }
