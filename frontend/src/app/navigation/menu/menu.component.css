@@ -13,8 +13,44 @@
 
 .title {
     color: #f1f0f4;
+    display: flex;
+    align-items: center;
 }
 
 .menu-title {
     color: #696774;
+}
+
+.icon {
+    border-radius: 5px;
+    width: 15px;
+    height: 15px;
+    background-color: #353340;
+    color: #808191;
+    margin-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.icon.active {
+    background-color: #ff5c00;
+    color: white;
+}
+
+.item a {
+    display: flex;
+    align-items: center;
+}
+
+.circle {
+    border-radius: 50%;
+    background-color: #363543;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
+    margin-right: 10px;
 }
