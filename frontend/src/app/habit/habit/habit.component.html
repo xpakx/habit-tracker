@@ -1,5 +1,13 @@
 <div class="habit" *ngIf="habit">
-    <button class="complete" (click)="completeHabit()">Complete</button>
-    <div class="habit-name">{{ habit.name }}</div>
-    <div class="habit-desc">{{ habit.description }}</div>
+    <button class="complete-btn" (click)="completeHabit()">
+        <div class="completion-field"></div>
+    </button>
+    <div class="habit-content">
+        <div class="habit-name">{{ habit.name }}</div>
+        <div class="habit-trigger" *ngIf="habit.trigger">{{ habit.trigger.name }}</div>
+        <div class="habit-desc">{{ habit.description }}</div>
+        <div class="completion">
+            0/{{habit.dailyCompletions}}
+        </div>
+    </div>
 </div>

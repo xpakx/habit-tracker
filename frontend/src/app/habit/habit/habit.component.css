@@ -1,0 +1,39 @@
+.habit {
+    background-color: #353340;
+    color: #d7d6d9;
+    padding: 15px 15px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+}
+
+button {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    margin: 0;
+}
+
+.complete-btn {
+    margin-right: 10px;
+    border: solid 1px #d7d6d9;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    min-width: 75px;
+}
+
+.habit-name {
+    font-size: 19px;
+    font-weight: 700;
+    color: white;
+}
+
+.completion-field {
+    background-color: aqua;
+    width: 30px;
+    height: 35px;
+}
