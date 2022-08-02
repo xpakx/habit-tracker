@@ -1,5 +1,6 @@
 package io.github.xpakx.habittracker.habit;
 
+import io.github.xpakx.habittracker.habit.dto.CompletionRequest;
 import io.github.xpakx.habittracker.habit.dto.DayRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,7 @@ public class HabitCompletionController {
     private final HabitCompletionService service;
 
     @PostMapping("/habit/{habitId}/completion")
-    public ResponseEntity<HabitCompletion> completeHabit(@RequestBody DayRequest request, @PathVariable Long habitId) {
+    public ResponseEntity<HabitCompletion> completeHabit(@RequestBody CompletionRequest request, @PathVariable Long habitId) {
         return new ResponseEntity<>(
                 service.completeHabit(habitId, request),
                 HttpStatus.CREATED
