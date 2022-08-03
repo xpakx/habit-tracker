@@ -34,7 +34,7 @@
         <label>Context</label>
     </div>
     <div class="contexts">
-        <button (click)="selectContext(undefined)">No context</button>
+        <button class="context-button no-context" (click)="selectContext(undefined)">No context</button>
         <button class="context-button" *ngFor="let context of contexts" (click)="selectContext(context.id)" [class.selected]="context.id == selectedContext">{{ context.name }}</button>
     </div>
 

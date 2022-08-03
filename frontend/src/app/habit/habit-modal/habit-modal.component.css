@@ -24,3 +24,8 @@ button {
     background-color: #ff5c00;
     font-weight: 700;
 }
+
+.no-context {
+    background-color: #494758;
+    color: gray;
+}
