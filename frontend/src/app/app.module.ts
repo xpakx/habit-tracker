@@ -14,6 +14,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ContextModalComponent } from './habit/context-modal/context-modal.component';
 import { DailyContextViewComponent } from './habit/daily-context-view/daily-context-view.component';
 import { ContextViewComponent } from './habit/context-view/context-view.component';
+import { ContextsViewComponent } from './contexts-view/contexts-view.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { ContextViewComponent } from './habit/context-view/context-view.componen
     AddButtonComponent,
     ContextModalComponent,
     DailyContextViewComponent,
-    ContextViewComponent
+    ContextViewComponent,
+    ContextsViewComponent
   ],
   imports: [
     BrowserModule,
