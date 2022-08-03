@@ -1,6 +1,6 @@
 
 <div class="contexts">
-    <button *ngFor="let context of contexts" [routerLink]="'/context/'+context.id">{{ context.name }}</button>
+    <button class="context-button" *ngFor="let context of contexts" [routerLink]="'/context/'+context.id">{{ context.name }}</button>
 </div>
 
 <app-add-button (clicked)="displayContextModal()"></app-add-button>

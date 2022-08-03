@@ -1,3 +1,26 @@
-.selected {
-    background-color: antiquewhite;
+
+
+button {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    margin: 0;
+}
+
+.context-button {
+    margin-right: 20px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 75px;
+    background-color: #353340;
+    padding: 10px 15px;
+    color: white;
+    text-transform: capitalize;
+}
+
+.context-button.selected {
+    background-color: #ff5c00;
+    font-weight: 700;
 }
