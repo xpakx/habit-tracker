@@ -25,7 +25,7 @@ export class ContextModalComponent implements OnInit {
     this.form = this.fb.nonNullable.group({
       name: [new String(''), Validators.required],
       description: [new String(''), Validators.required],
-      timeBounded: [true],
+      timeBounded: [false],
       activeStart: [new Date()],
       activeEnd: [new Date()]
     });

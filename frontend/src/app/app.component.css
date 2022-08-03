@@ -19,3 +19,15 @@
     border-radius: 20px 0 0 20px;
     padding: 10px 15px;
 }
+
+.habit-container {
+    width: 50%;
+}
+
+.hero-container {
+    width: 50%;
+}
+
+.view-container {
+    flex-grow: 1;
+}
