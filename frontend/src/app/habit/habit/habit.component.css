@@ -16,14 +16,16 @@ button {
 }
 
 .complete-btn {
-    margin-right: 10px;
+    margin-right: 20px;
     border: solid 1px #d7d6d9;
     border-radius: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 75px;
+}
+.habit-content {
     flex-grow: 1;
-    min-width: 75px;
 }
 
 .habit-name {
@@ -33,7 +35,21 @@ button {
 }
 
 .completion-field {
-    background-color: aqua;
+    background-color: #64626f;
     width: 30px;
-    height: 35px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.check-mark {
+    font-size: 20px;
+    color: white;
+}
+
+.completion {
+    font-size: 12px;
+    color: #64626f;
 }

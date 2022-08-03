@@ -26,6 +26,9 @@ export class HabitComponent implements OnInit {
 
   onSuccess(response: HabitCompletion): void {
     //TODO
+    if(this.habit) {
+      this.habit.completions = this.habit.completions + 1;
+    }
   }
 
 }

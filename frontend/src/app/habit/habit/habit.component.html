@@ -1,6 +1,8 @@
 <div class="habit" *ngIf="habit">
     <button class="complete-btn" (click)="completeHabit()">
-        <div class="completion-field"></div>
+        <div class="completion-field">
+            <div class="check-mark" *ngIf="habit.completions >= habit.dailyCompletions">✔</div>
+        </div>
     </button>
     <div class="habit-content">
         <div class="habit-name">{{ habit.name }}</div>
