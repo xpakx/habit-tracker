@@ -14,12 +14,14 @@ export class DailyContextViewComponent implements OnInit {
   showHabitModal: boolean = false;
   errorMessage: String = '';
   errorOccured: boolean = false;
+  contextId?: number;
 
   constructor(private contextService: ContextService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(routeParams => {
       let page: number | undefined = routeParams['id'];
+      this.contextId = routeParams['id'];
       if(page) {
         this.getHabits(routeParams['id']);
       } 

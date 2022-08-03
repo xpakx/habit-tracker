@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ContextService } from '../context.service';
 import { ContextDetails } from '../dto/context-details';
@@ -24,7 +24,7 @@ export interface HabitForm {
 export class HabitModalComponent implements OnInit {
   form: FormGroup<HabitForm>;
   contexts: ContextDetails[] = [];
-  selectedContext?: number;
+  @Input('context') selectedContext?: number;
 
   constructor(private habitService: HabitService, private contextService: ContextService, private fb: FormBuilder) {
     this.form = this.fb.nonNullable.group({

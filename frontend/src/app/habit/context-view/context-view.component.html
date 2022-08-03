@@ -2,4 +2,4 @@
 <app-habit-list [habits]="habits"></app-habit-list>
 
 <app-add-button (clicked)="displayHabitModal()"></app-add-button>
-<app-habit-modal *ngIf="showHabitModal"></app-habit-modal>
+<app-habit-modal *ngIf="showHabitModal" [context]="contextId"></app-habit-modal>
