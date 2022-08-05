@@ -2,5 +2,8 @@ package io.github.xpakx.habitgamification.gamification.dto;
 
 import lombok.Value;
 
-public record HabitCompletion(Long completionId, Long habitId) {
+@Value
+public class HabitCompletion {
+    private Long completionId;
+    private Long habitId;
 }

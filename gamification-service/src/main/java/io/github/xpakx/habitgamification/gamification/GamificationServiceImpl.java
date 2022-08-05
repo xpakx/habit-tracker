@@ -5,14 +5,35 @@ import io.github.xpakx.habitgamification.gamification.dto.HabitCompletion;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class GamificationServiceImpl implements GamificationService {
     private final ExpEntryRepository expRepository;
     private final AchievementRepository achievementRepository;
-    
+    private final List<AchievementProcessor> processors;
+
     @Override
     public CompletionResult newAttempt(HabitCompletion completion) {
-        return null;
+        ExpEntry exp = new ExpEntry();
+        exp.setCompletionId(completion.getCompletionId());
+        exp.setDate(LocalDateTime.now());
+        exp.setExperience(10);
+        expRepository.save(exp);
+        List<Achievement> achievements = processForAchievements(completion, exp);
+        return new CompletionResult(
+                exp.getExperience(),
+                achievements.stream()
+                        .map(Achievement::getBadgeType)
+                        .collect(Collectors.toList())
+        );
+    }
+
+    private List<Achievement> processForAchievements(HabitCompletion completion, ExpEntry exp) {
+        return new ArrayList<>();
     }
 }
