@@ -35,7 +35,7 @@ public class GamificationServiceImpl implements GamificationService {
     }
 
     private List<Achievement> processForAchievements(HabitCompletion completion, ExpEntry exp) {
-        int expSum = exp.getExperience();
+        int expSum = exp.getExperience(); //TODO
         List<Achievement> achievements = processors.stream()
                 .map((p) -> p.process(completion, expSum))
                 .filter(Optional::isPresent)
