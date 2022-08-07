@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +23,7 @@ public class GamificationServiceImpl implements GamificationService {
         exp.setCompletionId(completion.getCompletionId());
         exp.setDate(LocalDateTime.now());
         exp.setExperience(10);
+        exp.setUserId(completion.getUserId());
         expRepository.save(exp);
         List<Achievement> achievements = processForAchievements(completion, exp);
         return new CompletionResult(
@@ -34,6 +35,21 @@ public class GamificationServiceImpl implements GamificationService {
     }
 
     private List<Achievement> processForAchievements(HabitCompletion completion, ExpEntry exp) {
-        return new ArrayList<>();
+        int expSum = exp.getExperience();
+        List<Achievement> achievements = processors.stream()
+                .map((p) -> p.process(completion, expSum))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(this::badgeToAchievement)
+                .toList();
+        achievementRepository.saveAll(achievements);
+        return achievements;
+    }
+
+    private Achievement badgeToAchievement(Badge badge) {
+        Achievement achievement = new Achievement();
+        achievement.setBadgeType(badge);
+        achievement.setDate(LocalDateTime.now());
+        return achievement;
     }
 }

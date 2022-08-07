@@ -22,4 +22,5 @@ public class ExpEntry {
     private Long completionId;
     private LocalDateTime date;
     private int experience;
+    private Long userId;
 }
