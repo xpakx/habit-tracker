@@ -1,6 +1,7 @@
 package io.github.xpakx.habitgamification.gamification;
 
 import io.github.xpakx.habitgamification.gamification.dto.CompletionResult;
+import io.github.xpakx.habitgamification.gamification.dto.ExpResponse;
 import io.github.xpakx.habitgamification.gamification.dto.HabitCompletion;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -51,5 +52,13 @@ public class GamificationServiceImpl implements GamificationService {
         achievement.setBadgeType(badge);
         achievement.setDate(LocalDateTime.now());
         return achievement;
+    }
+
+    @Override
+    public ExpResponse getExp(Long userId) {
+        Integer experience = expRepository.getExpForUser(userId);
+        ExpResponse response = new ExpResponse();
+        response.setExperience(experience);
+        return  response;
     }
 }
