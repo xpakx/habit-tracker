@@ -2,7 +2,6 @@ package io.github.xpakx.habittracker.habit;
 
 import io.github.xpakx.habittracker.clients.GamificationServiceClient;
 import io.github.xpakx.habittracker.habit.dto.CompletionRequest;
-import io.github.xpakx.habittracker.habit.dto.DayRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
