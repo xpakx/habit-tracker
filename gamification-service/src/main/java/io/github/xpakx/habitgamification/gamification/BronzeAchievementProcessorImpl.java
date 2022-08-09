@@ -1,7 +1,6 @@
 package io.github.xpakx.habitgamification.gamification;
 
 import io.github.xpakx.habitgamification.gamification.dto.HabitCompletion;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
