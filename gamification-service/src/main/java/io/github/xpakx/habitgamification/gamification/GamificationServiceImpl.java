@@ -23,7 +23,7 @@ public class GamificationServiceImpl implements GamificationService {
         ExpEntry exp = new ExpEntry();
         exp.setCompletionId(completion.getCompletionId());
         exp.setDate(LocalDateTime.now());
-        exp.setExperience(10);
+        exp.setExperience(difficultyToExperience(completion.getDifficulty()));
         exp.setUserId(completion.getUserId());
         expRepository.save(exp);
         List<Achievement> achievements = processForAchievements(completion, exp);
@@ -33,6 +33,19 @@ public class GamificationServiceImpl implements GamificationService {
                         .map(Achievement::getBadgeType)
                         .collect(Collectors.toList())
         );
+    }
+
+    private int difficultyToExperience(Integer difficulty) {
+        if(difficulty == null) {
+            return 5;
+        }
+        if(difficulty >= 0 && difficulty <=3) {
+            return difficulty * 5;
+        }
+        if(difficulty > 3) {
+            return 15;
+        }
+        return 0;
     }
 
     private List<Achievement> processForAchievements(HabitCompletion completion, ExpEntry exp) {

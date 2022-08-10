@@ -9,4 +9,5 @@ public class HabitCompletion {
     private Long completionId;
     private Long habitId;
     private Long userId;
+    private Integer difficulty;
 }
