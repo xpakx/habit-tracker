@@ -15,7 +15,7 @@ public class AMQPConfig {
     }
 
     @Bean
-    public TopicExchange challengesTopicExchange() {
+    public TopicExchange completionsTopicExchange() {
         return ExchangeBuilder
                 .topicExchange(completionsTopic)
                 .durable(true)

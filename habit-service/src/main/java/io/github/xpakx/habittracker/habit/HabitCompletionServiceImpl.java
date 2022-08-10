@@ -1,5 +1,6 @@
 package io.github.xpakx.habittracker.habit;
 
+import io.github.xpakx.habittracker.clients.GamificationPublisher;
 import io.github.xpakx.habittracker.clients.GamificationServiceClient;
 import io.github.xpakx.habittracker.habit.dto.CompletionRequest;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,8 @@ import java.time.LocalDateTime;
 public class HabitCompletionServiceImpl implements HabitCompletionService {
     private final HabitCompletionRepository completionRepository;
     private final HabitRepository habitRepository;
-    private final GamificationServiceClient gamificationClient;
+    //private final GamificationServiceClient gamificationClient;
+    private final GamificationPublisher gamificationPublisher;
 
 
     @Override
@@ -30,7 +32,8 @@ public class HabitCompletionServiceImpl implements HabitCompletionService {
             habit.setCompletions(0);
         }
         habitRepository.save(habit);
-        gamificationClient.sendCompletion(completion);
+        //gamificationClient.sendCompletion(completion);
+        gamificationPublisher.sendCompletion(completion);
         return completion;
     }
 
