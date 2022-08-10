@@ -8,7 +8,7 @@ import { ExperienceResponse } from './dto/experience-response';
   providedIn: 'root'
 })
 export class GamificationService {
-  private apiServerUrl = environment.apiServerUrl;
+  private apiServerUrl = environment.gamificationServerUrl;
 
   constructor(private http: HttpClient) { }
 
