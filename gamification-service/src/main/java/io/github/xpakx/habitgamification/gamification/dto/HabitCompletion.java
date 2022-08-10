@@ -1,8 +1,10 @@
 package io.github.xpakx.habitgamification.gamification.dto;
 
-import lombok.Value;
+import lombok.Getter;
+import lombok.Setter;
 
-@Value
+@Getter
+@Setter
 public class HabitCompletion {
     private Long completionId;
     private Long habitId;
