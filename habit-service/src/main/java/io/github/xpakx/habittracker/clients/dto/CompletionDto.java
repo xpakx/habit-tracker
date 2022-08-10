@@ -9,4 +9,5 @@ public class CompletionDto {
     Long completionId;
     Long habitId;
     Long userId;
+    Integer difficulty;
 }

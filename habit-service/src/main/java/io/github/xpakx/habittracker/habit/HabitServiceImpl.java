@@ -1,6 +1,5 @@
 package io.github.xpakx.habittracker.habit;
 
-import io.github.xpakx.habittracker.habit.dto.CompletionRequest;
 import io.github.xpakx.habittracker.habit.dto.HabitRequest;
 import io.github.xpakx.habittracker.habit.dto.HabitUpdateRequest;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +27,7 @@ public class HabitServiceImpl implements HabitService {
         habit.setNextDue(request.getStart());
         habit.setCompletions(0);
         habit.setContext(request.getContextId() != null ? contextRepository.getReferenceById(request.getContextId()) : null);
+        habit.setDifficulty(request.getDifficulty());
         HabitTrigger trigger = new HabitTrigger();
         trigger.setName(request.getTriggerName());
         habit.setTrigger(trigger);
@@ -42,6 +42,7 @@ public class HabitServiceImpl implements HabitService {
         habit.setInterval(request.getInterval());
         habit.setDailyCompletions(request.getDailyCompletions());
         habit.setStart(request.getStart());
+        habit.setDifficulty(request.getDifficulty());
         return null;
     }
 

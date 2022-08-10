@@ -21,7 +21,7 @@ public class GamificationServiceClient {
         CompletionDto completionDto = new CompletionDto();
         completionDto.setCompletionId(completion.getId());
         completionDto.setHabitId(completion.getHabit().getId());
-        completionDto.setUserId(0L);
+        completionDto.setUserId(1L);
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(
                     gamificationServiceUri + "/attempt",

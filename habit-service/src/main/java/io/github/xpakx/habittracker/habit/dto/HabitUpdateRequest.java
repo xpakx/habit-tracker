@@ -17,4 +17,5 @@ public class HabitUpdateRequest {
     private Integer interval;
     private Integer dailyCompletions;
     private LocalDateTime start;
+    private Integer difficulty;
 }

@@ -19,4 +19,5 @@ public class HabitDetails {
 
     private HabitContextMin context;
     private HabitTriggerMin trigger;
+    private Integer difficulty;
 }

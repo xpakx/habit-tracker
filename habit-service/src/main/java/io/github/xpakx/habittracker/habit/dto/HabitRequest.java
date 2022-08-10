@@ -20,4 +20,5 @@ public class HabitRequest {
 
     private Long contextId;
     private String triggerName;
+    private Integer difficulty;
 }

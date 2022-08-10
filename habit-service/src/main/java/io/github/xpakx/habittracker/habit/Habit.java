@@ -39,4 +39,5 @@ public class Habit {
     private Integer completions;
     private LocalDateTime start;
     private LocalDateTime nextDue;
+    private Integer difficulty;
 }
