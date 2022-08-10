@@ -43,7 +43,7 @@ public class HabitServiceImpl implements HabitService {
         habit.setDailyCompletions(request.getDailyCompletions());
         habit.setStart(request.getStart());
         habit.setDifficulty(request.getDifficulty());
-        return null;
+        return habitRepository.save(habit);
     }
 
     @Override
