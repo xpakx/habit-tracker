@@ -58,7 +58,7 @@ public class GamificationServiceImpl implements GamificationService {
     public ExpResponse getExp(Long userId) {
         Integer experience = expRepository.getExpForUser(userId);
         ExpResponse response = new ExpResponse();
-        response.setExperience(experience);
+        response.setExperience(experience != null ? experience : 0);
         return  response;
     }
 }
