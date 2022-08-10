@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class HabitCompletionServiceImpl implements HabitCompletionService {
     private final HabitCompletionRepository completionRepository;
     private final HabitRepository habitRepository;
-    private GamificationServiceClient gamificationClient;
+    private final GamificationServiceClient gamificationClient;
 
 
     @Override
