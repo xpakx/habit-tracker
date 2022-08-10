@@ -15,6 +15,7 @@ import { ContextModalComponent } from './habit/context-modal/context-modal.compo
 import { DailyContextViewComponent } from './habit/daily-context-view/daily-context-view.component';
 import { ContextViewComponent } from './habit/context-view/context-view.component';
 import { ContextsViewComponent } from './contexts-view/contexts-view.component';
+import { HeroComponent } from './hero/hero/hero.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { ContextsViewComponent } from './contexts-view/contexts-view.component';
     ContextModalComponent,
     DailyContextViewComponent,
     ContextViewComponent,
-    ContextsViewComponent
+    ContextsViewComponent,
+    HeroComponent
   ],
   imports: [
     BrowserModule,
