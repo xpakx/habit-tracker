@@ -47,4 +47,12 @@ public class HabitController {
                 HttpStatus.OK
         );
     }
+
+    @GetMapping
+    public ResponseEntity<List<Habit>> getAllHabits() {
+        return new ResponseEntity<>(
+                service.getAllHabits(),
+                HttpStatus.OK
+        );
+    }
 }

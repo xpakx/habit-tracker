@@ -11,4 +11,5 @@ public interface HabitService {
     Habit addHabit(HabitRequest request);
     Habit updateHabit(Long habitId, HabitUpdateRequest request);
     List<Habit> getHabitsForDay(LocalDateTime date);
+    List<Habit> getAllHabits();
 }

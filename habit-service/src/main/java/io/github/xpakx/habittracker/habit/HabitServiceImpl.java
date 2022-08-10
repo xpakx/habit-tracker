@@ -51,4 +51,9 @@ public class HabitServiceImpl implements HabitService {
         LocalDateTime end = start.plusDays(1);
         return habitRepository.findByNextDueBetween(start, end);
     }
+
+    @Override
+    public List<Habit> getAllHabits() {
+        return habitRepository.findAll();
+    }
 }
