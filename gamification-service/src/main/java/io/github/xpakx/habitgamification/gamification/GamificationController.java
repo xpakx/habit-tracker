@@ -12,15 +12,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class GamificationController {
     private final GamificationService service;
-
-    @PostMapping("/attempt")
-    public ResponseEntity<CompletionResult> newAttempt(@RequestBody HabitCompletion request) {
-        return new ResponseEntity<>(
-                service.newAttempt(request),
-                HttpStatus.OK
-        );
-    }
-
     @GetMapping("/experience/{userId}")
     public ResponseEntity<ExpResponse> getExperience(@PathVariable Long userId) {
         return new ResponseEntity<>(
