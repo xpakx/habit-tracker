@@ -1,6 +1,6 @@
 package io.github.xpakx.habittracker.clients;
 
-import io.github.xpakx.habittracker.clients.dto.CompletionDto;
+import io.github.xpakx.habittracker.clients.dto.CompletionEvent;
 import io.github.xpakx.habittracker.habit.HabitCompletion;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +17,7 @@ public class GamificationPublisher {
     }
 
     public void sendCompletion(HabitCompletion completion) {
-        CompletionDto event = new CompletionDto();
+        CompletionEvent event = new CompletionEvent();
         event.setCompletionId(completion.getId());
         event.setHabitId(completion.getHabit().getId());
         event.setUserId(1L);

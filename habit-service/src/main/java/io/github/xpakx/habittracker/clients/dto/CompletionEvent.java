@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CompletionDto {
+public class CompletionEvent {
     Long completionId;
     Long habitId;
     Long userId;
