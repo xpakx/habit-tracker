@@ -2,7 +2,7 @@ package io.github.xpakx.habitgamification.gamification;
 
 import io.github.xpakx.habitgamification.gamification.dto.CompletionResult;
 import io.github.xpakx.habitgamification.gamification.dto.ExpResponse;
-import io.github.xpakx.habitgamification.gamification.dto.HabitCompletion;
+import io.github.xpakx.habitgamification.gamification.dto.HabitCompletionEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ public class GamificationServiceImpl implements GamificationService {
     private final List<AchievementProcessor> processors;
 
     @Override
-    public CompletionResult newAttempt(HabitCompletion completion) {
+    public CompletionResult newAttempt(HabitCompletionEvent completion) {
         ExpEntry exp = new ExpEntry();
         exp.setCompletionId(completion.getCompletionId());
         exp.setDate(LocalDateTime.now());
@@ -48,7 +48,7 @@ public class GamificationServiceImpl implements GamificationService {
         return 0;
     }
 
-    private List<Achievement> processForAchievements(HabitCompletion completion, ExpEntry exp) {
+    private List<Achievement> processForAchievements(HabitCompletionEvent completion, ExpEntry exp) {
         int expSum = exp.getExperience(); //TODO
         List<Achievement> achievements = processors.stream()
                 .map((p) -> p.process(completion, expSum))

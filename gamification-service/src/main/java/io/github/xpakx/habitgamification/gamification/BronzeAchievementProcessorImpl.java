@@ -1,6 +1,6 @@
 package io.github.xpakx.habitgamification.gamification;
 
-import io.github.xpakx.habitgamification.gamification.dto.HabitCompletion;
+import io.github.xpakx.habitgamification.gamification.dto.HabitCompletionEvent;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -8,7 +8,7 @@ import java.util.Optional;
 @Component
 public class BronzeAchievementProcessorImpl implements AchievementProcessor {
     @Override
-    public Optional<Badge> process(HabitCompletion completion, int experience) {
+    public Optional<Badge> process(HabitCompletionEvent completion, int experience) {
         if(experience >= 50) {
             return Optional.of(type());
         }

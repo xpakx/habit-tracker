@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class HabitCompletion {
+public class HabitCompletionEvent {
     private Long completionId;
     private Long habitId;
     private Long userId;
