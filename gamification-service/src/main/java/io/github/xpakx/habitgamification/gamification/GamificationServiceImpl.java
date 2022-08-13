@@ -26,7 +26,8 @@ public class GamificationServiceImpl implements GamificationService {
         exp.setExperience(difficultyToExperience(completion.getDifficulty()));
         exp.setUserId(completion.getUserId());
         expRepository.save(exp);
-        List<Achievement> achievements = processForAchievements(completion, exp);
+        int experience = expRepository.getExpForUser(completion.getUserId());
+        List<Achievement> achievements = processForAchievements(completion, experience);
         return new CompletionResult(
                 exp.getExperience(),
                 achievements.stream()
@@ -48,8 +49,7 @@ public class GamificationServiceImpl implements GamificationService {
         return 0;
     }
 
-    private List<Achievement> processForAchievements(HabitCompletionEvent completion, ExpEntry exp) {
-        int expSum = exp.getExperience(); //TODO
+    private List<Achievement> processForAchievements(HabitCompletionEvent completion, int expSum) {
         List<Achievement> achievements = processors.stream()
                 .map((p) -> p.process(completion, expSum))
                 .filter(Optional::isPresent)
