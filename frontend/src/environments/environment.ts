@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  apiServerUrl: "http://localhost:8080",
-  gamificationServerUrl: "http://localhost:8081"
+  apiServerUrl: "http://localhost:8000",
+  gamificationServerUrl: "http://localhost:8000"
 };
 
 /*
