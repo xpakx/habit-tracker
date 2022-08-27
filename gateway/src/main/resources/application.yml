@@ -1,0 +1,24 @@
+server:
+    port: 8000
+spring:
+    cloud:
+        gateway:
+            routes:
+                - id: habit
+                  uri: http://localhost:8080
+                  predicates:
+                    - Path=/habit/**,/context/**
+                - id: gamification
+                  uri: http://localhost:8081
+                  predicates:
+                    - Path=/experience/**
+            globalcors:
+                cors-configurations:
+                    '[/**]':
+                        allowedOrigins: "https://docs.spring.io"
+                        allowedHeaders:
+                            - "*"
+                        allowedMethods:
+                            - "GET"
+                            - "POST"
+                            - "OPTIONS"
