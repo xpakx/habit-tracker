@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class GameEventHandler {
     private final GamificationService gamificationService;
 
-    @RabbitListener(queues = "${amqp.queue.completions}")
+    @RabbitListener(queues = "${amqp.queue.gamification}")
     void handleMultiplicationSolved(final HabitCompletionEvent event) {
         try {
             gamificationService.newAttempt(event);
