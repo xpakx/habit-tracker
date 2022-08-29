@@ -1,7 +1,6 @@
 package io.github.xpakx.habittracker.habit;
 
 import io.github.xpakx.habittracker.habit.dto.CompletionRequest;
-import io.github.xpakx.habittracker.habit.dto.DayRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

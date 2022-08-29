@@ -4,7 +4,6 @@ import io.github.xpakx.habittracker.habit.dto.HabitDetails;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import javax.persistence.Entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
