@@ -48,8 +48,11 @@ public class AuthenticationFilter implements GatewayFilter {
     }
 
     private boolean isAuthMissing(ServerHttpRequest request) {
+        if(!request.getHeaders().containsKey("Authorization")) {
+            return true;
+        }
         final String requestTokenHeader = this.getAuthHeader(request);
-        return !request.getHeaders().containsKey("Authorization") || requestTokenHeader == null || !requestTokenHeader.startsWith("Bearer ");
+        return requestTokenHeader == null || !requestTokenHeader.startsWith("Bearer ");
     }
 
     private void populateRequestWithHeaders(ServerWebExchange exchange, String token) {

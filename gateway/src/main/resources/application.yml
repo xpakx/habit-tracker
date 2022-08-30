@@ -8,6 +8,8 @@ spring:
                   uri: http://localhost:8080
                   predicates:
                     - Path=/habit/**,/context/**
+                  filters:
+                    - AuthenticationFilterFactory
                 - id: gamification
                   uri: http://localhost:8081
                   predicates:
