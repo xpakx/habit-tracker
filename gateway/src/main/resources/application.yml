@@ -18,6 +18,10 @@ spring:
                   uri: http://localhost:8082
                   predicates:
                     - Path=/equipment/**
+                - id: auth
+                  uri: http://localhost:8083
+                  predicates:
+                    - Path=/authenticate,/register
             globalcors:
                 cors-configurations:
                     '[/**]':
