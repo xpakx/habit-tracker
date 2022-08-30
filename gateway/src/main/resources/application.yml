@@ -12,6 +12,10 @@ spring:
                   uri: http://localhost:8081
                   predicates:
                     - Path=/experience/**
+                - id: city
+                  uri: http://localhost:8082
+                  predicates:
+                    - Path=/equipment/**
             globalcors:
                 cors-configurations:
                     '[/**]':
