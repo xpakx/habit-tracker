@@ -1,11 +1,9 @@
 package io.github.xpakx.habitcity.money;
 
+import io.github.xpakx.habitcity.equipment.UserEquipment;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -18,6 +16,7 @@ public class Money {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
     private Long amount;
+    @OneToOne(mappedBy = "money")
+    private UserEquipment equipment;
 }
