@@ -6,6 +6,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -18,12 +20,13 @@ public class JwtUtils {
     @Value("${jwt.secret}")
     private String secret;
 
-    public String generateToken(UserAccount userDetails) {
+    public String generateToken(UserDetails userDetails) {
         Claims claims = Jwts.claims().setSubject(userDetails.getUsername());
         claims.put(
                 "roles",
-                userDetails.getRoles().stream()
-                        .map(UserRole::getAuthority)
+                userDetails.getAuthorities()
+                        .stream()
+                        .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toList())
         );
         return doGenerateToken(claims, userDetails.getUsername());

@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ import java.util.Set;
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserAccountRepository userRepository;
     private final JwtUtils jwtUtils;
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
@@ -30,7 +32,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         testRegistrationRequest(request);
         UserAccount userToAdd = createNewUser(request);
         authenticate(request.getUsername(), request.getPassword());
-        final String token = jwtUtils.generateToken(userToAdd);
+        final String token = jwtUtils.generateToken(userService.userAccountToUserDetails(userToAdd));
         return AuthenticationResponse.builder()
                 .token(token)
                 .username(userToAdd.getUsername())
@@ -67,6 +69,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse generateAuthenticationToken(AuthenticationRequest authenticationRequest) {
-        return null;
+        final UserDetails userDetails = userService.loadUserByUsername(authenticationRequest.getUsername());
+        authenticate(userDetails.getUsername(), authenticationRequest.getPassword());
+        final String token = jwtUtils.generateToken(userDetails);
+        return AuthenticationResponse.builder()
+                .token(token)
+                .username(userDetails.getUsername())
+                .build();
     }
 }
