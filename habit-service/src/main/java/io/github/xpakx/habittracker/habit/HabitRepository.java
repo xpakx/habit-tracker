@@ -6,9 +6,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface HabitRepository extends JpaRepository<Habit, Long> {
-    List<Habit> findByNextDueBetween(LocalDateTime nextDueStart, LocalDateTime nextDueEnd);
+    List<Habit> findByNextDueBetweenAndUserId(LocalDateTime nextDueStart, LocalDateTime nextDueEnd, Long userId);
+    List<Habit> findAllByUserId(Long userId);
+
+    Optional<Habit> findByIdAndUserId(Long id, Long userId);
 
     @EntityGraph("habit-details")
     List<HabitDetails> findByNextDueBetweenAndContextId(LocalDateTime nextDueStart, LocalDateTime nextDueEnd, Long contextId);

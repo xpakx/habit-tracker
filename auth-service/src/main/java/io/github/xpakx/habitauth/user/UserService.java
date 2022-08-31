@@ -16,10 +16,10 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserAccount userAccount = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("No user with username " + username));
-        return new User(userAccount.getUsername(), userAccount.getPassword(), userAccount.getRoles());
+        return new User(String.valueOf(userAccount.getId()), userAccount.getPassword(), userAccount.getRoles());
     }
 
     public UserDetails userAccountToUserDetails(UserAccount userAccount) {
-        return new User(userAccount.getUsername(), userAccount.getPassword(), userAccount.getRoles());
+        return new User(String.valueOf(userAccount.getId()), userAccount.getPassword(), userAccount.getRoles());
     }
 }

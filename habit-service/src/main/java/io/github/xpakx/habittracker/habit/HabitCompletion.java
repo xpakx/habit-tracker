@@ -25,5 +25,5 @@ public class HabitCompletion {
     @JoinColumn(name = "habit_id")
     @JsonIgnore
     private Habit habit;
-
+    private Long userId;
 }

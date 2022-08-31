@@ -26,4 +26,5 @@ public class HabitContext {
     private boolean timeBounded;
     private LocalDateTime activeStart;
     private LocalDateTime activeEnd;
+    private Long userId;
 }

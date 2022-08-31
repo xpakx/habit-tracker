@@ -17,41 +17,41 @@ public class HabitController {
     public final HabitService service;
 
     @PostMapping
-    public ResponseEntity<Habit> addHabit(@RequestBody HabitRequest request) {
+    public ResponseEntity<Habit> addHabit(@RequestBody HabitRequest request, @RequestHeader String id) {
         return new ResponseEntity<>(
-                service.addHabit(request),
+                service.addHabit(request, Long.valueOf(id)),
                 HttpStatus.CREATED
         );
     }
 
     @PutMapping("/{habitId}")
-    public ResponseEntity<Habit> updateHabit(@RequestBody HabitUpdateRequest request, @PathVariable Long habitId) {
+    public ResponseEntity<Habit> updateHabit(@RequestBody HabitUpdateRequest request, @PathVariable Long habitId, @RequestHeader String id) {
         return new ResponseEntity<>(
-                service.updateHabit(habitId, request),
+                service.updateHabit(habitId, request, Long.valueOf(id)),
                 HttpStatus.OK
         );
     }
 
     @GetMapping(value = "/date")
-    public ResponseEntity<List<Habit>> getHabitsForDay(@RequestParam("date") LocalDateTime date) {
+    public ResponseEntity<List<Habit>> getHabitsForDay(@RequestParam("date") LocalDateTime date, @RequestHeader String id) {
         return new ResponseEntity<>(
-                service.getHabitsForDay(date),
+                service.getHabitsForDay(date, Long.valueOf(id)),
                 HttpStatus.OK
         );
     }
 
     @GetMapping("/daily")
-    public ResponseEntity<List<Habit>> getDailyHabits() {
+    public ResponseEntity<List<Habit>> getDailyHabits(@RequestHeader String id) {
         return new ResponseEntity<>(
-                service.getHabitsForDay(LocalDateTime.now()),
+                service.getHabitsForDay(LocalDateTime.now(), Long.valueOf(id)),
                 HttpStatus.OK
         );
     }
 
     @GetMapping
-    public ResponseEntity<List<Habit>> getAllHabits() {
+    public ResponseEntity<List<Habit>> getAllHabits(@RequestHeader String id) {
         return new ResponseEntity<>(
-                service.getAllHabits(),
+                service.getAllHabits(Long.valueOf(id)),
                 HttpStatus.OK
         );
     }

@@ -21,4 +21,5 @@ public class HabitTrigger {
     @JsonIgnore
     @OneToOne(mappedBy = "trigger")
     private Habit habit;
+    private Long userId;
 }

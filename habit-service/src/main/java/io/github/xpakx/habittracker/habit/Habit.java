@@ -40,4 +40,5 @@ public class Habit {
     private LocalDateTime start;
     private LocalDateTime nextDue;
     private Integer difficulty;
+    private Long userId;
 }
