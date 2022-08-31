@@ -8,10 +8,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface HabitContextService {
-    HabitContext addContext(HabitContextRequest request);
-    HabitContext updateContext(Long contextId, HabitContextRequest request);
-    List<HabitDetails> getHabitsForDayAndContext(LocalDateTime request, Long contextId);
-    List<Habit> getHabitsForContext(Long contextId);
+    HabitContext addContext(HabitContextRequest request, Long userId);
+    HabitContext updateContext(Long contextId, HabitContextRequest request, Long userId);
+    List<HabitDetails> getHabitsForDayAndContext(LocalDateTime request, Long contextId, Long userId);
+    List<Habit> getHabitsForContext(Long contextId, Long userId);
 
-    List<ContextDetails> getAllContexts();
+    List<ContextDetails> getAllContexts(Long userId);
 }

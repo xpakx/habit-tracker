@@ -16,19 +16,20 @@ public class HabitContextServiceImpl implements HabitContextService {
     private final HabitRepository habitRepository;
 
     @Override
-    public HabitContext addContext(HabitContextRequest request) {
+    public HabitContext addContext(HabitContextRequest request, Long userId) {
         HabitContext context = new HabitContext();
         context.setName(request.getName());
         context.setDescription(request.getDescription());
         context.setTimeBounded(request.isTimeBounded());
         context.setActiveStart(request.getActiveStart());
         context.setActiveEnd(request.getActiveEnd());
+        context.setUserId(userId);
         return contextRepository.save(context);
     }
 
     @Override
-    public HabitContext updateContext(Long contextId, HabitContextRequest request) {
-        HabitContext context = contextRepository.findById(contextId).orElseThrow();
+    public HabitContext updateContext(Long contextId, HabitContextRequest request, Long userId) {
+        HabitContext context = contextRepository.findByIdAndUserId(contextId, userId).orElseThrow();
         context.setName(request.getName());
         context.setDescription(request.getDescription());
         context.setTimeBounded(request.isTimeBounded());
@@ -38,19 +39,19 @@ public class HabitContextServiceImpl implements HabitContextService {
     }
 
     @Override
-    public List<HabitDetails> getHabitsForDayAndContext(LocalDateTime request, Long contextId) {
+    public List<HabitDetails> getHabitsForDayAndContext(LocalDateTime request, Long contextId, Long userId) {
         LocalDateTime start = request.withHour(0).withMinute(0).withSecond(0).withNano(0);
         LocalDateTime end = start.plusDays(1);
-        return habitRepository.findByNextDueBetweenAndContextId(start, end, contextId);
+        return habitRepository.findByNextDueBetweenAndContextIdAndUserId(start, end, contextId, userId);
     }
 
     @Override
-    public List<Habit> getHabitsForContext(Long contextId) {
-        return habitRepository.findByContextId(contextId);
+    public List<Habit> getHabitsForContext(Long contextId, Long userId) {
+        return habitRepository.findByContextIdAndUserId(contextId, userId);
     }
 
     @Override
-    public List<ContextDetails> getAllContexts() {
-        return contextRepository.findProjectedBy();
+    public List<ContextDetails> getAllContexts(Long userId) {
+        return contextRepository.findProjectedByUserId(userId);
     }
 }

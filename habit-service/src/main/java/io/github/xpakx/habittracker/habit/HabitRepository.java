@@ -15,7 +15,7 @@ public interface HabitRepository extends JpaRepository<Habit, Long> {
     Optional<Habit> findByIdAndUserId(Long id, Long userId);
 
     @EntityGraph("habit-details")
-    List<HabitDetails> findByNextDueBetweenAndContextId(LocalDateTime nextDueStart, LocalDateTime nextDueEnd, Long contextId);
+    List<HabitDetails> findByNextDueBetweenAndContextIdAndUserId(LocalDateTime nextDueStart, LocalDateTime nextDueEnd, Long contextId, Long userId);
 
-    List<Habit> findByContextId(Long contextId);
+    List<Habit> findByContextIdAndUserId(Long contextId, Long userId);
 }

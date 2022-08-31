@@ -18,48 +18,48 @@ public class HabitContextController {
     public final HabitContextService service;
 
     @PostMapping
-    public ResponseEntity<HabitContext> addContext(@RequestBody HabitContextRequest request) {
+    public ResponseEntity<HabitContext> addContext(@RequestBody HabitContextRequest request, @RequestHeader String id) {
         return new ResponseEntity<>(
-                service.addContext(request),
+                service.addContext(request, Long.valueOf(id)),
                 HttpStatus.OK
         );
     }
     @PutMapping("/{contextId}")
-    public ResponseEntity<HabitContext> updateContext(@RequestBody HabitContextRequest request, @PathVariable Long contextId) {
+    public ResponseEntity<HabitContext> updateContext(@RequestBody HabitContextRequest request, @PathVariable Long contextId, @RequestHeader String id) {
         return new ResponseEntity<>(
-                service.updateContext(contextId, request),
+                service.updateContext(contextId, request, Long.valueOf(id)),
                 HttpStatus.OK
         );
     }
 
     @GetMapping("/{contextId}/habit/date")
-    public ResponseEntity<List<HabitDetails>> getHabitsForDayAndContext(@RequestParam("date") LocalDateTime date, @PathVariable Long contextId) {
+    public ResponseEntity<List<HabitDetails>> getHabitsForDayAndContext(@RequestParam("date") LocalDateTime date, @PathVariable Long contextId, @RequestHeader String id) {
         return new ResponseEntity<>(
-                service.getHabitsForDayAndContext(date, contextId),
+                service.getHabitsForDayAndContext(date, contextId, Long.valueOf(id)),
                 HttpStatus.OK
         );
     }
 
     @GetMapping("/{contextId}/habit/daily")
-    public ResponseEntity<List<HabitDetails>> getDailyHabitsForContext(@PathVariable Long contextId) {
+    public ResponseEntity<List<HabitDetails>> getDailyHabitsForContext(@PathVariable Long contextId, @RequestHeader String id) {
         return new ResponseEntity<>(
-                service.getHabitsForDayAndContext(LocalDateTime.now(), contextId),
+                service.getHabitsForDayAndContext(LocalDateTime.now(), contextId, Long.valueOf(id)),
                 HttpStatus.OK
         );
     }
 
     @GetMapping("/{contextId}/habit")
-    public ResponseEntity<List<Habit>> getHabitsForContext(@PathVariable Long contextId) {
+    public ResponseEntity<List<Habit>> getHabitsForContext(@PathVariable Long contextId, @RequestHeader String id) {
         return new ResponseEntity<>(
-                service.getHabitsForContext(contextId),
+                service.getHabitsForContext(contextId, Long.valueOf(id)),
                 HttpStatus.OK
         );
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<ContextDetails>> getAllContexts() {
+    public ResponseEntity<List<ContextDetails>> getAllContexts(@RequestHeader String id) {
         return new ResponseEntity<>(
-                service.getAllContexts(),
+                service.getAllContexts(Long.valueOf(id)),
                 HttpStatus.OK
         );
     }
