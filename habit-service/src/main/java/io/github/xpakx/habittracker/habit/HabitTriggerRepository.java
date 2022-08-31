@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface HabitTriggerRepository extends JpaRepository<HabitTrigger, Long> {
-    Optional<HabitTrigger> findByHabitId(Long id);
+    Optional<HabitTrigger> findByHabitIdAndHabitUserId(Long habitId, Long userId);
 }

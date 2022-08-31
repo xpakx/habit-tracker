@@ -18,11 +18,12 @@ public class HabitCompletionServiceImpl implements HabitCompletionService {
 
     @Override
     @Transactional
-    public HabitCompletion completeHabit(Long habitId, CompletionRequest request) {
-        Habit habit = habitRepository.findById(habitId).orElseThrow();
+    public HabitCompletion completeHabit(Long habitId, CompletionRequest request, Long userId) {
+        Habit habit = habitRepository.findByIdAndUserId(habitId, userId).orElseThrow();
         HabitCompletion completion = new HabitCompletion();
         completion.setHabit(habit);
         completion.setDate(request.getDate());
+        completion.setUserId(userId);
         completion = completionRepository.save(completion);
         habit.setCompletions(habit.getCompletions() != null ? habit.getCompletions() + 1 : 1);
         if(completedForDay(habitId, habit, request)) {

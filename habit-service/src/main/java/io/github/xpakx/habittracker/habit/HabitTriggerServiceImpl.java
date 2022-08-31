@@ -10,8 +10,8 @@ public class HabitTriggerServiceImpl implements HabitTriggerService {
     private final HabitTriggerRepository triggerRepository;
 
     @Override
-    public HabitTrigger updateTrigger(Long habitId, TriggerUpdateRequest request) {
-        HabitTrigger trigger = triggerRepository.findByHabitId(habitId).orElseThrow();
+    public HabitTrigger updateTrigger(Long habitId, TriggerUpdateRequest request, Long userId) {
+        HabitTrigger trigger = triggerRepository.findByHabitIdAndHabitUserId(habitId, userId).orElseThrow();
         trigger.setName(request.getName());
         return triggerRepository.save(trigger);
     }

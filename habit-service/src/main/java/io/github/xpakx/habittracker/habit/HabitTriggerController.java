@@ -12,9 +12,9 @@ public class HabitTriggerController {
     private final HabitTriggerService service;
 
     @PutMapping("/habit/{habitId}/trigger")
-    public ResponseEntity<HabitTrigger> updateTrigger(@RequestBody TriggerUpdateRequest request, @PathVariable Long habitId) {
+    public ResponseEntity<HabitTrigger> updateTrigger(@RequestBody TriggerUpdateRequest request, @PathVariable Long habitId, @RequestHeader String id) {
         return new ResponseEntity<>(
-                service.updateTrigger(habitId, request),
+                service.updateTrigger(habitId, request, Long.valueOf(id)),
                 HttpStatus.OK
         );
     }

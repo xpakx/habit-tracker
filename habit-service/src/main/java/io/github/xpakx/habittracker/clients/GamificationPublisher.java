@@ -20,7 +20,7 @@ public class GamificationPublisher {
         CompletionEvent event = new CompletionEvent();
         event.setCompletionId(completion.getId());
         event.setHabitId(completion.getHabit().getId());
-        event.setUserId(1L);
+        event.setUserId(completion.getUserId());
         event.setDifficulty(completion.getHabit().getDifficulty());
         template.convertAndSend(completionsTopic, "completion", event);
     }
