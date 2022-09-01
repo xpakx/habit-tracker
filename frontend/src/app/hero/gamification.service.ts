@@ -8,11 +8,11 @@ import { ExperienceResponse } from './dto/experience-response';
   providedIn: 'root'
 })
 export class GamificationService {
-  private apiServerUrl = environment.gamificationServerUrl;
+  private apiServerUrl = environment.apiServerUrl;
 
   constructor(private http: HttpClient) { }
 
-  public getExperience(userId: number):  Observable<ExperienceResponse> {
-    return this.http.get<ExperienceResponse>(`${this.apiServerUrl}/experience/${userId}`);
+  public getExperience():  Observable<ExperienceResponse> {
+    return this.http.get<ExperienceResponse>(`${this.apiServerUrl}/experience`);
   }
 }

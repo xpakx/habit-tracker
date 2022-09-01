@@ -16,7 +16,7 @@ export class HeroComponent implements OnInit {
   constructor(private gamification: GamificationService) { }
 
   ngOnInit(): void {
-    this.gamification.getExperience(1).subscribe({
+    this.gamification.getExperience().subscribe({
       next: (response: ExperienceResponse) => this.onSuccess(response.experience),
       error: (error: HttpErrorResponse) => this.onError(error)
     });
