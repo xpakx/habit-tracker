@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class GamificationController {
     private final GamificationService service;
-    @GetMapping("/experience/{userId}")
-    public ResponseEntity<ExpResponse> getExperience(@PathVariable Long userId) {
+    @GetMapping("/experience")
+    public ResponseEntity<ExpResponse> getExperience(@RequestHeader String id) {
         return new ResponseEntity<>(
-                service.getExp(userId),
+                service.getExp(Long.valueOf(id)),
                 HttpStatus.OK
         );
     }
