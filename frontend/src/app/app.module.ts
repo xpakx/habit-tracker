@@ -16,6 +16,8 @@ import { DailyContextViewComponent } from './habit/daily-context-view/daily-cont
 import { ContextViewComponent } from './habit/context-view/context-view.component';
 import { ContextsViewComponent } from './contexts-view/contexts-view.component';
 import { HeroComponent } from './hero/hero/hero.component';
+import { LoginComponent } from './user/login/login.component';
+import { RegisterComponent } from './user/register/register.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,9 @@ import { HeroComponent } from './hero/hero/hero.component';
     DailyContextViewComponent,
     ContextViewComponent,
     ContextsViewComponent,
-    HeroComponent
+    HeroComponent,
+    LoginComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
