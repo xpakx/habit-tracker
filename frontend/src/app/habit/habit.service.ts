@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { JwtService } from '../common/jwt-service';
 import { DateRequest } from './dto/date-request';
 import { Habit } from './dto/habit';
 import { HabitCompletion } from './dto/habit-completion';
@@ -10,15 +11,12 @@ import { HabitRequest } from './dto/habit-request';
 @Injectable({
   providedIn: 'root'
 })
-export class HabitService {
+export class HabitService extends JwtService {
   private apiServerUrl = environment.apiServerUrl;
 
-  constructor(private http: HttpClient) { }
-
-  private getHeaders(): HttpHeaders {
-    let token = localStorage.getItem("token");
-    return new HttpHeaders({'Authorization':`Bearer ${token}`});
-  }
+  constructor(private http: HttpClient) {
+    super();
+   }
 
   public getDailyHabits():  Observable<Habit[]> {
     return this.http.get<Habit[]>(`${this.apiServerUrl}/habit/daily`, { headers: this.getHeaders() });
