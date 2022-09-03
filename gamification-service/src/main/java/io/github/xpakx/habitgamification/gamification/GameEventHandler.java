@@ -12,7 +12,7 @@ public class GameEventHandler {
     private final GamificationService gamificationService;
 
     @RabbitListener(queues = "${amqp.queue.gamification}")
-    void handleMultiplicationSolved(final HabitCompletionEvent event) {
+    void handleHabitCompletion(final HabitCompletionEvent event) {
         try {
             gamificationService.newAttempt(event);
         } catch (final Exception e) {
