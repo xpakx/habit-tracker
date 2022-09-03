@@ -1,4 +1,4 @@
 export interface AuthenticationResponse {
-    token: String;
+    token: string;
     username: String;
 }
