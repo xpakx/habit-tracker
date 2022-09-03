@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -12,7 +12,12 @@ export class GamificationService {
 
   constructor(private http: HttpClient) { }
 
+  private getHeaders(): HttpHeaders {
+    let token = localStorage.getItem("token");
+    return new HttpHeaders({'Authorization':`Bearer ${token}`});
+  }
+
   public getExperience():  Observable<ExperienceResponse> {
-    return this.http.get<ExperienceResponse>(`${this.apiServerUrl}/experience`);
+    return this.http.get<ExperienceResponse>(`${this.apiServerUrl}/experience`, { headers: this.getHeaders() });
   }
 }

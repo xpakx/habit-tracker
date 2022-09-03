@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -15,19 +15,24 @@ export class HabitService {
 
   constructor(private http: HttpClient) { }
 
+  private getHeaders(): HttpHeaders {
+    let token = localStorage.getItem("token");
+    return new HttpHeaders({'Authorization':`Bearer ${token}`});
+  }
+
   public getDailyHabits():  Observable<Habit[]> {
-    return this.http.get<Habit[]>(`${this.apiServerUrl}/habit/daily`);
+    return this.http.get<Habit[]>(`${this.apiServerUrl}/habit/daily`, { headers: this.getHeaders() });
   }
 
   public getHabitsForDate(date: Date):  Observable<Habit[]> {
-    return this.http.get<Habit[]>(`${this.apiServerUrl}/habit/daily?date=${date}`);
+    return this.http.get<Habit[]>(`${this.apiServerUrl}/habit/daily?date=${date}`, { headers: this.getHeaders() });
   }
 
   public addHabit(request: HabitRequest): Observable<Habit> {
-    return this.http.post<Habit>(`${this.apiServerUrl}/habit`, request);
+    return this.http.post<Habit>(`${this.apiServerUrl}/habit`, request, { headers: this.getHeaders() });
   }
 
   public completeHabit(habitId: number, request: DateRequest): Observable<HabitCompletion> {
-    return this.http.post<HabitCompletion>(`${this.apiServerUrl}/habit/${habitId}/completion`, request);
+    return this.http.post<HabitCompletion>(`${this.apiServerUrl}/habit/${habitId}/completion`, request, { headers: this.getHeaders() });
   }
 }
