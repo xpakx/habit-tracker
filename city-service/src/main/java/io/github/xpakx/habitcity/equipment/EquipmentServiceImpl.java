@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 public class EquipmentServiceImpl implements EquipmentService {
     private final UserEquipmentRepository equipmentRepository;
 
-
     @Override
     public void addUserEquipment(AccountEvent event) {
         UserEquipment equipment = new UserEquipment();

@@ -1,0 +1,38 @@
+button {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    margin: 0;
+}
+
+.btn {
+    margin-right: 20px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 75px;
+    background-color: #353340;
+    padding: 10px 15px;
+    color: white;
+    text-transform: capitalize;
+}
+
+.btn:hover {
+    background-color: #ff5c00;
+    font-weight: 700;
+}
+
+.form-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.form, input {
+    margin-bottom: 10px;
+}
+
+input {
+    background-color: #363543;
+}
