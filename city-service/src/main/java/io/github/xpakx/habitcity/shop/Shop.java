@@ -16,4 +16,5 @@ public class Shop {
     private Long id;
     private Long userId;
     private Integer maxSize;
+    private Integer maxRarity;
 }
