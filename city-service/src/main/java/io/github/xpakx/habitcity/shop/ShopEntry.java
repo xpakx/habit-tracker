@@ -1,7 +1,8 @@
-package io.github.xpakx.habitcity.equipment;
+package io.github.xpakx.habitcity.shop;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.github.xpakx.habitcity.building.Building;
+import io.github.xpakx.habitcity.equipment.UserEquipment;
 import io.github.xpakx.habitcity.resource.Resource;
 import io.github.xpakx.habitcity.ship.Ship;
 import lombok.*;
@@ -14,7 +15,7 @@ import javax.persistence.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class EquipmentEntry {
+public class ShopEntry {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,9 +23,9 @@ public class EquipmentEntry {
     private Integer amount;
 
     @ManyToOne
-    @JoinColumn(name = "equipment_id")
+    @JoinColumn(name = "shop_id")
     @JsonIgnore
-    private UserEquipment equipment;
+    private Shop shop;
 
     @ManyToOne
     @JoinColumn(name = "building_id")
