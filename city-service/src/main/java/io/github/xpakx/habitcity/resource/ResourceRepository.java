@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ResourceRepository extends JpaRepository<Resource, Long> {
-    @Query(nativeQuery = true, value = "select r from resource r WHERE r.rarity <= :rarity ORDER BY RAND() LIMIT :amount")
+    @Query(nativeQuery = true, value = "SELECT * FROM resource r WHERE r.rarity <= :rarity ORDER BY RANDOM() LIMIT :amount")
     public List<Resource> findRandomResources(int amount, int rarity);
 }
