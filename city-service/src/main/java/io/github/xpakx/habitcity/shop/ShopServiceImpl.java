@@ -32,18 +32,19 @@ public class ShopServiceImpl implements ShopService {
             List<ShopEntry> entries = resourceRepository
                     .findRandomResources(shopSize, rarity)
                     .stream()
-                    .map(a -> toShopEntry(a, shop))
+                    .map(a -> toShopEntry(a, shop, random.nextFloat()))
                     .toList();
             entriesToAdd.addAll(entries);
         }
         entryRepository.saveAll(entriesToAdd);
     }
 
-    private ShopEntry toShopEntry(Resource a, Shop shop) {
+    private ShopEntry toShopEntry(Resource a, Shop shop, float maxAmountPercent) {
+        int amount = (int) (a.getMaxStock()*maxAmountPercent);
         ShopEntry entry = new ShopEntry();
         entry.setShop(shop);
         entry.setResource(a);
-        entry.setAmount(1);
+        entry.setAmount( amount > 0 ? amount : 1);
         return entry;
     }
 
