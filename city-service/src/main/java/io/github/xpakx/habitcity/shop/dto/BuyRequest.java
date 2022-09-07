@@ -5,7 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ItemResponse {
-    String name;
-    Integer amount;
+public class BuyRequest {
+    int amount;
 }
