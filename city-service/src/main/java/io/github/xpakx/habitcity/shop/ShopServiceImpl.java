@@ -2,6 +2,7 @@ package io.github.xpakx.habitcity.shop;
 
 import io.github.xpakx.habitcity.equipment.EquipmentEntry;
 import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
+import io.github.xpakx.habitcity.equipment.UserEquipment;
 import io.github.xpakx.habitcity.equipment.UserEquipmentRepository;
 import io.github.xpakx.habitcity.money.Money;
 import io.github.xpakx.habitcity.money.MoneyRepository;
@@ -64,17 +65,23 @@ public class ShopServiceImpl implements ShopService {
     @Transactional
     public ItemResponse buy(BuyRequest request, Long shopEntryId, Long userId) {
         ShopEntry entry = getShopEntry(request, shopEntryId);
+        UserEquipment eq = equipmentRepository.getByUserId(userId).orElseThrow();
+        testEqSpace(eq, entry);
         exchangeMoney(entry, userId, entry.getAmount());
         entry.setAmount(entry.getAmount()-request.getAmount());
         entryRepository.save(entry);
-        EquipmentEntry eqEntry = createEquipmentEntry(request, userId, entry);
+        EquipmentEntry eqEntry = createEquipmentEntry(request, eq, entry);
         equipmentEntryRepository.save(eqEntry);
         return createItemResponse(request, eqEntry);
     }
 
+    private void testEqSpace(UserEquipment eq, ShopEntry entry) {
+        // TODO
+    }
+
     private void exchangeMoney(ShopEntry entry, Long userId, int amount) {
         Money money = moneyRepository.findByUserId(userId).orElseThrow();
-        int price = entry.getPrice();
+        int price = entry.getPrice()*amount;
         if(money.getAmount()-price < 0) {
             throw new NotEnoughMoneyException();
         }
@@ -102,13 +109,13 @@ public class ShopServiceImpl implements ShopService {
         return "";
     }
 
-    private EquipmentEntry createEquipmentEntry(BuyRequest request, Long userId, ShopEntry entry) {
+    private EquipmentEntry createEquipmentEntry(BuyRequest request, UserEquipment eq, ShopEntry entry) {
         EquipmentEntry eqEntry = new EquipmentEntry();
         eqEntry.setAmount(request.getAmount());
         eqEntry.setResource(entry.getResource());
         eqEntry.setBuilding(entry.getBuilding());
         eqEntry.setShip(entry.getShip());
-        eqEntry.setEquipment(equipmentRepository.getByUserId(userId).orElseThrow());
+        eqEntry.setEquipment(eq);
         return eqEntry;
     }
 
