@@ -58,27 +58,50 @@ public class ShopServiceImpl implements ShopService {
     @Override
     @Transactional
     public ItemResponse buy(BuyRequest request, Long shopEntryId, Long userId) {
-        ShopEntry entry = entryRepository.findById(shopEntryId)
-                .orElseThrow();
-        if(entry.getAmount() - request.getAmount() <= 0) {
-            throw new ShopItemEmptyException();
-        }
-
+        ShopEntry entry = getShopEntry(request, shopEntryId);
         entry.setAmount(entry.getAmount()-request.getAmount());
         entryRepository.save(entry);
+        EquipmentEntry eqEntry = createEquipmentEntry(request, userId, entry);
+        equipmentEntryRepository.save(eqEntry);
+        return createItemResponse(request, eqEntry);
+    }
 
+    private ItemResponse createItemResponse(BuyRequest request, EquipmentEntry eqEntry) {
+        ItemResponse response = new ItemResponse();
+        response.setAmount(request.getAmount());
+        response.setName(getItemName(eqEntry));
+        return response;
+    }
+
+    private String getItemName(EquipmentEntry eqEntry) {
+        if(eqEntry.getResource() != null) {
+            return eqEntry.getResource().getName();
+        }
+        if(eqEntry.getBuilding() != null) {
+            return eqEntry.getBuilding().getName();
+        }
+        if(eqEntry.getShip() != null) {
+            return eqEntry.getShip().getName();
+        }
+        return "";
+    }
+
+    private EquipmentEntry createEquipmentEntry(BuyRequest request, Long userId, ShopEntry entry) {
         EquipmentEntry eqEntry = new EquipmentEntry();
         eqEntry.setAmount(request.getAmount());
         eqEntry.setResource(entry.getResource());
         eqEntry.setBuilding(entry.getBuilding());
         eqEntry.setShip(entry.getShip());
         eqEntry.setEquipment(equipmentRepository.getByUserId(userId).orElseThrow());
-        equipmentEntryRepository.save(eqEntry);
+        return eqEntry;
+    }
 
-        ItemResponse response = new ItemResponse();
-        response.setAmount(request.getAmount());
-        response.setName(eqEntry.getResource() != null ? eqEntry.getResource().getName() : "");
-
-        return response;
+    private ShopEntry getShopEntry(BuyRequest request, Long shopEntryId) {
+        ShopEntry entry = entryRepository.findById(shopEntryId)
+                .orElseThrow();
+        if(entry.getAmount() - request.getAmount() <= 0) {
+            throw new ShopItemEmptyException();
+        }
+        return entry;
     }
 }
