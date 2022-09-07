@@ -20,6 +20,7 @@ public class ShopEntry {
     private Long id;
 
     private Integer amount;
+    private Integer price;
 
     @ManyToOne
     @JoinColumn(name = "shop_id")

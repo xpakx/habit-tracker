@@ -3,10 +3,13 @@ package io.github.xpakx.habitcity.shop;
 import io.github.xpakx.habitcity.equipment.EquipmentEntry;
 import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
 import io.github.xpakx.habitcity.equipment.UserEquipmentRepository;
+import io.github.xpakx.habitcity.money.Money;
+import io.github.xpakx.habitcity.money.MoneyRepository;
 import io.github.xpakx.habitcity.resource.Resource;
 import io.github.xpakx.habitcity.resource.ResourceRepository;
 import io.github.xpakx.habitcity.shop.dto.BuyRequest;
 import io.github.xpakx.habitcity.shop.dto.ItemResponse;
+import io.github.xpakx.habitcity.shop.error.NotEnoughMoneyException;
 import io.github.xpakx.habitcity.shop.error.ShopItemEmptyException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,6 +28,7 @@ public class ShopServiceImpl implements ShopService {
     private final ResourceRepository resourceRepository;
     private final EquipmentEntryRepository equipmentEntryRepository;
     private final UserEquipmentRepository equipmentRepository;
+    private final MoneyRepository moneyRepository;
 
     @Override
     @Scheduled(cron = "0 * * * * *")
@@ -52,6 +56,7 @@ public class ShopServiceImpl implements ShopService {
         entry.setShop(shop);
         entry.setResource(a);
         entry.setAmount( amount > 0 ? amount : 1);
+        entry.setPrice(a.getBaseCost());
         return entry;
     }
 
@@ -59,11 +64,22 @@ public class ShopServiceImpl implements ShopService {
     @Transactional
     public ItemResponse buy(BuyRequest request, Long shopEntryId, Long userId) {
         ShopEntry entry = getShopEntry(request, shopEntryId);
+        exchangeMoney(entry, userId, entry.getAmount());
         entry.setAmount(entry.getAmount()-request.getAmount());
         entryRepository.save(entry);
         EquipmentEntry eqEntry = createEquipmentEntry(request, userId, entry);
         equipmentEntryRepository.save(eqEntry);
         return createItemResponse(request, eqEntry);
+    }
+
+    private void exchangeMoney(ShopEntry entry, Long userId, int amount) {
+        Money money = moneyRepository.findByUserId(userId).orElseThrow();
+        int price = entry.getPrice();
+        if(money.getAmount()-price < 0) {
+            throw new NotEnoughMoneyException();
+        }
+        money.setAmount(money.getAmount()-price);
+        moneyRepository.save(money);
     }
 
     private ItemResponse createItemResponse(BuyRequest request, EquipmentEntry eqEntry) {
@@ -99,7 +115,7 @@ public class ShopServiceImpl implements ShopService {
     private ShopEntry getShopEntry(BuyRequest request, Long shopEntryId) {
         ShopEntry entry = entryRepository.findById(shopEntryId)
                 .orElseThrow();
-        if(entry.getAmount() - request.getAmount() <= 0) {
+        if(entry.getAmount() - request.getAmount() < 0) {
             throw new ShopItemEmptyException();
         }
         return entry;
