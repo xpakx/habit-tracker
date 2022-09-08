@@ -84,7 +84,7 @@ public class ShopServiceImpl implements ShopService {
             pointer++;
             int stockSize = getStockSize(eqEntry);
             if(eqEntry.getAmount() < stockSize) {
-                int oldAmount = eqEntry.getAmount();;
+                int oldAmount = eqEntry.getAmount();
                 eqEntry.setAmount(Math.min(eqEntry.getAmount() + amount, stockSize));
                 amount -= eqEntry.getAmount() - oldAmount;
             }

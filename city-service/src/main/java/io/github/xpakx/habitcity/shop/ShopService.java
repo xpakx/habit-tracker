@@ -5,5 +5,5 @@ import io.github.xpakx.habitcity.shop.dto.ItemResponse;
 
 public interface ShopService {
     void refreshShops();
-    ItemResponse buy(BuyRequest reqquest, Long shopEntryId, Long userId);
+    ItemResponse buy(BuyRequest request, Long shopEntryId, Long userId);
 }
