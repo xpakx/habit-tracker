@@ -4,6 +4,7 @@ import io.github.xpakx.habitcity.equipment.EquipmentEntry;
 import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
 import io.github.xpakx.habitcity.equipment.UserEquipment;
 import io.github.xpakx.habitcity.equipment.UserEquipmentRepository;
+import io.github.xpakx.habitcity.equipment.error.EquipmentFullException;
 import io.github.xpakx.habitcity.money.Money;
 import io.github.xpakx.habitcity.money.MoneyRepository;
 import io.github.xpakx.habitcity.resource.Resource;
@@ -87,6 +88,10 @@ public class ShopServiceImpl implements ShopService {
                 eqEntry.setAmount(Math.min(eqEntry.getAmount() + amount, stockSize));
                 amount -= eqEntry.getAmount() - oldAmount;
             }
+        }
+        long itemsInEquipment = equipmentEntryRepository.countByEquipmentId(eq.getId());
+        if(itemsInEquipment >= eq.getMaxSize()) {
+            throw new EquipmentFullException();
         }
         if(amount > 0) {
             eqEntries.add(createEquipmentEntry(amount, eq, entry));
