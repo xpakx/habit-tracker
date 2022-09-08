@@ -66,17 +66,61 @@ public class ShopServiceImpl implements ShopService {
     public ItemResponse buy(BuyRequest request, Long shopEntryId, Long userId) {
         ShopEntry entry = getShopEntry(request, shopEntryId);
         UserEquipment eq = equipmentRepository.getByUserId(userId).orElseThrow();
-        testEqSpace(eq, entry);
+        List<EquipmentEntry> eqEntries = prepareEqEntries(eq, entry, request.getAmount());
         exchangeMoney(entry, userId, entry.getAmount());
         entry.setAmount(entry.getAmount()-request.getAmount());
         entryRepository.save(entry);
-        EquipmentEntry eqEntry = createEquipmentEntry(request, eq, entry);
-        equipmentEntryRepository.save(eqEntry);
-        return createItemResponse(request, eqEntry);
+        equipmentEntryRepository.saveAll(eqEntries);
+        return createItemResponse(request, eqEntries.get(0));
     }
 
-    private void testEqSpace(UserEquipment eq, ShopEntry entry) {
-        // TODO
+    private List<EquipmentEntry> prepareEqEntries(UserEquipment eq, ShopEntry entry, int amount) {
+        List<EquipmentEntry> eqEntries = getEntriesForItem(eq.getId(), entry);
+        int pointer = 0;
+        while(amount > 0 && pointer < eqEntries.size()) {
+            EquipmentEntry eqEntry = eqEntries.get(pointer);
+            pointer++;
+            int stockSize = getStockSize(eqEntry);
+            if(eqEntry.getAmount() < stockSize) {
+                int oldAmount = eqEntry.getAmount();;
+                eqEntry.setAmount(Math.min(eqEntry.getAmount() + amount, stockSize));
+                amount -= eqEntry.getAmount() - oldAmount;
+            }
+        }
+        if(amount > 0) {
+            eqEntries.add(createEquipmentEntry(amount, eq, entry));
+        }
+        return eqEntries;
+    }
+
+    private int getStockSize(EquipmentEntry entry) {
+        if(entry.getResource() != null) {
+            return entry.getResource().getMaxStock();
+        }
+        return 1;
+    }
+
+    private List<EquipmentEntry> getEntriesForItem(Long id, ShopEntry entry) {
+        if(entry.getResource() != null) {
+            return equipmentEntryRepository.findByEquipmentIdAndResourceId(id, entry.getResource().getId());
+        }
+        if(entry.getBuilding() != null) {
+            return equipmentEntryRepository.findByEquipmentIdAndBuildingId(id, entry.getBuilding().getId());
+        }
+        if(entry.getShip() != null) {
+            return equipmentEntryRepository.findByEquipmentIdAndShipId(id, entry.getShip().getId());
+        }
+        return new ArrayList<>();
+    }
+
+    private EquipmentEntry createEquipmentEntry(int amount, UserEquipment eq, ShopEntry entry) {
+        EquipmentEntry eqEntry = new EquipmentEntry();
+        eqEntry.setAmount(amount);
+        eqEntry.setResource(entry.getResource());
+        eqEntry.setBuilding(entry.getBuilding());
+        eqEntry.setShip(entry.getShip());
+        eqEntry.setEquipment(eq);
+        return eqEntry;
     }
 
     private void exchangeMoney(ShopEntry entry, Long userId, int amount) {
@@ -107,16 +151,6 @@ public class ShopServiceImpl implements ShopService {
             return eqEntry.getShip().getName();
         }
         return "";
-    }
-
-    private EquipmentEntry createEquipmentEntry(BuyRequest request, UserEquipment eq, ShopEntry entry) {
-        EquipmentEntry eqEntry = new EquipmentEntry();
-        eqEntry.setAmount(request.getAmount());
-        eqEntry.setResource(entry.getResource());
-        eqEntry.setBuilding(entry.getBuilding());
-        eqEntry.setShip(entry.getShip());
-        eqEntry.setEquipment(eq);
-        return eqEntry;
     }
 
     private ShopEntry getShopEntry(BuyRequest request, Long shopEntryId) {
