@@ -11,8 +11,10 @@ import io.github.xpakx.habitcity.resource.Resource;
 import io.github.xpakx.habitcity.resource.ResourceRepository;
 import io.github.xpakx.habitcity.shop.dto.BuyRequest;
 import io.github.xpakx.habitcity.shop.dto.ItemResponse;
+import io.github.xpakx.habitcity.shop.dto.ShopResponse;
 import io.github.xpakx.habitcity.shop.error.NotEnoughMoneyException;
 import io.github.xpakx.habitcity.shop.error.ShopItemEmptyException;
+import io.github.xpakx.habitcity.shop.error.WrongOwnerException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -74,6 +76,16 @@ public class ShopServiceImpl implements ShopService {
         entryRepository.save(entry);
         equipmentEntryRepository.saveAll(eqEntries);
         return createItemResponse(request, eqEntries.get(0));
+    }
+
+    @Override
+    public ShopResponse getShop(Long shopId, Long userId) {
+        if(!shopRepository.existsByIdAndUserId(shopId, userId)) {
+            throw new WrongOwnerException();
+        }
+        ShopResponse response = new ShopResponse();
+        response.setShopEntries(entryRepository.findByShopId());
+        return response;
     }
 
     private List<EquipmentEntry> prepareEqEntries(UserEquipment eq, ShopEntry entry, int amount) {
