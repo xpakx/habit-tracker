@@ -14,7 +14,7 @@ public class EquipmentController {
     private final EquipmentService service;
 
     @GetMapping("/equipment")
-    public ResponseEntity<EquipmentResponse> getShop(@RequestHeader String id) {
+    public ResponseEntity<EquipmentResponse> getEquipment(@RequestHeader String id) {
         return new ResponseEntity<>(
                 service.getEquipment(Long.valueOf(id)),
                 HttpStatus.OK
