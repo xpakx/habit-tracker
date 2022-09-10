@@ -17,7 +17,7 @@ spring:
                 - id: city
                   uri: http://localhost:8082
                   predicates:
-                    - Path=/equipment/**
+                    - Path=/equipment/**,/shop/**
                 - id: auth
                   uri: http://localhost:8083
                   predicates:
