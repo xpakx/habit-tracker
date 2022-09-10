@@ -15,7 +15,7 @@ export class EquipmentService  extends JwtService {
     super();
   }
 
-  public getEquipment(): Observable<EquipmentResponse[]> {
-    return this.http.get<EquipmentResponse[]>(`${this.apiServerUrl}/equipment`, { headers: this.getHeaders() });
+  public getEquipment(): Observable<EquipmentResponse> {
+    return this.http.get<EquipmentResponse>(`${this.apiServerUrl}/equipment`, { headers: this.getHeaders() });
   }
 }
