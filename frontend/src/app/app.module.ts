@@ -19,6 +19,7 @@ import { HeroComponent } from './hero/hero/hero.component';
 import { LoginComponent } from './user/login/login.component';
 import { RegisterComponent } from './user/register/register.component';
 import { ErrorInterceptor } from './user/error.interceptor';
+import { EquipmentComponent } from './equipment/equipment/equipment.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { ErrorInterceptor } from './user/error.interceptor';
     ContextsViewComponent,
     HeroComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    EquipmentComponent
   ],
   imports: [
     BrowserModule,
