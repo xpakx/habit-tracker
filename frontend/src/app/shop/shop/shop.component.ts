@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { ItemResponse } from '../dto/item-response';
 import { ShopEntry } from '../dto/shop-entry';
 import { ShopResponse } from '../dto/shop-response';
 import { ShopService } from '../shop.service';
@@ -31,5 +32,15 @@ export class ShopComponent implements OnInit {
 
   saveShop(response: ShopResponse): void {
     this.items = response.items;
+  }
+
+  buy(itemId: number): void {
+    this.shopService.buy({amount: 1}, itemId).subscribe({
+      next: (response: ItemResponse) => this.afterBuy(response)
+    });
+  }
+
+  afterBuy(response: ItemResponse): void {
+    //TODO
   }
 }
