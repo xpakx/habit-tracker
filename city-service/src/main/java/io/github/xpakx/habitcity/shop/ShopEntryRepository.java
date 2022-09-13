@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface ShopEntryRepository extends JpaRepository<ShopEntry, Long> {
-    List<ShopEntry> findByShopId();
+    List<ShopEntry> findByShopId(Long shopId);
 }

@@ -84,7 +84,7 @@ public class ShopServiceImpl implements ShopService {
             throw new WrongOwnerException();
         }
         ShopResponse response = new ShopResponse();
-        response.setShopEntries(entryRepository.findByShopId());
+        response.setShopEntries(entryRepository.findByShopId(shopId));
         return response;
     }
 
@@ -142,7 +142,7 @@ public class ShopServiceImpl implements ShopService {
     }
 
     private void exchangeMoney(ShopEntry entry, Long userId, int amount) {
-        Money money = moneyRepository.findByUserId(userId).orElseThrow();
+        Money money = moneyRepository.findByEquipmentUserId(userId).orElseThrow();
         int price = entry.getPrice()*amount;
         if(money.getAmount()-price < 0) {
             throw new NotEnoughMoneyException();
