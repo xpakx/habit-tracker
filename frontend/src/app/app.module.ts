@@ -20,6 +20,7 @@ import { LoginComponent } from './user/login/login.component';
 import { RegisterComponent } from './user/register/register.component';
 import { ErrorInterceptor } from './user/error.interceptor';
 import { EquipmentComponent } from './equipment/equipment/equipment.component';
+import { ShopComponent } from './shop/shop/shop.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { EquipmentComponent } from './equipment/equipment/equipment.component';
     HeroComponent,
     LoginComponent,
     RegisterComponent,
-    EquipmentComponent
+    EquipmentComponent,
+    ShopComponent
   ],
   imports: [
     BrowserModule,

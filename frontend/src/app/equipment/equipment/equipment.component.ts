@@ -22,6 +22,4 @@ export class EquipmentComponent implements OnInit {
   saveEquipment(response: EquipmentResponse): void {
     this.items = response.items;
   }
-
-
 }
