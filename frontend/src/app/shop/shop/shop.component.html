@@ -3,4 +3,6 @@
     <div class="amount">{{item.amount}}</div>
     <div class="price">{{item.price}}</div>
     <button class="buy-btn" (click)="buy(item.id)">Buy</button>
+    <button class="buy-btn" (click)="buy(item.id, 10)">Buy 10</button>
+    <button class="buy-btn" (click)="buy(item.id, item.amount)">Buy all</button>
 </div>

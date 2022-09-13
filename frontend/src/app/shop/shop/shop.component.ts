@@ -34,8 +34,8 @@ export class ShopComponent implements OnInit {
     this.items = response.items;
   }
 
-  buy(itemId: number): void {
-    this.shopService.buy({amount: 1}, itemId).subscribe({
+  buy(itemId: number, amount: number = 1): void {
+    this.shopService.buy({amount: amount}, itemId).subscribe({
       next: (response: ItemResponse) => this.afterBuy(response)
     });
   }
