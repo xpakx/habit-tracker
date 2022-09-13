@@ -1,5 +1,5 @@
 <div *ngFor="let item of items">
-    item
+    {{item.name}}
     <div class="amount">{{item.amount}}</div>
     <div class="price">{{item.price}}</div>
     <button class="buy-btn" (click)="buy(item.id)">Buy</button>

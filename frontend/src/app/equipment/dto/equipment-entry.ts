@@ -1,4 +1,5 @@
 export interface EquipmentEntry {
     id: number;
-    amount: number;    
+    amount: number;
+    name: String;    
 }
