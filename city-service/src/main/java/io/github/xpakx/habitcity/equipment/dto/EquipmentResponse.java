@@ -9,5 +9,5 @@ import java.util.List;
 @Getter
 @Setter
 public class EquipmentResponse {
-    List<EquipmentEntry> items;
+    List<EquipmentEntrySummary> items;
 }

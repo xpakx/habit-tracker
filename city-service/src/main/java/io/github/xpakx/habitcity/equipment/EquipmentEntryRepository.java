@@ -1,5 +1,6 @@
 package io.github.xpakx.habitcity.equipment;
 
+import io.github.xpakx.habitcity.equipment.dto.EquipmentEntrySummary;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -10,5 +11,5 @@ public interface EquipmentEntryRepository extends JpaRepository<EquipmentEntry, 
     List<EquipmentEntry> findByEquipmentIdAndShipId(Long equipmentId, Long shipId);
     long countByEquipmentId(Long id);
 
-    List<EquipmentEntry> findByEquipmentId(Long id);
+    List<EquipmentEntrySummary> findByEquipmentId(Long id);
 }
