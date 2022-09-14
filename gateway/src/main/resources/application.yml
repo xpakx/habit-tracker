@@ -14,10 +14,14 @@ spring:
                   uri: http://localhost:8081
                   predicates:
                     - Path=/experience/**
+                  filters:
+                    - AuthenticationFilterFactory
                 - id: city
                   uri: http://localhost:8082
                   predicates:
                     - Path=/equipment/**,/shop/**
+                  filters:
+                    - AuthenticationFilterFactory
                 - id: auth
                   uri: http://localhost:8083
                   predicates:
