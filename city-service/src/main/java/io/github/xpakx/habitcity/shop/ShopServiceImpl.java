@@ -84,7 +84,7 @@ public class ShopServiceImpl implements ShopService {
             throw new WrongOwnerException();
         }
         ShopResponse response = new ShopResponse();
-        response.setShopEntries(entryRepository.findByShopId(shopId));
+        response.setItems(entryRepository.findByShopId(shopId));
         return response;
     }
 

@@ -16,7 +16,6 @@ export class ShopComponent implements OnInit {
   constructor(private shopService: ShopService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-
     this.route.params.subscribe(routeParams => {
       let id: number | undefined = routeParams['id'];
       if(id) {
@@ -24,6 +23,7 @@ export class ShopComponent implements OnInit {
       }
     }); 
   }
+  
   getShop(id: number) {
     this.shopService.getShop(id).subscribe({
       next: (response: ShopResponse) => this.saveShop(response)

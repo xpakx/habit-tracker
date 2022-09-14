@@ -8,5 +8,5 @@ import java.util.List;
 @Getter
 @Setter
 public class ShopResponse {
-    List<ShopEntrySummary> shopEntries;
+    List<ShopEntrySummary> items;
 }
