@@ -1,5 +1,6 @@
 package io.github.xpakx.habitauth.user;
 
+import io.github.xpakx.habitauth.clients.AccountPublisher;
 import io.github.xpakx.habitauth.security.JwtUtils;
 import io.github.xpakx.habitauth.user.dto.AuthenticationRequest;
 import io.github.xpakx.habitauth.user.dto.AuthenticationResponse;
@@ -26,6 +27,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final AccountPublisher accountPublisher;
 
     @Override
     public AuthenticationResponse register(RegistrationRequest request) {
@@ -33,6 +35,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         UserAccount userToAdd = createNewUser(request);
         authenticate(request.getUsername(), request.getPassword());
         final String token = jwtUtils.generateToken(userService.userAccountToUserDetails(userToAdd));
+        accountPublisher.sendCompletion(userToAdd);
         return AuthenticationResponse.builder()
                 .token(token)
                 .username(userToAdd.getUsername())
