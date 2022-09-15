@@ -7,5 +7,4 @@ import lombok.Setter;
 @Setter
 public class CraftElem {
     private Long id;
-    private Integer amount;
 }

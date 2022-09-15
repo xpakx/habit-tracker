@@ -12,4 +12,6 @@ public interface EquipmentEntryRepository extends JpaRepository<EquipmentEntry, 
     long countByEquipmentId(Long id);
 
     List<EquipmentEntrySummary> findByEquipmentId(Long id);
+
+    List<EquipmentEntry> getByEquipmentId(Long id);
 }
