@@ -7,10 +7,13 @@ import io.github.xpakx.habitcity.equipment.EquipmentEntry;
 import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
 import io.github.xpakx.habitcity.equipment.UserEquipment;
 import io.github.xpakx.habitcity.equipment.UserEquipmentRepository;
+import io.github.xpakx.habitcity.equipment.error.EquipmentFullException;
+import io.github.xpakx.habitcity.shop.ShopEntry;
 import io.github.xpakx.habitcity.shop.dto.ItemResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,6 +37,17 @@ public class RecipeServiceImpl implements RecipeService {
         UserEquipment eq = equipmentRepository.getByUserId(userId).orElseThrow();
         List<EquipmentEntry> eqEntries = entryRepository.getByEquipmentId(eq.getId());
 
+        subtractResources(request, eqEntries);
+        eqEntries.addAll(prepareEqEntries(eqEntries, eq, recipe, request.getAmount()));
+
+        entryRepository.saveAll(eqEntries);
+        ItemResponse response = new ItemResponse();
+        response.setAmount(request.getAmount());
+        response.setName(recipe.getShip() != null ? recipe.getShip().getName() : recipe.getResource().getName());
+        return response;
+    }
+
+    private void subtractResources(CraftRequest request, List<EquipmentEntry> eqEntries) {
         List<CraftElem> craftElems = request.asList();
         for(CraftElem elem : craftElems) {
             int amount = request.getAmount();
@@ -50,10 +64,30 @@ public class RecipeServiceImpl implements RecipeService {
                 throw new NotEnoughResourcesException();
             }
         }
+    }
 
-        ItemResponse response = new ItemResponse();
-        response.setAmount(request.getAmount());
-        response.setName(recipe.getShip() != null ? recipe.getShip().getName() : recipe.getResource().getName());
-        return response;
+    private List<EquipmentEntry> prepareEqEntries(List<EquipmentEntry> eqEntries, UserEquipment eq, Recipe recipe, int amount) {
+        List<EquipmentEntry> newEqEntries = new ArrayList<>();
+        //TODO: fill existing entries first
+        int stockSize = recipe.getShip() != null ? 1 : recipe.getResource().getMaxStock();
+        int requiredSlots = amount/stockSize;
+        long itemsInEquipment = entryRepository.countByEquipmentId(eq.getId());
+        if(itemsInEquipment + requiredSlots > eq.getMaxSize()) {
+            throw new EquipmentFullException();
+        }
+        while(amount > 0) {
+            newEqEntries.add(createEquipmentEntry(Math.min(stockSize, amount), eq, recipe));
+            amount -= stockSize;
+        }
+        return newEqEntries;
+    }
+
+    private EquipmentEntry createEquipmentEntry(int amount, UserEquipment eq, Recipe recipe) {
+        EquipmentEntry eqEntry = new EquipmentEntry();
+        eqEntry.setAmount(amount);
+        eqEntry.setResource(recipe.getResource());
+        eqEntry.setShip(recipe.getShip());
+        eqEntry.setEquipment(eq);
+        return eqEntry;
     }
 }
