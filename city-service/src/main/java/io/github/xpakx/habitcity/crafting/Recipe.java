@@ -70,11 +70,6 @@ public class Recipe {
     private Resource resource;
 
     @ManyToOne
-    @JoinColumn(name = "building_id")
-    @JsonIgnore
-    private Building building;
-
-    @ManyToOne
     @JoinColumn(name = "ship_id")
     @JsonIgnore
     private Ship ship;

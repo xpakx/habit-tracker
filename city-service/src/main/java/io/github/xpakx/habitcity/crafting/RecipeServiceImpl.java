@@ -20,8 +20,7 @@ public class RecipeServiceImpl implements RecipeService {
 
         ItemResponse response = new ItemResponse();
         response.setAmount(1);
-        response.setName(recipe.getBuilding() != null ? recipe.getBuilding().getName() :
-                (recipe.getShip() != null ? recipe.getShip().getName() : recipe.getResource().getName()));
+        response.setName(recipe.getShip() != null ? recipe.getShip().getName() : recipe.getResource().getName());
         return response;
     }
 }
