@@ -6,13 +6,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CraftRequest {
-    private Long resource1;
-    private Long resource2;
-    private Long resource3;
-    private Long resource4;
-    private Long resource5;
-    private Long resource6;
-    private Long resource7;
-    private Long resource8;
-    private Long resource9;
+    private CraftElem elem1;
+    private CraftElem elem2;
+    private CraftElem elem3;
+    private CraftElem elem4;
+    private CraftElem elem5;
+    private CraftElem elem6;
+    private CraftElem elem7;
+    private CraftElem elem8;
+    private CraftElem elem9;
 }
