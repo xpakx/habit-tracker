@@ -1,6 +1,9 @@
 package io.github.xpakx.habitcity.crafting;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.github.xpakx.habitcity.building.Building;
 import io.github.xpakx.habitcity.resource.Resource;
+import io.github.xpakx.habitcity.ship.Ship;
 import lombok.*;
 
 import javax.persistence.*;
@@ -15,22 +18,65 @@ public class Recipe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+
+    @ManyToOne
+    @JoinColumn(name = "res1_id")
+    @JsonIgnore
     private Resource resource1;
-    @OneToOne
+
+    @ManyToOne
+    @JoinColumn(name = "res2_id")
+    @JsonIgnore
     private Resource resource2;
-    @OneToOne
+
+    @ManyToOne
+    @JoinColumn(name = "res3_id")
+    @JsonIgnore
     private Resource resource3;
-    @OneToOne
+
+    @ManyToOne
+    @JoinColumn(name = "res4_id")
+    @JsonIgnore
     private Resource resource4;
-    @OneToOne
+
+    @ManyToOne
+    @JoinColumn(name = "res5_id")
+    @JsonIgnore
     private Resource resource5;
-    @OneToOne
+
+    @ManyToOne
+    @JoinColumn(name = "res6_id")
+    @JsonIgnore
     private Resource resource6;
-    @OneToOne
+
+    @ManyToOne
+    @JoinColumn(name = "res7_id")
+    @JsonIgnore
     private Resource resource7;
-    @OneToOne
+
+    @ManyToOne
+    @JoinColumn(name = "res8_id")
+    @JsonIgnore
     private Resource resource8;
-    @OneToOne
+
+    @ManyToOne
+    @JoinColumn(name = "res9_id")
+    @JsonIgnore
     private Resource resource9;
+
+    @ManyToOne
+    @JoinColumn(name = "resource_id")
+    @JsonIgnore
+    private Resource resource;
+
+    @ManyToOne
+    @JoinColumn(name = "building_id")
+    @JsonIgnore
+    private Building building;
+
+    @ManyToOne
+    @JoinColumn(name = "ship_id")
+    @JsonIgnore
+    private Ship ship;
+
 }
