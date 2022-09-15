@@ -8,10 +8,10 @@ import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
 import io.github.xpakx.habitcity.equipment.UserEquipment;
 import io.github.xpakx.habitcity.equipment.UserEquipmentRepository;
 import io.github.xpakx.habitcity.equipment.error.EquipmentFullException;
-import io.github.xpakx.habitcity.shop.ShopEntry;
 import io.github.xpakx.habitcity.shop.dto.ItemResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +25,7 @@ public class RecipeServiceImpl implements RecipeService {
     private final EquipmentEntryRepository entryRepository;
 
     @Override
+    @Transactional
     public ItemResponse craft(CraftRequest request, Long userId) {
         Recipe recipe = recipeRepository.getRecipeByResources(
                 request.getElem1().getId(), request.getElem2().getId(), request.getElem3().getId(),
@@ -39,8 +40,11 @@ public class RecipeServiceImpl implements RecipeService {
 
         subtractResources(request, eqEntries);
         eqEntries.addAll(prepareEqEntries(eqEntries, eq, recipe, request.getAmount()));
-
         entryRepository.saveAll(eqEntries);
+        return createItemResponse(request, recipe);
+    }
+
+    private ItemResponse createItemResponse(CraftRequest request, Recipe recipe) {
         ItemResponse response = new ItemResponse();
         response.setAmount(request.getAmount());
         response.setName(recipe.getShip() != null ? recipe.getShip().getName() : recipe.getResource().getName());
