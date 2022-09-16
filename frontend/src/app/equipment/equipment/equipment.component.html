@@ -1,22 +1,10 @@
-<button *ngFor="let item of items" class="eq-cell">
+<button *ngFor="let item of items" class="eq-cell" [dndDraggable]="item.id" (dndStart)="onDragStart(item.id)" (dndEnd)="onDragEnd()">
     {{item.name}}
     <div class="amount">{{item.amount}}</div>
 </button>
 
 <div class="craft-container">
-    <div class="craft-row">
-        <button class="craft-cell"></button>
-        <button class="craft-cell"></button>
-        <button class="craft-cell"></button>
-    </div>
-    <div class="craft-row">
-        <button class="craft-cell"></button>
-        <button class="craft-cell"></button>
-        <button class="craft-cell"></button>
-    </div>
-    <div class="craft-row">
-        <button class="craft-cell"></button>
-        <button class="craft-cell"></button>
-        <button class="craft-cell"></button>
-    </div>
+        <button *ngFor="let num of [0,1,2,3,4,5,6,7,8]" dndDropzone (dndDrop)="onDrop($event, num)" (click)="reset(num)" class="craft-cell">
+             {{ craftSlots[num] > -1 ? craftSlots[num] : '' }} 
+        </button>
 </div>

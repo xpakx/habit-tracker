@@ -1,15 +1,12 @@
 .craft-container {
     display: flex;
-    flex-direction: column;
-}
-
-.craft-row {
-    display: flex;
+    flex-wrap: wrap;
+    width: 90px;
+    height: 90px;
 }
 
 .craft-cell {
-    width: 30px;
-    height: 30px;
+    flex-basis: 33.333333%;
 }
 
 .eq-cell {
