@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class RecipeController {
     private final RecipeService service;
-    
+
     @PostMapping("/craft")
-    public ResponseEntity<ItemResponse> buy(@RequestBody CraftRequest request, @RequestHeader String id) {
+    public ResponseEntity<ItemResponse> craft(@RequestBody CraftRequest request, @RequestHeader String id) {
         return new ResponseEntity<>(
                 service.craft(request, Long.valueOf(id)),
                 HttpStatus.OK
