@@ -1,0 +1,13 @@
+.craft-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.craft-row {
+    display: flex;
+}
+
+.craft-cell {
+    width: 25px;
+    height: 25px;
+}
