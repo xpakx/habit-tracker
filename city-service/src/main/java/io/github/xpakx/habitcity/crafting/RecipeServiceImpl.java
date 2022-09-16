@@ -40,7 +40,8 @@ public class RecipeServiceImpl implements RecipeService {
 
         subtractResources(request, eqEntries);
         eqEntries.addAll(prepareEqEntries(eqEntries, eq, recipe, request.getAmount()));
-        entryRepository.saveAll(eqEntries);
+        entryRepository.saveAll(eqEntries.stream().filter((a -> a.getAmount() > 0)).toList());
+        entryRepository.deleteAll(eqEntries.stream().filter((a -> a.getAmount() <= 0)).toList());
         return createItemResponse(request, recipe);
     }
 
