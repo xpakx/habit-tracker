@@ -72,8 +72,27 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     private List<EquipmentEntry> prepareEqEntries(List<EquipmentEntry> eqEntries, UserEquipment eq, Recipe recipe, int amount) {
+        List<EquipmentEntry> oldEntries = eqEntries.stream()
+                .filter(
+                        a -> recipe.getShip() != null ? (a.getShip() != null && Objects.equals(a.getShip().getId(), recipe.getShip().getId())) :
+                                (a.getResource() != null && Objects.equals(a.getResource().getId(), recipe.getResource().getId()))
+                ).toList();
+        int pointer = 0;
+        while(amount > 0 && pointer < eqEntries.size()) {
+            EquipmentEntry eqEntry = eqEntries.get(pointer);
+            pointer++;
+            int stockSize = getStockSize(eqEntry);
+            if(eqEntry.getAmount() < stockSize) {
+                int oldAmount = eqEntry.getAmount();
+                eqEntry.setAmount(Math.min(eqEntry.getAmount() + amount, stockSize));
+                amount -= eqEntry.getAmount() - oldAmount;
+            }
+        }
         List<EquipmentEntry> newEqEntries = new ArrayList<>();
-        //TODO: fill existing entries first
+        if(amount <= 0) {
+            return newEqEntries;
+        }
+        
         int stockSize = recipe.getShip() != null ? 1 : recipe.getResource().getMaxStock();
         int requiredSlots = amount/stockSize;
         long itemsInEquipment = entryRepository.countByEquipmentId(eq.getId());
@@ -85,6 +104,13 @@ public class RecipeServiceImpl implements RecipeService {
             amount -= stockSize;
         }
         return newEqEntries;
+    }
+
+    private int getStockSize(EquipmentEntry entry) {
+        if(entry.getResource() != null) {
+            return entry.getResource().getMaxStock();
+        }
+        return 1;
     }
 
     private EquipmentEntry createEquipmentEntry(int amount, UserEquipment eq, Recipe recipe) {
