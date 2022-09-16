@@ -9,7 +9,7 @@ import { EquipmentService } from '../equipment.service';
   styleUrls: ['./equipment.component.css']
 })
 export class EquipmentComponent implements OnInit {
-  items: EquipmentEntry[] = [];
+  items: EquipmentEntry[] = [{id: 1, name: "wood", amount: 50}];
 
   constructor(private eqService: EquipmentService) { }
 

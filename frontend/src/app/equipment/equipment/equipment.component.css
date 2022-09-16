@@ -8,6 +8,24 @@
 }
 
 .craft-cell {
-    width: 25px;
-    height: 25px;
+    width: 30px;
+    height: 30px;
+}
+
+.eq-cell {
+    width: 30px;
+    height: 30px;
+}
+
+.eq-cell .amount {
+    background-color: black;
+    color: aliceblue;
+    border-radius: 15px;
+    width: 15px;
+    height: 15px;
+    font-size: 9px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
