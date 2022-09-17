@@ -1,11 +1,11 @@
 <button *ngFor="let item of items" class="eq-cell" [dndDraggable]="item.id" (dndStart)="onDragStart(item)" (dndEnd)="onDragEnd()">
-    <img src="/assets/WOOD.png" alt="" class="icon">
+    <img [src]="'/assets/'+ item.icon +'.png'" alt="" class="icon">
     <div class="amount">{{item.amount}}</div>
 </button>
 
 <div class="craft-container">
-        <button *ngFor="let num of [0,1,2,3,4,5,6,7,8]" dndDropzone (dndDrop)="onDrop($event, num)" (click)="reset(num)" class="craft-cell">
-            <img [src]="'/assets/'+ craftSlots[num].icon +'.png'" alt="" class="icon" *ngIf="craftSlots[num].id > -1">
+        <button *ngFor="let slot of craftSlots; index as num" dndDropzone (dndDrop)="onDrop($event, num)" (click)="reset(num)" class="craft-cell">
+            <img [src]="'/assets/'+ slot.icon +'.png'" alt="" class="icon" *ngIf="slot.id > -1">
         </button>
 </div>
 
