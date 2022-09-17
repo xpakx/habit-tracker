@@ -11,8 +11,13 @@ import { EquipmentService } from '../equipment.service';
 })
 export class EquipmentComponent implements OnInit {
   items: EquipmentEntry[] = [{id: 1, name: "wood", amount: 50}];
-  draggedItem?: number;
-  craftSlots: number[] = [-1,-1,-1,-1,-1,-1,-1,-1,-1];
+  draggedItem?: EquipmentEntry;
+  empty: EquipmentEntry = {id:-1, name: "", amount: 0}
+  craftSlots: EquipmentEntry[] = [
+    this.empty, this.empty, this.empty,
+    this.empty, this.empty, this.empty,
+    this.empty, this.empty, this.empty
+  ];
 
   constructor(private eqService: EquipmentService) { }
 
@@ -32,7 +37,7 @@ export class EquipmentComponent implements OnInit {
     }
   }
 
-  onDragStart(id: number) {
+  onDragStart(id: EquipmentEntry) {
     this.draggedItem = id;
   }
 
@@ -41,6 +46,6 @@ export class EquipmentComponent implements OnInit {
   }
 
   reset(num: number) {
-    this.craftSlots[num] = -1;
+    this.craftSlots[num] = this.empty;
   }
 }
