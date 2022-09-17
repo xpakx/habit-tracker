@@ -14,9 +14,9 @@ import { RecipeService } from '../recipe.service';
   styleUrls: ['./equipment.component.css']
 })
 export class EquipmentComponent implements OnInit {
-  items: EquipmentEntry[] = [{id: 1, name: "wood", amount: 50}];
+  items: EquipmentEntry[] = [{id: 1, itemId: 1, name: "wood", amount: 50}];
   draggedItem?: EquipmentEntry;
-  empty: EquipmentEntry = {id:-1, name: "", amount: 0}
+  empty: EquipmentEntry = {id:-1, itemId: -1, name: "", amount: 0}
   craftSlots: EquipmentEntry[] = [
     this.empty, this.empty, this.empty,
     this.empty, this.empty, this.empty,
@@ -71,15 +71,19 @@ export class EquipmentComponent implements OnInit {
   createRequest(amount: number = 1): CraftRequest {
     return {
       amount: amount, 
-      elem1: {id: this.craftSlots[0].id},
-      elem2: {id: this.craftSlots[1].id},
-      elem3: {id: this.craftSlots[2].id},
-      elem4: {id: this.craftSlots[3].id},
-      elem5: {id: this.craftSlots[4].id},
-      elem6: {id: this.craftSlots[5].id},
-      elem7: {id: this.craftSlots[6].id},
-      elem8: {id: this.craftSlots[7].id},
-      elem9: {id: this.craftSlots[8].id},
+      elem1: {id: this.getItemId(0)},
+      elem2: {id: this.getItemId(1)},
+      elem3: {id: this.getItemId(2)},
+      elem4: {id: this.getItemId(3)},
+      elem5: {id: this.getItemId(4)},
+      elem6: {id: this.getItemId(5)},
+      elem7: {id: this.getItemId(6)},
+      elem8: {id: this.getItemId(7)},
+      elem9: {id: this.getItemId(8)},
     }
+  }
+
+  private getItemId(num: number): number | undefined {
+    return this.craftSlots[num].id > -1 ? this.craftSlots[num].id : undefined;
   }
 }
