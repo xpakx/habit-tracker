@@ -14,9 +14,9 @@ import { RecipeService } from '../recipe.service';
   styleUrls: ['./equipment.component.css']
 })
 export class EquipmentComponent implements OnInit {
-  items: EquipmentEntry[] = [{id: 1, itemId: 1, name: "wood", amount: 50}];
+  items: EquipmentEntry[] = [{id: 1, itemId: 1, name: "wood", icon: "WOOD", amount: 50}];
   draggedItem?: EquipmentEntry;
-  empty: EquipmentEntry = {id:-1, itemId: -1, name: "", amount: 0}
+  empty: EquipmentEntry = {id:-1, itemId: -1, name: "", icon: "", amount: 0}
   craftSlots: EquipmentEntry[] = [
     this.empty, this.empty, this.empty,
     this.empty, this.empty, this.empty,
