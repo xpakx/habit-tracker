@@ -53,8 +53,8 @@ export class EquipmentComponent implements OnInit {
     this.craftSlots[num] = this.empty;
   }
 
-  craft(): void {
-    this.recipeService.craft(this.createRequest()).subscribe({
+  craft(amount: number = 1): void {
+    this.recipeService.craft(this.createRequest(amount)).subscribe({
       next: (response: ItemResponse) => this.onCraft(response),
       error: (error: HttpErrorResponse) => this.onCraftError(error),
     });
@@ -68,9 +68,9 @@ export class EquipmentComponent implements OnInit {
     throw new Error('Method not implemented.');
   }
 
-  createRequest(): CraftRequest {
+  createRequest(amount: number = 1): CraftRequest {
     return {
-      amount: 1, 
+      amount: amount, 
       elem1: {id: this.craftSlots[0].id},
       elem2: {id: this.craftSlots[1].id},
       elem3: {id: this.craftSlots[2].id},
