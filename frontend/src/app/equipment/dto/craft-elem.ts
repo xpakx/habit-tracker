@@ -1,3 +1,3 @@
 export interface CraftElem {
-    id: number;
+    id: number|undefined;
 }
