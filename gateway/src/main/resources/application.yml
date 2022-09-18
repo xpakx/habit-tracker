@@ -19,7 +19,7 @@ spring:
                 - id: city
                   uri: http://localhost:8082
                   predicates:
-                    - Path=/equipment/**,/shop/**
+                    - Path=/equipment/**,/shop/**,/craft
                   filters:
                     - AuthenticationFilterFactory
                 - id: auth
