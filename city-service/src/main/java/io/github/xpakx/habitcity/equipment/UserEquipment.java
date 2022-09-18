@@ -12,7 +12,6 @@ import javax.persistence.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class UserEquipment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
