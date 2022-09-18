@@ -25,4 +25,5 @@ public class Building {
     private Integer height;
     private Integer baseCost;
     private Integer rarity;
+    private String code;
 }

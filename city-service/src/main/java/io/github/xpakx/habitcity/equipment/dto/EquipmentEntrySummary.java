@@ -15,8 +15,8 @@ public interface EquipmentEntrySummary {
             "(target.ship != null ? target.ship.id : " +
             "(target.resource != null ? target.resource.id : 0L))}")
     Long getItemId();
-    @Value("#{target.building != null ? 'BUILDING' : " +
-            "(target.ship != null ? 'SHIP' : " +
-            "(target.resource != null ? 'WOOD' : ''))}")
+    @Value("#{target.building != null ? target.building.code : " +
+            "(target.ship != null ? target.ship.code : " +
+            "(target.resource != null ? target.resource.code : ''))}")
     String getIcon();
 }

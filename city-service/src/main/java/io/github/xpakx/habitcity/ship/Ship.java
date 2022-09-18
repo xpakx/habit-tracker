@@ -23,4 +23,5 @@ public class Ship {
     private Integer size;
     private Integer baseCost;
     private Integer rarity;
+    private String code;
 }

@@ -23,4 +23,5 @@ public class Resource {
     private String imgUrl;
     private Integer baseCost;
     private Integer rarity;
+    private String code;
 }
