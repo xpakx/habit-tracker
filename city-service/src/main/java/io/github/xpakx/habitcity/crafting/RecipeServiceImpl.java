@@ -64,9 +64,10 @@ public class RecipeServiceImpl implements RecipeService {
                 pointer++;
                 int oldAmount = eqEntry.getAmount();
                 eqEntry.setAmount(Math.max(eqEntry.getAmount() - amount, 0));
-                amount -= eqEntry.getAmount() - oldAmount;
+                amount -= oldAmount - eqEntry.getAmount();
             }
             if(amount > 0) {
+                System.out.println("No resources");
                 throw new NotEnoughResourcesException();
             }
         }
@@ -86,6 +87,7 @@ public class RecipeServiceImpl implements RecipeService {
         int requiredSlots = amount /stockSize;
         long itemsInEquipment = entryRepository.countByEquipmentId(eq.getId());
         if(itemsInEquipment + requiredSlots > eq.getMaxSize()) {
+            System.out.println("New entries");
             throw new EquipmentFullException();
         }
         while(amount > 0) {

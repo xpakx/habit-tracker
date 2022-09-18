@@ -22,15 +22,21 @@ public class CraftRequest {
 
     public List<CraftElem> asList() {
         List<CraftElem> result = new ArrayList<>();
-        result.add(elem1);
-        result.add(elem2);
-        result.add(elem3);
-        result.add(elem4);
-        result.add(elem6);
-        result.add(elem7);
-        result.add(elem8);
-        result.add(elem9);
-        result.add(elem9);
+        addElemIfNotEmpty(result, elem1);
+        addElemIfNotEmpty(result, elem2);
+        addElemIfNotEmpty(result, elem3);
+        addElemIfNotEmpty(result, elem4);
+        addElemIfNotEmpty(result, elem5);
+        addElemIfNotEmpty(result, elem6);
+        addElemIfNotEmpty(result, elem7);
+        addElemIfNotEmpty(result, elem8);
+        addElemIfNotEmpty(result, elem9);
         return result;
+    }
+
+    private void addElemIfNotEmpty(List<CraftElem> result, CraftElem elem) {
+        if(elem != null && elem.getId() != null) {
+            result.add(elem);
+        }
     }
 }
