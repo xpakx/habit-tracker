@@ -2,6 +2,7 @@ package io.github.xpakx.habitcity.crafting;
 
 import io.github.xpakx.habitcity.crafting.dto.CraftElem;
 import io.github.xpakx.habitcity.crafting.dto.CraftRequest;
+import io.github.xpakx.habitcity.crafting.error.NoSuchRecipeException;
 import io.github.xpakx.habitcity.crafting.error.NotEnoughResourcesException;
 import io.github.xpakx.habitcity.equipment.EquipmentEntry;
 import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
@@ -31,7 +32,7 @@ public class RecipeServiceImpl implements RecipeService {
                 request.getElem1().getId(), request.getElem2().getId(), request.getElem3().getId(),
                 request.getElem4().getId(), request.getElem5().getId(), request.getElem6().getId(),
                 request.getElem7().getId(), request.getElem8().getId(), request.getElem9().getId()
-        ).orElseThrow();
+        ).orElseThrow(NoSuchRecipeException::new);
 
         //TODO: test if player unlocked recipe
 
