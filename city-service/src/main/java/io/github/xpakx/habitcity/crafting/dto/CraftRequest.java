@@ -1,5 +1,6 @@
 package io.github.xpakx.habitcity.crafting.dto;
 
+import io.github.xpakx.habitcity.equipment.dto.CraftElem;
 import io.github.xpakx.habitcity.equipment.dto.CraftList;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package io.github.xpakx.habitcity.crafting.dto;
+package io.github.xpakx.habitcity.equipment.dto;
 
 import lombok.Getter;
 import lombok.Setter;

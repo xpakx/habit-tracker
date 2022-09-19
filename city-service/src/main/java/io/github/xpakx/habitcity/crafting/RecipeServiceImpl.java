@@ -1,9 +1,7 @@
 package io.github.xpakx.habitcity.crafting;
 
-import io.github.xpakx.habitcity.crafting.dto.CraftElem;
 import io.github.xpakx.habitcity.crafting.dto.CraftRequest;
 import io.github.xpakx.habitcity.crafting.error.NoSuchRecipeException;
-import io.github.xpakx.habitcity.crafting.error.NotEnoughResourcesException;
 import io.github.xpakx.habitcity.equipment.*;
 import io.github.xpakx.habitcity.equipment.error.EquipmentFullException;
 import io.github.xpakx.habitcity.shop.dto.ItemResponse;
