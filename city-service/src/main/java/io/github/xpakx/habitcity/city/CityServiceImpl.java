@@ -36,7 +36,6 @@ public class CityServiceImpl implements CityService {
 
         // TODO: subtract resources
 
-
         City city = cityRepository.findByIdAndUserId(cityId, userId).orElseThrow();
         long buildingsInCity = cityBuildingRepository.countByCityId(city.getId());
         if(buildingsInCity >= city.getMaxSize()) {

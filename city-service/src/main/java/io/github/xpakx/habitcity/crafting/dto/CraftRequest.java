@@ -11,15 +11,15 @@ import java.util.List;
 @Getter
 @Setter
 public class CraftRequest implements CraftList {
-    private CraftElem elem1;
-    private CraftElem elem2;
-    private CraftElem elem3;
-    private CraftElem elem4;
-    private CraftElem elem5;
-    private CraftElem elem6;
-    private CraftElem elem7;
-    private CraftElem elem8;
-    private CraftElem elem9;
+    private CraftRequestElem elem1;
+    private CraftRequestElem elem2;
+    private CraftRequestElem elem3;
+    private CraftRequestElem elem4;
+    private CraftRequestElem elem5;
+    private CraftRequestElem elem6;
+    private CraftRequestElem elem7;
+    private CraftRequestElem elem8;
+    private CraftRequestElem elem9;
     private Integer amount;
 
     @Override
@@ -37,7 +37,7 @@ public class CraftRequest implements CraftList {
         return result;
     }
 
-    private void addElemIfNotEmpty(List<CraftElem> result, CraftElem elem) {
+    private void addElemIfNotEmpty(List<CraftElem> result, CraftRequestElem elem) {
         if(elem != null && elem.getId() != null) {
             result.add(elem);
         }
