@@ -1,7 +1,6 @@
 package io.github.xpakx.habitcity.city;
 
 import io.github.xpakx.habitcity.building.Building;
-import io.github.xpakx.habitcity.building.BuildingRepository;
 import io.github.xpakx.habitcity.city.dto.BuildingRequest;
 import io.github.xpakx.habitcity.city.dto.BuildingResponse;
 import io.github.xpakx.habitcity.city.error.NotEnoughSpaceException;
@@ -17,7 +16,6 @@ import java.util.Objects;
 public class CityServiceImpl implements CityService {
     private final CityRepository cityRepository;
     private final CityBuildingRepository cityBuildingRepository;
-    private final BuildingRepository buildingRepository;
     private final EquipmentService equipmentService;
     private final UserEquipmentRepository equipmentRepository;
     private final EquipmentEntryRepository entryRepository;
