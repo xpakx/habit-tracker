@@ -16,7 +16,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class CraftServiceImpl implements CraftService {
-    private final RecipeRepository recipeRepository;
+    private final RecipeService recipeService;
     private final UserEquipmentRepository equipmentRepository;
     private final EquipmentEntryRepository entryRepository;
     private final EquipmentService equipment;
@@ -24,11 +24,7 @@ public class CraftServiceImpl implements CraftService {
     @Override
     @Transactional
     public ItemResponse craft(CraftRequest request, Long userId) {
-        Recipe recipe = recipeRepository.getRecipeByResources(
-                request.getElem1().getId(), request.getElem2().getId(), request.getElem3().getId(),
-                request.getElem4().getId(), request.getElem5().getId(), request.getElem6().getId(),
-                request.getElem7().getId(), request.getElem8().getId(), request.getElem9().getId()
-        ).orElseThrow(NoSuchRecipeException::new);
+        Recipe recipe = recipeService.getRecipe(request);
 
         //TODO: test if player unlocked recipe
 
