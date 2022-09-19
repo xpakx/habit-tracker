@@ -4,6 +4,7 @@ import io.github.xpakx.habitcity.building.Building;
 import io.github.xpakx.habitcity.building.BuildingRepository;
 import io.github.xpakx.habitcity.city.dto.BuildingRequest;
 import io.github.xpakx.habitcity.city.dto.BuildingResponse;
+import io.github.xpakx.habitcity.city.error.NotEnoughSpaceException;
 import io.github.xpakx.habitcity.equipment.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,11 +36,16 @@ public class CityServiceImpl implements CityService {
 
         // TODO: subtract resources
 
-        // TODO: test city size
+
+        City city = cityRepository.findByIdAndUserId(cityId, userId).orElseThrow();
+        long buildingsInCity = cityBuildingRepository.countByCityId(city.getId());
+        if(buildingsInCity >= city.getMaxSize()) {
+            throw new NotEnoughSpaceException();
+        }
 
         CityBuilding cityBuilding = new CityBuilding();
         cityBuilding.setBuilding(building);
-        cityBuilding.setCity(cityRepository.getReferenceById(cityId));
+        cityBuilding.setCity(city);
         cityBuildingRepository.save(cityBuilding);
 
         return null;

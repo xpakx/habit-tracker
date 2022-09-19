@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface CraftList {
     List<CraftElem> asCraftList();
-    int getAmount();
+    Integer getAmount();
 }
