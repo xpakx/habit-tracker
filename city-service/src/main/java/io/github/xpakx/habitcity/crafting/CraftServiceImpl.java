@@ -15,7 +15,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class RecipeServiceImpl implements RecipeService {
+public class CraftServiceImpl implements CraftService {
     private final RecipeRepository recipeRepository;
     private final UserEquipmentRepository equipmentRepository;
     private final EquipmentEntryRepository entryRepository;

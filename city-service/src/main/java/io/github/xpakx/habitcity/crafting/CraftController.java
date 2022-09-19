@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-public class RecipeController {
-    private final RecipeService service;
+public class CraftController {
+    private final CraftService service;
 
     @PostMapping("/craft")
     public ResponseEntity<ItemResponse> craft(@RequestBody CraftRequest request, @RequestHeader String id) {
