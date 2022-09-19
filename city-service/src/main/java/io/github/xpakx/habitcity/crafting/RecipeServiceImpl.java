@@ -4,10 +4,7 @@ import io.github.xpakx.habitcity.crafting.dto.CraftElem;
 import io.github.xpakx.habitcity.crafting.dto.CraftRequest;
 import io.github.xpakx.habitcity.crafting.error.NoSuchRecipeException;
 import io.github.xpakx.habitcity.crafting.error.NotEnoughResourcesException;
-import io.github.xpakx.habitcity.equipment.EquipmentEntry;
-import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
-import io.github.xpakx.habitcity.equipment.UserEquipment;
-import io.github.xpakx.habitcity.equipment.UserEquipmentRepository;
+import io.github.xpakx.habitcity.equipment.*;
 import io.github.xpakx.habitcity.equipment.error.EquipmentFullException;
 import io.github.xpakx.habitcity.shop.dto.ItemResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +21,7 @@ public class RecipeServiceImpl implements RecipeService {
     private final RecipeRepository recipeRepository;
     private final UserEquipmentRepository equipmentRepository;
     private final EquipmentEntryRepository entryRepository;
+    private final EquipmentService equipment;
 
     @Override
     @Transactional
@@ -39,7 +37,7 @@ public class RecipeServiceImpl implements RecipeService {
         UserEquipment eq = equipmentRepository.getByUserId(userId).orElseThrow();
         List<EquipmentEntry> eqEntries = entryRepository.getByEquipmentId(eq.getId());
 
-        subtractResources(request, eqEntries);
+        equipment.subtractResources(request, eqEntries);
         eqEntries.addAll(prepareEqEntries(eqEntries, eq, recipe, request.getAmount()));
         entryRepository.saveAll(eqEntries.stream().filter((a -> a.getAmount() > 0)).toList());
         entryRepository.deleteAll(eqEntries.stream().filter((a -> a.getAmount() <= 0)).toList());
@@ -53,24 +51,7 @@ public class RecipeServiceImpl implements RecipeService {
         return response;
     }
 
-    private void subtractResources(CraftRequest request, List<EquipmentEntry> eqEntries) {
-        List<CraftElem> craftElems = request.asList();
-        for(CraftElem elem : craftElems) {
-            int amount = request.getAmount();
-            List<EquipmentEntry> entriesWithElem = eqEntries.stream().filter((a) -> Objects.equals(a.getResource().getId(), elem.getId())).toList();
-            int pointer = 0;
-            while(amount > 0 && pointer < entriesWithElem.size()) {
-                EquipmentEntry eqEntry = entriesWithElem.get(pointer);
-                pointer++;
-                int oldAmount = eqEntry.getAmount();
-                eqEntry.setAmount(Math.max(eqEntry.getAmount() - amount, 0));
-                amount -= oldAmount - eqEntry.getAmount();
-            }
-            if(amount > 0) {
-                throw new NotEnoughResourcesException();
-            }
-        }
-    }
+
 
     private List<EquipmentEntry> prepareEqEntries(List<EquipmentEntry> eqEntries, UserEquipment eq, Recipe recipe, int amount) {
         amount = fillExistingEntries(eqEntries, amount, recipe);
