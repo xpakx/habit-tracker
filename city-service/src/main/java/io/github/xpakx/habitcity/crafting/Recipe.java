@@ -1,19 +1,23 @@
 package io.github.xpakx.habitcity.crafting;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.github.xpakx.habitcity.building.Building;
 import io.github.xpakx.habitcity.resource.Resource;
 import io.github.xpakx.habitcity.ship.Ship;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serial;
+import java.io.Serializable;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Recipe {
+public class Recipe implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 715214808488882315L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
