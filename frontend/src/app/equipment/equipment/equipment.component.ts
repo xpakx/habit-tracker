@@ -84,6 +84,6 @@ export class EquipmentComponent implements OnInit {
   }
 
   private getItemId(num: number): number | undefined {
-    return this.craftSlots[num].id > -1 ? this.craftSlots[num].id : undefined;
+    return this.craftSlots[num].itemId > -1 ? this.craftSlots[num].itemId : undefined;
   }
 }

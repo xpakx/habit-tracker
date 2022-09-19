@@ -18,7 +18,7 @@ import java.io.Serializable;
 public class Resource implements Serializable {
     @Serial
     private static final long serialVersionUID = -5833214018665842925L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
