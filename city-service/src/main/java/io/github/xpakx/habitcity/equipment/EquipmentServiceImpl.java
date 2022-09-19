@@ -43,7 +43,7 @@ public class EquipmentServiceImpl implements EquipmentService {
     public void subtractResources(CraftList request, List<EquipmentEntry> eqEntries) {
         List<CraftElem> craftElems = request.asCraftList();
         for(CraftElem elem : craftElems) {
-            int amount = request.getAmount();
+            int amount = request.getAmount()*elem.getAmount();
             List<EquipmentEntry> entriesWithElem = eqEntries.stream().filter((a) -> Objects.equals(a.getResource().getId(), elem.getId())).toList();
             int pointer = 0;
             while(amount > 0 && pointer < entriesWithElem.size()) {
