@@ -1,6 +1,8 @@
 package io.github.xpakx.habitcity.city;
 
 import io.github.xpakx.habitcity.building.Building;
+import io.github.xpakx.habitcity.building.BuildingRecipeElemRepository;
+import io.github.xpakx.habitcity.building.dto.BuildingCraftList;
 import io.github.xpakx.habitcity.city.dto.BuildingRequest;
 import io.github.xpakx.habitcity.city.dto.BuildingResponse;
 import io.github.xpakx.habitcity.city.error.NotEnoughSpaceException;
@@ -19,6 +21,7 @@ public class CityServiceImpl implements CityService {
     private final EquipmentService equipmentService;
     private final UserEquipmentRepository equipmentRepository;
     private final EquipmentEntryRepository entryRepository;
+    private final BuildingRecipeElemRepository recipeRepository;
 
     @Override
     public BuildingResponse build(BuildingRequest request, Long cityId, Long userId) {
@@ -32,7 +35,8 @@ public class CityServiceImpl implements CityService {
                 .findFirst()
                 .orElseThrow();
 
-        // TODO: subtract resources
+        BuildingCraftList craftList = new BuildingCraftList(1, recipeRepository.findByBuildingId(request.getBuildingId()));
+        equipmentService.subtractResources(craftList, eqEntries);
 
         City city = cityRepository.findByIdAndUserId(cityId, userId).orElseThrow();
         long buildingsInCity = cityBuildingRepository.countByCityId(city.getId());
@@ -44,6 +48,7 @@ public class CityServiceImpl implements CityService {
         cityBuilding.setBuilding(building);
         cityBuilding.setCity(city);
         cityBuildingRepository.save(cityBuilding);
+        entryRepository.saveAll(eqEntries);
 
         return null;
     }
