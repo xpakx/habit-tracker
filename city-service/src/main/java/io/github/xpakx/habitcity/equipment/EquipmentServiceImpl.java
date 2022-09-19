@@ -4,10 +4,9 @@ import io.github.xpakx.habitcity.crafting.dto.CraftElem;
 import io.github.xpakx.habitcity.crafting.dto.CraftRequest;
 import io.github.xpakx.habitcity.crafting.error.NotEnoughResourcesException;
 import io.github.xpakx.habitcity.equipment.dto.AccountEvent;
+import io.github.xpakx.habitcity.equipment.dto.CraftList;
 import io.github.xpakx.habitcity.equipment.dto.EquipmentResponse;
 import io.github.xpakx.habitcity.money.MoneyService;
-import io.github.xpakx.habitcity.shop.dto.ShopResponse;
-import io.github.xpakx.habitcity.shop.error.WrongOwnerException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,8 +40,8 @@ public class EquipmentServiceImpl implements EquipmentService {
     }
 
     @Override
-    public void subtractResources(CraftRequest request, List<EquipmentEntry> eqEntries) {
-        List<CraftElem> craftElems = request.asList();
+    public void subtractResources(CraftList request, List<EquipmentEntry> eqEntries) {
+        List<CraftElem> craftElems = request.asCraftList();
         for(CraftElem elem : craftElems) {
             int amount = request.getAmount();
             List<EquipmentEntry> entriesWithElem = eqEntries.stream().filter((a) -> Objects.equals(a.getResource().getId(), elem.getId())).toList();

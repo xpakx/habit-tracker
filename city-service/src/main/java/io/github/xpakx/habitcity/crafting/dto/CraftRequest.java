@@ -1,5 +1,6 @@
 package io.github.xpakx.habitcity.crafting.dto;
 
+import io.github.xpakx.habitcity.equipment.dto.CraftList;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +9,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class CraftRequest {
+public class CraftRequest implements CraftList {
     private CraftElem elem1;
     private CraftElem elem2;
     private CraftElem elem3;
@@ -20,7 +21,8 @@ public class CraftRequest {
     private CraftElem elem9;
     private Integer amount;
 
-    public List<CraftElem> asList() {
+    @Override
+    public List<CraftElem> asCraftList() {
         List<CraftElem> result = new ArrayList<>();
         addElemIfNotEmpty(result, elem1);
         addElemIfNotEmpty(result, elem2);
