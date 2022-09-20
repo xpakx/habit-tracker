@@ -55,11 +55,11 @@ public class CityServiceImpl implements CityService {
 
     @Override
     public List<City> getCities(Long userId) {
-        return null;
+        return cityRepository.findByUserId(userId);
     }
 
     @Override
     public List<CityBuilding> getBuildings(Long cityId, Long userId) {
-        return null;
+        return cityBuildingRepository.findByCityIdAndCityUserId(cityId, userId);
     }
 }
