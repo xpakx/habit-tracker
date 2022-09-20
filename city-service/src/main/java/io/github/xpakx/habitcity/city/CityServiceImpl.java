@@ -21,7 +21,7 @@ public class CityServiceImpl implements CityService {
     private final EquipmentService equipmentService;
     private final UserEquipmentRepository equipmentRepository;
     private final EquipmentEntryRepository entryRepository;
-    private final BuildingRecipeElemRepository recipeRepository;
+    private final BuildingRecipeService recipeService;
 
     @Override
     public BuildingResponse build(BuildingRequest request, Long cityId, Long userId) {
@@ -35,7 +35,7 @@ public class CityServiceImpl implements CityService {
                 .findFirst()
                 .orElseThrow();
 
-        BuildingCraftList craftList = new BuildingCraftList(1, recipeRepository.findByBuildingId(request.getBuildingId()));
+        BuildingCraftList craftList = new BuildingCraftList(1, recipeService.getRecipe(request.getBuildingId()));
         equipmentService.subtractResources(craftList, eqEntries);
 
         City city = cityRepository.findByIdAndUserId(cityId, userId).orElseThrow();
