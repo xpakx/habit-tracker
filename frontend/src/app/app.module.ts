@@ -23,6 +23,7 @@ import { ErrorInterceptor } from './user/error.interceptor';
 import { EquipmentComponent } from './equipment/equipment/equipment.component';
 import { ShopComponent } from './shop/shop/shop.component';
 import { CitiesComponent } from './city/cities/cities.component';
+import { CityComponent } from './city/city/city.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { CitiesComponent } from './city/cities/cities.component';
     RegisterComponent,
     EquipmentComponent,
     ShopComponent,
-    CitiesComponent
+    CitiesComponent,
+    CityComponent
   ],
   imports: [
     BrowserModule,
