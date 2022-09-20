@@ -52,4 +52,14 @@ public class CityServiceImpl implements CityService {
 
         return null;
     }
+
+    @Override
+    public List<City> getCities(Long userId) {
+        return null;
+    }
+
+    @Override
+    public List<CityBuilding> getBuildings(Long cityId, Long userId) {
+        return null;
+    }
 }
