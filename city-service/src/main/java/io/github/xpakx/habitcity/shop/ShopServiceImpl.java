@@ -4,6 +4,7 @@ import io.github.xpakx.habitcity.equipment.EquipmentEntry;
 import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
 import io.github.xpakx.habitcity.equipment.UserEquipment;
 import io.github.xpakx.habitcity.equipment.UserEquipmentRepository;
+import io.github.xpakx.habitcity.equipment.dto.AccountEvent;
 import io.github.xpakx.habitcity.equipment.error.EquipmentFullException;
 import io.github.xpakx.habitcity.money.Money;
 import io.github.xpakx.habitcity.money.MoneyRepository;
@@ -90,6 +91,15 @@ public class ShopServiceImpl implements ShopService {
         ShopResponse response = new ShopResponse();
         response.setItems(entryRepository.findByShopId(shopId));
         return response;
+    }
+
+    @Override
+    public void addUserShop(AccountEvent event) {
+        Shop shop = new Shop();
+        shop.setUserId(event.getId());
+        shop.setMaxSize(5);
+        shop.setMaxRarity(1);
+        shopRepository.save(shop);
     }
 
     private List<EquipmentEntry> prepareEqEntries(UserEquipment eq, ShopEntry entry, int amount) {
