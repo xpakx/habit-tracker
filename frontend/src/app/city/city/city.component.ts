@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CityService } from '../city.service';
 import { Building } from '../dto/building';
+import { BuildingResponse } from '../dto/building-response';
 
 @Component({
   selector: 'app-city',
@@ -11,14 +12,15 @@ import { Building } from '../dto/building';
 })
 export class CityComponent implements OnInit {
   buildings: Building[] = [];
+  cityId?: number;
 
   constructor(private cityService: CityService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(routeParams => {
-      let id: number | undefined = routeParams['id'];
-      if(id) {
-        this.getCity(id);
+      this.cityId = routeParams['id'];
+      if(this.cityId) {
+        this.getCity(this.cityId);
       } 
     }); 
   }
@@ -37,5 +39,17 @@ export class CityComponent implements OnInit {
   updateBuildings(response: Building[]): void {
     this.buildings = response;
   }
-  
+
+  build(buildingId: number) {
+    if(this.cityId) {
+      this.cityService.build({buildingId: buildingId}, this.cityId).subscribe({
+        next: (response: BuildingResponse) => this.addBuilding(response),
+        error: (error: HttpErrorResponse) => this.onError(error)
+      });
+    }
+  }
+
+  addBuilding(response: BuildingResponse): void {
+    throw new Error('Method not implemented.');
+  }
 }
