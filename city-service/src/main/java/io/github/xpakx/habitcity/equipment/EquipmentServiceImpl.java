@@ -1,6 +1,5 @@
 package io.github.xpakx.habitcity.equipment;
 
-import io.github.xpakx.habitcity.crafting.dto.CraftRequestElem;
 import io.github.xpakx.habitcity.crafting.error.NotEnoughResourcesException;
 import io.github.xpakx.habitcity.equipment.dto.AccountEvent;
 import io.github.xpakx.habitcity.equipment.dto.CraftElem;
