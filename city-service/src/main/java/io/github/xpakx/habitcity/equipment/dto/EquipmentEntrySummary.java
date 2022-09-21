@@ -19,4 +19,10 @@ public interface EquipmentEntrySummary {
             "(target.ship != null ? target.ship.code : " +
             "(target.resource != null ? target.resource.code : ''))}")
     String getIcon();
+
+
+    @Value("#{target.building != null ? 'BUILDING' : " +
+            "(target.ship != null ? 'SHIP' : " +
+            "(target.resource != null ? 'RESOURCE' : 'NONE'))}")
+    String getType();
 }
