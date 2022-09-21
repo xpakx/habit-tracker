@@ -1,10 +1,7 @@
 package io.github.xpakx.habitcity.equipment;
 
 import io.github.xpakx.habitcity.crafting.error.NotEnoughResourcesException;
-import io.github.xpakx.habitcity.equipment.dto.AccountEvent;
-import io.github.xpakx.habitcity.equipment.dto.CraftElem;
-import io.github.xpakx.habitcity.equipment.dto.CraftList;
-import io.github.xpakx.habitcity.equipment.dto.EquipmentResponse;
+import io.github.xpakx.habitcity.equipment.dto.*;
 import io.github.xpakx.habitcity.money.MoneyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -56,5 +53,13 @@ public class EquipmentServiceImpl implements EquipmentService {
                 throw new NotEnoughResourcesException();
             }
         }
+    }
+
+    @Override
+    public EquipmentResponse getBuildingPlans(Long userId) {
+        UserEquipment equipment = equipmentRepository.getByUserId(userId).orElseThrow();
+        EquipmentResponse response = new EquipmentResponse();
+        response.setItems(entryRepository.findByEquipmentIdAndBuildingIsNotNull(equipment.getId()));
+        return response;
     }
 }
