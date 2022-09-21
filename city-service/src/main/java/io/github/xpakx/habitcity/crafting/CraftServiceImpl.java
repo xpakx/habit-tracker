@@ -27,19 +27,20 @@ public class CraftServiceImpl implements CraftService {
     @Transactional
     public ItemResponse craft(CraftRequest request, Long userId) {
         Recipe recipe = recipeService.getRecipe(request);
-
-        if(recipe.getRequiredBuilding() != null && city.hasUserBuilding(recipe.getRequiredBuilding().getId(), userId)) {
-            throw new ItemRequirementsNotMetException();
-        }
-
+        testRequirements(userId, recipe);
         UserEquipment eq = equipmentRepository.getByUserId(userId).orElseThrow();
         List<EquipmentEntry> eqEntries = entryRepository.getByEquipmentId(eq.getId());
-
         equipment.subtractResources(request, eqEntries);
         eqEntries.addAll(prepareEqEntries(eqEntries, eq, recipe, request.getAmount()));
         entryRepository.saveAll(eqEntries.stream().filter((a -> a.getAmount() > 0)).toList());
         entryRepository.deleteAll(eqEntries.stream().filter((a -> a.getAmount() <= 0)).toList());
         return createItemResponse(request, recipe);
+    }
+
+    private void testRequirements(Long userId, Recipe recipe) {
+        if(recipe.getRequiredBuilding() != null && city.hasUserBuilding(recipe.getRequiredBuilding().getId(), userId)) {
+            throw new ItemRequirementsNotMetException();
+        }
     }
 
     private ItemResponse createItemResponse(CraftRequest request, Recipe recipe) {
