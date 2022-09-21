@@ -1,1 +1,9 @@
 <p>city works!</p>
+
+
+<button class="build-button" (click)="switchBuildContainer()">Build</button>
+<div class="build-container" *ngIf="showPlans">
+    <button *ngFor="let item of plans" class="eq-cell" (click)="onBuildingClick(item)">
+        <img [src]="'/assets/'+ item.icon +'.png'" alt="" class="icon">
+    </button>
+</div>

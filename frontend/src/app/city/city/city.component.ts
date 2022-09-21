@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { EquipmentEntry } from 'src/app/equipment/dto/equipment-entry';
 import { CityService } from '../city.service';
 import { Building } from '../dto/building';
 import { BuildingResponse } from '../dto/building-response';
@@ -12,6 +13,8 @@ import { BuildingResponse } from '../dto/building-response';
 })
 export class CityComponent implements OnInit {
   buildings: Building[] = [];
+  plans: EquipmentEntry[] = [];
+  showPlans: boolean = false;
   cityId?: number;
 
   constructor(private cityService: CityService, private route: ActivatedRoute) { }
@@ -51,5 +54,13 @@ export class CityComponent implements OnInit {
 
   addBuilding(response: BuildingResponse): void {
     throw new Error('Method not implemented.');
+  }
+
+  switchBuildContainer(): void {
+    this.showPlans = !this.showPlans;
+  }
+
+  onBuildingClick(plan: EquipmentEntry): void {
+    this.build(plan.itemId);
   }
 }
