@@ -1,6 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { DndDropEvent } from 'ngx-drag-drop'
+import { CityService } from 'src/app/city/city.service';
+import { BuildingResponse } from 'src/app/city/dto/building-response';
 import { ItemResponse } from 'src/app/shop/dto/item-response';
 import { CraftRequest } from '../dto/craft-request';
 import { EquipmentEntry } from '../dto/equipment-entry';
@@ -16,14 +18,17 @@ import { RecipeService } from '../recipe.service';
 export class EquipmentComponent implements OnInit {
   items: EquipmentEntry[] = [];
   draggedItem?: EquipmentEntry;
-  empty: EquipmentEntry = {id:-1, itemId: -1, name: "", icon: "", amount: 0}
+  empty: EquipmentEntry = {id:-1, itemId: -1, name: "", icon: "", amount: 0, type: ''}
   craftSlots: EquipmentEntry[] = [
     this.empty, this.empty, this.empty,
     this.empty, this.empty, this.empty,
     this.empty, this.empty, this.empty
   ];
 
-  constructor(private eqService: EquipmentService, private recipeService: RecipeService) { }
+  activeBuilding?: number;
+  activeCity?: number;
+
+  constructor(private eqService: EquipmentService, private recipeService: RecipeService, private cityService: CityService) { }
 
   ngOnInit(): void {
     this.eqService.getEquipment().subscribe({
@@ -85,5 +90,32 @@ export class EquipmentComponent implements OnInit {
 
   private getItemId(num: number): number | undefined {
     return this.craftSlots[num].itemId > -1 ? this.craftSlots[num].itemId : undefined;
+  }
+
+  onItemClick(item: EquipmentEntry) {
+    if(item.type == 'BUILDING') {
+      this.activeBuilding = item.itemId;
+    }
+  }
+
+  onCityChoice(cityId: number) {
+    this.activeCity = cityId;
+  }
+
+  public build(): void {
+    if(this.activeBuilding && this.activeCity) {
+      this.cityService.build({buildingId: this.activeBuilding}, this.activeCity).subscribe({
+        next: (response: BuildingResponse) => this.onBuild(response),
+        error: (error: HttpErrorResponse) => this.onBuildError(error)
+      })
+    }
+  }
+  
+  onBuildError(error: HttpErrorResponse): void {
+    throw new Error('Method not implemented.');
+  }
+
+  onBuild(response: BuildingResponse): void {
+    throw new Error('Method not implemented.');
   }
 }

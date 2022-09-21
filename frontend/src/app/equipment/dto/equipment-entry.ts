@@ -4,4 +4,5 @@ export interface EquipmentEntry {
     icon: String;
     amount: number;
     name: String;    
+    type: String;
 }

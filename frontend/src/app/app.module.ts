@@ -24,6 +24,7 @@ import { EquipmentComponent } from './equipment/equipment/equipment.component';
 import { ShopComponent } from './shop/shop/shop.component';
 import { CitiesComponent } from './city/cities/cities.component';
 import { CityComponent } from './city/city/city.component';
+import { CitiesListComponent } from './city/cities-list/cities-list.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { CityComponent } from './city/city/city.component';
     EquipmentComponent,
     ShopComponent,
     CitiesComponent,
-    CityComponent
+    CityComponent,
+    CitiesListComponent
   ],
   imports: [
     BrowserModule,
