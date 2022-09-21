@@ -1,6 +1,7 @@
 package io.github.xpakx.habitcity.crafting;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.github.xpakx.habitcity.building.Building;
 import io.github.xpakx.habitcity.resource.Resource;
 import io.github.xpakx.habitcity.ship.Ship;
 import lombok.*;
@@ -77,5 +78,12 @@ public class Recipe implements Serializable {
     @JoinColumn(name = "ship_id")
     @JsonIgnore
     private Ship ship;
+
+
+    @ManyToOne
+    @JoinColumn(name = "required_building_id")
+    @JsonIgnore
+    private Building requiredBuilding;
+
 
 }

@@ -70,4 +70,9 @@ public class CityServiceImpl implements CityService {
         shop.setMaxSize(15);
         cityRepository.save(shop);
     }
+
+    @Override
+    public boolean hasUserBuilding(Long buildingId, Long userId) {
+        return false;
+    }
 }

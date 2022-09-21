@@ -11,4 +11,5 @@ public interface CityService {
     List<City> getCities(Long userId);
     List<CityBuilding> getBuildings(Long cityId, Long userId);
     void addUserCity(AccountEvent event);
+    boolean hasUserBuilding(Long buildingId, Long userId);
 }

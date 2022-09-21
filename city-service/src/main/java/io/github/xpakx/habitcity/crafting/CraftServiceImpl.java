@@ -1,7 +1,8 @@
 package io.github.xpakx.habitcity.crafting;
 
+import io.github.xpakx.habitcity.city.CityService;
+import io.github.xpakx.habitcity.city.error.ItemRequirementsNotMetException;
 import io.github.xpakx.habitcity.crafting.dto.CraftRequest;
-import io.github.xpakx.habitcity.crafting.error.NoSuchRecipeException;
 import io.github.xpakx.habitcity.equipment.*;
 import io.github.xpakx.habitcity.equipment.error.EquipmentFullException;
 import io.github.xpakx.habitcity.shop.dto.ItemResponse;
@@ -20,13 +21,16 @@ public class CraftServiceImpl implements CraftService {
     private final UserEquipmentRepository equipmentRepository;
     private final EquipmentEntryRepository entryRepository;
     private final EquipmentService equipment;
+    private final CityService city;
 
     @Override
     @Transactional
     public ItemResponse craft(CraftRequest request, Long userId) {
         Recipe recipe = recipeService.getRecipe(request);
 
-        //TODO: test if player unlocked recipe
+        if(recipe.getRequiredBuilding() != null && city.hasUserBuilding(recipe.getRequiredBuilding().getId(), userId)) {
+            throw new ItemRequirementsNotMetException();
+        }
 
         UserEquipment eq = equipmentRepository.getByUserId(userId).orElseThrow();
         List<EquipmentEntry> eqEntries = entryRepository.getByEquipmentId(eq.getId());
