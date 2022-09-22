@@ -101,8 +101,8 @@ services:
       SPRING_CLOUD_GATEWAY_ROUTES[1]_URI: http://gamification:8081
       SPRING_CLOUD_GATEWAY_ROUTES[2]_URI: http://city:8082
       SPRING_CLOUD_GATEWAY_ROUTES[3]_URI: http://auth:8083
-  frontend:
-    container_name: frontend
+  habitfrontend:
+    container_name: habitfrontend
     build: ./frontend/
     ports:
       - "80:80"
