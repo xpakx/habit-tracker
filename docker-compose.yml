@@ -1,0 +1,127 @@
+version: '3.3'
+
+services:
+  habit:
+    build: ./habit-service/
+    container_name: habit
+    depends_on:
+      - dbhabit
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbhabit:5432/habit
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+  dbhabit:
+    image: 'postgres:13.1-alpine'
+    container_name: dbhabit
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=habit
+    expose:
+      - 5432
+  auth:
+    build: ./auth-service/
+    container_name: auth
+    depends_on:
+      - dbauth
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbauth:5433/habitauth
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+  dbauth:
+    image: 'postgres:13.1-alpine'
+    container_name: dbauth
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=habitauth
+    expose:
+      - 5433
+  city:
+    build: ./city-service/
+    container_name: city
+    depends_on:
+      - dbcity
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbcity:5434/habitcity
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+  dbcity:
+    image: 'postgres:13.1-alpine'
+    container_name: dbcity
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=habitcity
+    expose:
+      - 5434
+  gamification:
+    build: ./gamification-service/
+    container_name: gamification
+    depends_on:
+      - dbgamification
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbgamification:5435/habitgame
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+  dbgamification:
+    image: 'postgres:13.1-alpine'
+    container_name: dbgamification
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=habitgame
+    expose:
+      - 5435
+  gateway:
+    build: ./gateway/
+    container_name: gateway
+    ports:
+      - "8000:8000"
+    depends_on: 
+      - habit
+      - auth
+      - city
+      - gamification
+    environment:
+      SPRING_PROFILES_ACTIVE: path
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_URI: http://habit:8080
+      SPRING_CLOUD_GATEWAY_ROUTES[1]_URI: http://gamification:8081
+      SPRING_CLOUD_GATEWAY_ROUTES[2]_URI: http://city:8082
+      SPRING_CLOUD_GATEWAY_ROUTES[3]_URI: http://auth:8083
+  frontend:
+    container_name: frontend
+    build: ./frontend/
+    ports:
+      - "80:80"
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+  cache:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass password
+    volumes: 
+      - cache:/data
+volumes:
+  cache:
+    driver: local

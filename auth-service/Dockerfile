@@ -7,6 +7,6 @@ RUN mvn clean package -DskipTests
 # Run stage
 FROM openjdk:17-alpine
 MAINTAINER xpakx.github.io
-EXPOSE 8080
+EXPOSE 8083
 COPY --from=build app/target/habitauth-0.0.1-SNAPSHOT.jar application.jar
 ENTRYPOINT ["java","-jar","/application.jar"]

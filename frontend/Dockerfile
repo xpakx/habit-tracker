@@ -8,5 +8,5 @@ RUN npm run build
 
 # Run stage
 FROM nginx:alpine
-COPY --from=build app/dist/ladder/ /usr/share/nginx/html
+COPY --from=build app/dist/habit-tracker/ /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/nginx.conf
