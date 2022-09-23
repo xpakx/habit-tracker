@@ -1,14 +1,10 @@
 package io.github.xpakx.habittracker.stats;
 
-import io.github.xpakx.habittracker.habit.Habit;
 import io.github.xpakx.habittracker.stats.dto.StatsResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 
 @RestController
@@ -24,7 +20,7 @@ public class StatisticController {
         );
     }
 
-    @GetMapping("/habit")
+    @GetMapping("/habit/stats")
     public ResponseEntity<StatsResponse> getDailyHabits(@RequestHeader String id) {
         return new ResponseEntity<>(
                 service.getStats(Long.valueOf(id)),
@@ -32,7 +28,7 @@ public class StatisticController {
         );
     }
 
-    @GetMapping("/habit/{habitId}")
+    @GetMapping("/habit/{habitId}/stats")
     public ResponseEntity<StatsResponse> getDailyHabits(@PathVariable Long habitId, @RequestHeader String id) {
         return new ResponseEntity<>(
                 service.getStatsForHabit(habitId, Long.valueOf(id)),
