@@ -9,4 +9,5 @@ import java.util.List;
 @Setter
 public class StatsResponse {
     List<Day> days;
+    Integer completions;
 }

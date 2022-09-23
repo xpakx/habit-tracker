@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +35,14 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private StatsResponse completionsToStats(List<HabitCompletion> completions) {
-        return null;
+        Map<Integer, List<HabitCompletion>> map =  completions.stream()
+                .collect(Collectors.groupingBy((c) -> c.getDate().getDayOfYear()));
+        List<Day> heatMapElems = map.keySet().stream()
+                .map((c) -> new Day(c, map.get(c).size()))
+                .toList();
+        StatsResponse response = new StatsResponse();
+        response.setDays(heatMapElems);
+        response.setCompletions(completions.size());
+        return response;
     }
 }
