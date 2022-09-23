@@ -100,15 +100,19 @@ services:
       SPRING_CLOUD_GATEWAY_ROUTES[0]_URI: http://habit:8080
       SPRING_CLOUD_GATEWAY_ROUTES[0]_ID: 'habit'
       SPRING_CLOUD_GATEWAY_ROUTES[0]_PREDICATES[0]: 'Path=/habit/**,/context/**'
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_FILTERs[0]: 'AuthenticationFilterFactory'
       SPRING_CLOUD_GATEWAY_ROUTES[1]_URI: http://gamification:8081
       SPRING_CLOUD_GATEWAY_ROUTES[1]_ID: 'gamification'
       SPRING_CLOUD_GATEWAY_ROUTES[1]_PREDICATES[0]: 'Path=/experience/**'
+      SPRING_CLOUD_GATEWAY_ROUTES[1]_FILTERs[0]: 'AuthenticationFilterFactory'
       SPRING_CLOUD_GATEWAY_ROUTES[2]_URI: http://city:8082
       SPRING_CLOUD_GATEWAY_ROUTES[2]_ID: 'city'
       SPRING_CLOUD_GATEWAY_ROUTES[2]_PREDICATES[0]: 'Path=/equipment/**,/shop/**,/craft'
+      SPRING_CLOUD_GATEWAY_ROUTES[2]_FILTERs[0]: 'AuthenticationFilterFactory'
       SPRING_CLOUD_GATEWAY_ROUTES[3]_URI: http://auth:8083
       SPRING_CLOUD_GATEWAY_ROUTES[3]_ID: 'auth'
       SPRING_CLOUD_GATEWAY_ROUTES[3]_PREDICATES[0]: 'Path=/authenticate,/register'
+      SPRING_CLOUD_GATEWAY_GLOBALCORS_CORS-CONFIGURATIONS['[/**]']_ALLOWEDORIGINS: http://localhost
   habitfrontend:
     container_name: habitfrontend
     build: ./frontend/
