@@ -7,6 +7,7 @@ import io.github.xpakx.habittracker.stats.dto.StatsResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -18,19 +19,19 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public StatsResponse getStats(Long userId) {
-        List<HabitCompletion> completions = completionRepository.findByUserId(userId);
+        List<HabitCompletion> completions = completionRepository.findByUserIdAndDateAfter(userId, LocalDateTime.now().minusDays(365));
         return completionsToStats(completions);
     }
 
     @Override
     public StatsResponse getStatsForContext(Long contextId, Long userId) {
-        List<HabitCompletion> completions = completionRepository.findByUserIdAndHabitContextId(userId, contextId);
+        List<HabitCompletion> completions = completionRepository.findByUserIdAndHabitContextIdAndDateAfter(userId, contextId, LocalDateTime.now().minusDays(365));
         return completionsToStats(completions);
     }
 
     @Override
     public StatsResponse getStatsForHabit(Long habitId, Long userId) {
-        List<HabitCompletion> completions = completionRepository.findByUserIdAndHabitId(userId, habitId);
+        List<HabitCompletion> completions = completionRepository.findByUserIdAndHabitIdAndDateAfter(userId, habitId, LocalDateTime.now().minusDays(365));
         return completionsToStats(completions);
     }
 

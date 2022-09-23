@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface HabitCompletionRepository extends JpaRepository<HabitCompletion, Long> {
     long countByDateBetweenAndHabitId(LocalDateTime dateStart, LocalDateTime dateEnd, Long habitId);
-    List<HabitCompletion> findByUserId(Long userId);
-    List<HabitCompletion> findByUserIdAndHabitId(Long userId, Long habitId);
-    List<HabitCompletion> findByUserIdAndHabitContextId(Long userId, Long contextId);
+    List<HabitCompletion> findByUserIdAndDateAfter(Long userId, LocalDateTime date);
+    List<HabitCompletion> findByUserIdAndHabitIdAndDateAfter(Long userId, Long habitId, LocalDateTime date);
+    List<HabitCompletion> findByUserIdAndHabitContextIdAndDateAfter(Long userId, Long contextId, LocalDateTime date);
 }
