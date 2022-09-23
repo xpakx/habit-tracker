@@ -36,10 +36,12 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private StatsResponse completionsToStats(List<HabitCompletion> completions) {
+        int currentDayOfYear = LocalDateTime.now().getDayOfYear();
         Map<Integer, List<HabitCompletion>> map =  completions.stream()
                 .collect(Collectors.groupingBy((c) -> c.getDate().getDayOfYear()));
         List<Day> heatMapElems = map.keySet().stream()
-                .map((c) -> new Day(c, map.get(c).size()))
+                .map((c) -> new Day(c > currentDayOfYear ? currentDayOfYear - c : c, map.get(c).size()))
+                .sorted()
                 .toList();
         StatsResponse response = new StatsResponse();
         response.setDays(heatMapElems);
