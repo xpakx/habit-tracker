@@ -6,8 +6,8 @@ services:
     container_name: habit
     depends_on:
       - dbhabit
-    ports:
-      - "8080:8080"
+    expose:
+      - 8080
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://dbhabit:5432/habit
       - SPRING_DATASOURCE_USERNAME=admin
@@ -27,10 +27,10 @@ services:
     container_name: auth
     depends_on:
       - dbauth
-    ports:
-      - "8083:8083"
+    expose:
+      - 8083
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbauth:5433/habitauth
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbauth:5432/habitauth
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
@@ -42,16 +42,16 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=habitauth
     expose:
-      - 5433
+      - 5432
   city:
     build: ./city-service/
     container_name: city
     depends_on:
       - dbcity
-    ports:
-      - "8082:8082"
+    expose:
+      - 8082
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbcity:5434/habitcity
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbcity:5432/habitcity
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
@@ -63,16 +63,16 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=habitcity
     expose:
-      - 5434
+      - 5432
   gamification:
     build: ./gamification-service/
     container_name: gamification
     depends_on:
       - dbgamification
-    ports:
-      - "8081:8081"
+    expose:
+      - 8081
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbgamification:5435/habitgame
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbgamification:5432/habitgame
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
@@ -84,7 +84,7 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=habitgame
     expose:
-      - 5435
+      - 5432
   gateway:
     build: ./gateway/
     container_name: gateway
@@ -98,9 +98,17 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: path
       SPRING_CLOUD_GATEWAY_ROUTES[0]_URI: http://habit:8080
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_ID: 'habit'
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_PREDICATES[0]: 'Path=/habit/**,/context/**'
       SPRING_CLOUD_GATEWAY_ROUTES[1]_URI: http://gamification:8081
+      SPRING_CLOUD_GATEWAY_ROUTES[1]_ID: 'gamification'
+      SPRING_CLOUD_GATEWAY_ROUTES[1]_PREDICATES[0]: 'Path=/experience/**'
       SPRING_CLOUD_GATEWAY_ROUTES[2]_URI: http://city:8082
+      SPRING_CLOUD_GATEWAY_ROUTES[2]_ID: 'city'
+      SPRING_CLOUD_GATEWAY_ROUTES[2]_PREDICATES[0]: 'Path=/equipment/**,/shop/**,/craft'
       SPRING_CLOUD_GATEWAY_ROUTES[3]_URI: http://auth:8083
+      SPRING_CLOUD_GATEWAY_ROUTES[3]_ID: 'auth'
+      SPRING_CLOUD_GATEWAY_ROUTES[3]_PREDICATES[0]: 'Path=/authenticate,/register'
   habitfrontend:
     container_name: habitfrontend
     build: ./frontend/
