@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -41,7 +42,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .collect(Collectors.groupingBy((c) -> c.getDate().getDayOfYear()));
         List<Day> heatMapElems = map.keySet().stream()
                 .map((c) -> new Day(c > currentDayOfYear ? currentDayOfYear - c : c, map.get(c).size()))
-                .sorted()
+                .sorted(Comparator.comparingInt(Day::getDayOfYear))
                 .toList();
         StatsResponse response = new StatsResponse();
         response.setDays(heatMapElems);
