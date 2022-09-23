@@ -6,6 +6,7 @@ services:
     container_name: habit
     depends_on:
       - dbhabit
+      - rabbitmq
     expose:
       - 8080
     environment:
@@ -13,6 +14,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_RABBITMQ_HOST=rabbitmq
   dbhabit:
     image: 'postgres:13.1-alpine'
     container_name: dbhabit
@@ -27,6 +29,7 @@ services:
     container_name: auth
     depends_on:
       - dbauth
+      - rabbitmq
     expose:
       - 8083
     environment:
@@ -34,6 +37,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_RABBITMQ_HOST=rabbitmq
   dbauth:
     image: 'postgres:13.1-alpine'
     container_name: dbauth
@@ -48,6 +52,7 @@ services:
     container_name: city
     depends_on:
       - dbcity
+      - rabbitmq
     expose:
       - 8082
     environment:
@@ -55,6 +60,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_RABBITMQ_HOST=rabbitmq
   dbcity:
     image: 'postgres:13.1-alpine'
     container_name: dbcity
@@ -69,6 +75,7 @@ services:
     container_name: gamification
     depends_on:
       - dbgamification
+      - rabbitmq
     expose:
       - 8081
     environment:
@@ -76,6 +83,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_RABBITMQ_HOST=rabbitmq
   dbgamification:
     image: 'postgres:13.1-alpine'
     container_name: dbgamification
@@ -107,7 +115,7 @@ services:
       SPRING_CLOUD_GATEWAY_ROUTES[1]_FILTERs[0]: 'AuthenticationFilterFactory'
       SPRING_CLOUD_GATEWAY_ROUTES[2]_URI: http://city:8082
       SPRING_CLOUD_GATEWAY_ROUTES[2]_ID: 'city'
-      SPRING_CLOUD_GATEWAY_ROUTES[2]_PREDICATES[0]: 'Path=/equipment/**,/shop/**,/craft'
+      SPRING_CLOUD_GATEWAY_ROUTES[2]_PREDICATES[0]: 'Path=/equipment/**,/shop/**,/craft,/city/**'
       SPRING_CLOUD_GATEWAY_ROUTES[2]_FILTERs[0]: 'AuthenticationFilterFactory'
       SPRING_CLOUD_GATEWAY_ROUTES[3]_URI: http://auth:8083
       SPRING_CLOUD_GATEWAY_ROUTES[3]_ID: 'auth'
