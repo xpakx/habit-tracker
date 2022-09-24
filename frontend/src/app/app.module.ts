@@ -25,6 +25,7 @@ import { ShopComponent } from './shop/shop/shop.component';
 import { CitiesComponent } from './city/cities/cities.component';
 import { CityComponent } from './city/city/city.component';
 import { CitiesListComponent } from './city/cities-list/cities-list.component';
+import { HeatmapComponent } from './stats/heatmap/heatmap.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { CitiesListComponent } from './city/cities-list/cities-list.component';
     ShopComponent,
     CitiesComponent,
     CityComponent,
-    CitiesListComponent
+    CitiesListComponent,
+    HeatmapComponent
   ],
   imports: [
     BrowserModule,
