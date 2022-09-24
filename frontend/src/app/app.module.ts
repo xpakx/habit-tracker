@@ -26,6 +26,9 @@ import { CitiesComponent } from './city/cities/cities.component';
 import { CityComponent } from './city/city/city.component';
 import { CitiesListComponent } from './city/cities-list/cities-list.component';
 import { HeatmapComponent } from './stats/heatmap/heatmap.component';
+import { OverallStatsComponent } from './stats/overall-stats/overall-stats.component';
+import { ContextStatsComponent } from './stats/context-stats/context-stats.component';
+import { HabitStatsComponent } from './stats/habit-stats/habit-stats.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +51,10 @@ import { HeatmapComponent } from './stats/heatmap/heatmap.component';
     CitiesComponent,
     CityComponent,
     CitiesListComponent,
-    HeatmapComponent
+    HeatmapComponent,
+    OverallStatsComponent,
+    ContextStatsComponent,
+    HabitStatsComponent
   ],
   imports: [
     BrowserModule,
