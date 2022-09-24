@@ -1,5 +1,10 @@
 <div class="heatmap">
-    <div class="field" *ngFor="let day of days">
-        {{ day.completions }}
-    </div>
+    <ng-container *ngFor="let day of days; let i = index">
+        <ng-container *ngIf="i > 0 && day.dayOfYear - days[i-1].dayOfYear > 1">
+            <div class="field" *ngFor="let _ of [].constructor(day.dayOfYear - days[i-1].dayOfYear - 1)">0</div>
+        </ng-container>
+        <div class="field">
+            {{ day.completions }}
+        </div>
+    </ng-container>
 </div>

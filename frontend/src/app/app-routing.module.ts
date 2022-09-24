@@ -28,7 +28,7 @@ const routes: Routes = [
 
   { path: 'stats/context/:id', component: ContextStatsComponent },
   { path: 'stats/habit/:id', component: HabitStatsComponent },
-  { path: 'stats/', component: OverallStatsComponent }
+  { path: 'stats', component: OverallStatsComponent }
 ];
 
 @NgModule({

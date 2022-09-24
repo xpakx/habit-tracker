@@ -9,7 +9,13 @@ import { StatsService } from '../stats.service';
   styleUrls: ['./overall-stats.component.css']
 })
 export class OverallStatsComponent implements OnInit {
-  stats?: StatsResponse;
+  stats?: StatsResponse = {completions:9, days: [
+    {dayOfYear: 5, completions: 2},
+    {dayOfYear: 6, completions: 2},
+    {dayOfYear: 10, completions: 3},
+    {dayOfYear: 11, completions: 2},
+    {dayOfYear: 44, completions: 2}
+  ]};
 
   constructor(private statsService: StatsService) { }
 
