@@ -1,1 +1,4 @@
-<p>habit-stats works!</p>
+<div class="stats-container" *ngIf="stats">
+    <div>{{ stats.completions }} Completions</div>
+    <app-heatmap [days]="stats.days"></app-heatmap>
+</div>
