@@ -15,7 +15,7 @@ export class StatsService extends JwtService{
     super();
   }
 
-  public getStats(shopId: number): Observable<StatsResponse> {
+  public getStats(): Observable<StatsResponse> {
     return this.http.get<StatsResponse>(`${this.apiServerUrl}/habit/stats`, { headers: this.getHeaders() });
   }
 
