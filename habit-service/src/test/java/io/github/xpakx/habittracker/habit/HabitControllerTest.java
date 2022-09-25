@@ -66,6 +66,7 @@ class HabitControllerTest {
         .when()
                 .post(baseUrl + "/habit")
         .then()
+                .log().body()
                 .statusCode(NOT_FOUND.value());
     }
 
