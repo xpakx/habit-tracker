@@ -2,6 +2,7 @@ package io.github.xpakx.habittracker.habit;
 
 import io.github.xpakx.habittracker.habit.dto.HabitRequest;
 import io.github.xpakx.habittracker.habit.dto.HabitUpdateRequest;
+import io.github.xpakx.habittracker.habit.error.NoSuchObjectException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,12 @@ public class HabitServiceImpl implements HabitService {
         habit.setNextDue(request.getStart());
         habit.setCompletions(0);
         habit.setUserId(userId);
-        habit.setContext(request.getContextId() != null ? contextRepository.getReferenceById(request.getContextId()) : null);
+        habit.setContext(
+                request.getContextId() != null ?
+                        contextRepository
+                                .findById(request.getContextId()).orElseThrow(() -> new NoSuchObjectException("No such context!"))
+                        : null
+        );
         habit.setDifficulty(request.getDifficulty());
         HabitTrigger trigger = new HabitTrigger();
         trigger.setUserId(userId);
