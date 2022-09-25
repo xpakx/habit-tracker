@@ -10,8 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import java.util.List;
+
 import static io.restassured.RestAssured.when;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.HttpStatus.*;
 
 import static io.restassured.RestAssured.given;
@@ -28,6 +32,8 @@ class HabitControllerTest {
     HabitRepository habitRepository;
     @Autowired
     HabitContextRepository contextRepository;
+    @Autowired
+    HabitTriggerRepository triggerRepository;
 
     @BeforeEach
     void setUp() {
@@ -39,6 +45,7 @@ class HabitControllerTest {
     void tearDown() {
         habitRepository.deleteAll();
         contextRepository.deleteAll();
+        triggerRepository.deleteAll();
     }
 
     @Test
@@ -78,6 +85,8 @@ class HabitControllerTest {
         .then()
                 .statusCode(CREATED.value())
                 .body("name", equalTo(request.getName()));
+        List<Habit> habits = habitRepository.findAll();
+        assertThat(habits, hasSize(1));
     }
 
     private HabitRequest getHabitRequest(String name, String triggerName, Long contextId) {
