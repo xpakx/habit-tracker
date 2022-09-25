@@ -17,11 +17,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleNoSuchObjectException(RuntimeException ex, WebRequest request) {
         ErrorResponse errorBody = new ErrorResponse();
         errorBody.setMessage(ex.getMessage());
+        errorBody.setStatus(HttpStatus.NOT_FOUND);
         return handleExceptionInternal(
                 ex,
                 errorBody,
                 new HttpHeaders(),
-                HttpStatus.NOT_FOUND,
+                errorBody.getStatus(),
                 request
         );
     }
