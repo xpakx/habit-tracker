@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -54,8 +56,8 @@ public class HabitServiceImpl implements HabitService {
     }
 
     @Override
-    public List<Habit> getHabitsForDay(LocalDateTime date, Long userId) {
-        LocalDateTime start = date.withHour(0).withMinute(0).withSecond(0).withNano(0);
+    public List<Habit> getHabitsForDay(LocalDate date, Long userId) {
+        LocalDateTime start = LocalDateTime.of(date, LocalTime.MIDNIGHT);
         LocalDateTime end = start.plusDays(1);
         return habitRepository.findByNextDueBetweenAndUserId(start, end, userId);
     }

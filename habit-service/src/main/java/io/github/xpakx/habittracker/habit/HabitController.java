@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -33,7 +35,7 @@ public class HabitController {
     }
 
     @GetMapping(value = "/date")
-    public ResponseEntity<List<Habit>> getHabitsForDay(@RequestParam("date") LocalDateTime date, @RequestHeader String id) {
+    public ResponseEntity<List<Habit>> getHabitsForDay(@RequestParam("date") LocalDate date, @RequestHeader String id) {
         return new ResponseEntity<>(
                 service.getHabitsForDay(date, Long.valueOf(id)),
                 HttpStatus.OK
@@ -43,7 +45,7 @@ public class HabitController {
     @GetMapping("/daily")
     public ResponseEntity<List<Habit>> getDailyHabits(@RequestHeader String id) {
         return new ResponseEntity<>(
-                service.getHabitsForDay(LocalDateTime.now(), Long.valueOf(id)),
+                service.getHabitsForDay(LocalDate.now(), Long.valueOf(id)),
                 HttpStatus.OK
         );
     }
