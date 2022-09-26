@@ -12,12 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static io.restassured.RestAssured.when;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpStatus.*;
 
 import static io.restassured.RestAssured.given;
@@ -138,9 +138,14 @@ class HabitControllerTest {
     }
 
     private Long addNewHabit(String name) {
+        return addNewHabit(name, LocalDateTime.now());
+    }
+
+    private Long addNewHabit(String name, LocalDateTime date) {
         Habit habit = new Habit();
         habit.setUserId(userId);
         habit.setName(name);
+        habit.setNextDue(date);
         return habitRepository.save(habit).getId();
     }
 
@@ -164,5 +169,39 @@ class HabitControllerTest {
         .then()
                 .statusCode(OK.value())
                 .body("name", equalTo(request.getName()));
+    }
+
+    @Test
+    @Disabled
+    void shouldRespondWith401ToGetHabitsForDayIfNoUserIdGiven() {
+        when()
+                .put(baseUrl + "/habit/date")
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldReturnHabitsForDate() {
+        HabitUpdateRequest request = getUpdateHabitRequest("new name");
+        LocalDateTime date = LocalDateTime.now().minusDays(5);
+        addNewHabit("first", date);
+        addNewHabit("second", date);
+        addNewHabit("third", date);
+        addNewHabit("fourth", date.minusDays(1));
+        given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .header(getHeaderForUserId(userId))
+                .queryParam("date", date.toLocalDate().toString())
+                .log().uri()
+        .when()
+                .put(baseUrl + "/habit/date")
+        .then()
+                .statusCode(OK.value())
+                .body("$", hasSize(3))
+                .body("name", hasItem(equalTo("first")))
+                .body("name", hasItem(equalTo("second")))
+                .body("name", hasItem(equalTo("third")))
+                .body("name", not(hasItem(equalTo("fourth"))));
     }
 }
