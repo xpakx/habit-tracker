@@ -3,13 +3,12 @@ package io.github.xpakx.habittracker.habit;
 import io.github.xpakx.habittracker.habit.dto.HabitRequest;
 import io.github.xpakx.habittracker.habit.dto.HabitUpdateRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -35,7 +34,7 @@ public class HabitController {
     }
 
     @GetMapping(value = "/date")
-    public ResponseEntity<List<Habit>> getHabitsForDay(@RequestParam("date") LocalDate date, @RequestHeader String id) {
+    public ResponseEntity<List<Habit>> getHabitsForDay(@RequestParam("date") @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate date, @RequestHeader String id) {
         return new ResponseEntity<>(
                 service.getHabitsForDay(date, Long.valueOf(id)),
                 HttpStatus.OK
