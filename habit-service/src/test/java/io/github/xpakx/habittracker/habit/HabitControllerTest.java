@@ -105,7 +105,7 @@ class HabitControllerTest {
     @Disabled
     void shouldRespondWith401ToUpdateHabitIfNoUserIdGiven() {
         when()
-                .post(baseUrl + "/habit/{habitId}", 1L)
+                .put(baseUrl + "/habit/{habitId}", 1L)
         .then()
                 .statusCode(UNAUTHORIZED.value());
     }
@@ -118,7 +118,7 @@ class HabitControllerTest {
                 .body(request)
                 .header(getHeaderForUserId(userId))
         .when()
-                .post(baseUrl + "/habit/{habitId}", 1L)
+                .put(baseUrl + "/habit/{habitId}", 1L)
         .then()
                 .statusCode(NOT_FOUND.value());
     }
@@ -132,7 +132,7 @@ class HabitControllerTest {
                 .body(request)
                 .header(getHeaderForUserId(userId+1))
         .when()
-                .post(baseUrl + "/habit/{habitId}", habitId)
+                .put(baseUrl + "/habit/{habitId}", habitId)
         .then()
                 .statusCode(NOT_FOUND.value());
     }

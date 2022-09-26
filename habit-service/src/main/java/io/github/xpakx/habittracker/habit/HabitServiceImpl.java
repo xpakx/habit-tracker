@@ -43,7 +43,7 @@ public class HabitServiceImpl implements HabitService {
 
     @Override
     public Habit updateHabit(Long habitId, HabitUpdateRequest request, Long userId) {
-        Habit habit = habitRepository.findByIdAndUserId(habitId, userId).orElseThrow();
+        Habit habit = habitRepository.findByIdAndUserId(habitId, userId).orElseThrow(() -> new NoSuchObjectException("No habit with id "+ habitId+"!"));
         habit.setName(request.getName());
         habit.setDescription(request.getDescription());
         habit.setInterval(request.getInterval());
