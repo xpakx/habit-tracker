@@ -151,4 +151,18 @@ class HabitControllerTest {
         return request;
     }
 
+    @Test
+    void shouldUpdateHabit() {
+        HabitUpdateRequest request = getUpdateHabitRequest("new name");
+        Long habitId = addNewHabit("old name");
+        given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .header(getHeaderForUserId(userId))
+        .when()
+                .put(baseUrl + "/habit/{habitId}", habitId)
+        .then()
+                .statusCode(OK.value())
+                .body("name", equalTo(request.getName()));
+    }
 }
