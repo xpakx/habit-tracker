@@ -204,4 +204,36 @@ class HabitControllerTest {
                 .body("name", hasItem(equalTo("third")))
                 .body("name", not(hasItem(equalTo("fourth"))));
     }
+
+    @Test
+    @Disabled
+    void shouldRespondWith401ToGetDailyHabitsIfNoUserIdGiven() {
+        when()
+                .get(baseUrl + "/habit/daily")
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldReturnDailyHabits() {
+        HabitUpdateRequest request = getUpdateHabitRequest("new name");
+        LocalDateTime date = LocalDateTime.now();
+        addNewHabit("first", date);
+        addNewHabit("second", date);
+        addNewHabit("third", date);
+        addNewHabit("fourth", date.minusDays(1));
+        given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/habit/daily")
+        .then()
+                .statusCode(OK.value())
+                .body("$", hasSize(3))
+                .body("name", hasItem(equalTo("first")))
+                .body("name", hasItem(equalTo("second")))
+                .body("name", hasItem(equalTo("third")))
+                .body("name", not(hasItem(equalTo("fourth"))));
+    }
 }
