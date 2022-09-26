@@ -22,26 +22,19 @@ public class AuthFilter extends OncePerRequestFilter {
         String headerId = request.getHeader("id");
         if(headerId == null) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.getWriter().write(convertObjectToJson(constructErrorBody()));
+            response.getWriter().write(constructErrorBody());
             return;
         }
-        logger.info("Successfully authenticated user with id" + headerId);
+        logger.info("Successfully authenticated user with id " + headerId);
         filterChain.doFilter(request, response);
     }
 
-    private ErrorResponse constructErrorBody() {
+    private String constructErrorBody() throws JsonProcessingException {
         ErrorResponse errorBody = new ErrorResponse();
         errorBody.setMessage("User unauthorized!");
         errorBody.setStatus(HttpStatus.UNAUTHORIZED.getReasonPhrase());
         errorBody.setError(HttpStatus.UNAUTHORIZED.value());
-        return errorBody;
-    }
-
-    public String convertObjectToJson(Object object) throws JsonProcessingException {
-        if (object == null) {
-            return null;
-        }
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(object);
+        return mapper.writeValueAsString(errorBody);
     }
 }
