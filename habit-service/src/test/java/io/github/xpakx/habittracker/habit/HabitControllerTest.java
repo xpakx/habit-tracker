@@ -6,7 +6,6 @@ import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -51,7 +50,6 @@ class HabitControllerTest {
     }
 
     @Test
-    @Disabled
     void shouldRespondWith401ToAddHabitIfNoUserIdGiven() {
         when()
                 .post(baseUrl + "/habit")
@@ -102,7 +100,6 @@ class HabitControllerTest {
     }
 
     @Test
-    @Disabled
     void shouldRespondWith401ToUpdateHabitIfNoUserIdGiven() {
         when()
                 .put(baseUrl + "/habit/{habitId}", 1L)
@@ -172,7 +169,6 @@ class HabitControllerTest {
     }
 
     @Test
-    @Disabled
     void shouldRespondWith401ToGetHabitsForDayIfNoUserIdGiven() {
         when()
                 .get(baseUrl + "/habit/date")
@@ -206,7 +202,6 @@ class HabitControllerTest {
     }
 
     @Test
-    @Disabled
     void shouldRespondWith401ToGetDailyHabitsIfNoUserIdGiven() {
         when()
                 .get(baseUrl + "/habit/daily")
@@ -235,8 +230,9 @@ class HabitControllerTest {
                 .body("name", hasItem(equalTo("second")))
                 .body("name", hasItem(equalTo("third")))
                 .body("name", not(hasItem(equalTo("fourth"))));
-    }@Test
-    @Disabled
+    }
+
+    @Test
     void shouldRespondWith401ToGetAllHabitsIfNoUserIdGiven() {
         when()
                 .get(baseUrl + "/habit")
