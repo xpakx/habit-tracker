@@ -1,10 +1,12 @@
 package io.github.xpakx.habittracker.habit;
 
 import io.github.xpakx.habittracker.habit.dto.HabitRequest;
+import io.github.xpakx.habittracker.habit.dto.HabitUpdateRequest;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,6 +51,7 @@ class HabitControllerTest {
     }
 
     @Test
+    @Disabled
     void shouldRespondWith401ToAddHabitIfNoUserIdGiven() {
         when()
                 .post(baseUrl + "/habit")
@@ -97,4 +100,55 @@ class HabitControllerTest {
         request.setTriggerName(triggerName);
         return request;
     }
+
+    @Test
+    @Disabled
+    void shouldRespondWith401ToUpdateHabitIfNoUserIdGiven() {
+        when()
+                .post(baseUrl + "/habit/{habitId}", 1L)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWithNotFoundIfHabitWithGivenIdDoesNotExist() {
+        HabitUpdateRequest request = getUpdateHabitRequest("new name");
+        given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/habit/{habitId}", 1L)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldRespondWithNotFoundIfHabitForGivenUserDoesNotExist() {
+        HabitUpdateRequest request = getUpdateHabitRequest("new name");
+        Long habitId = addNewHabit("old name");
+        given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .header(getHeaderForUserId(userId+1))
+        .when()
+                .post(baseUrl + "/habit/{habitId}", habitId)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    private Long addNewHabit(String name) {
+        Habit habit = new Habit();
+        habit.setUserId(userId);
+        habit.setName(name);
+        return habitRepository.save(habit).getId();
+    }
+
+
+    private HabitUpdateRequest getUpdateHabitRequest(String name) {
+        HabitUpdateRequest request = new HabitUpdateRequest();
+        request.setName(name);
+        return request;
+    }
+
 }
