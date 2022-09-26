@@ -175,7 +175,7 @@ class HabitControllerTest {
     @Disabled
     void shouldRespondWith401ToGetHabitsForDayIfNoUserIdGiven() {
         when()
-                .put(baseUrl + "/habit/date")
+                .get(baseUrl + "/habit/date")
         .then()
                 .statusCode(UNAUTHORIZED.value());
     }
@@ -195,7 +195,7 @@ class HabitControllerTest {
                 .queryParam("date", date.toLocalDate().toString())
                 .log().uri()
         .when()
-                .put(baseUrl + "/habit/date")
+                .get(baseUrl + "/habit/date")
         .then()
                 .statusCode(OK.value())
                 .body("$", hasSize(3))
