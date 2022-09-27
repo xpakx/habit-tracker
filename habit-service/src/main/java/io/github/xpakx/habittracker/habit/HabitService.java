@@ -4,7 +4,6 @@ import io.github.xpakx.habittracker.habit.dto.HabitRequest;
 import io.github.xpakx.habittracker.habit.dto.HabitUpdateRequest;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface HabitService {
