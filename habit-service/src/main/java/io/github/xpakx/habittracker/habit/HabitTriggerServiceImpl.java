@@ -12,7 +12,7 @@ public class HabitTriggerServiceImpl implements HabitTriggerService {
 
     @Override
     public HabitTrigger updateTrigger(Long habitId, TriggerUpdateRequest request, Long userId) {
-        HabitTrigger trigger = triggerRepository.findByHabitIdAndHabitUserId(habitId, userId).orElseThrow();
+        HabitTrigger trigger = triggerRepository.findByHabitIdAndHabitUserId(habitId, userId).orElseThrow(() -> new NoSuchObjectException("Trigger for habit with id "+habitId+" not found!"));
         trigger.setName(request.getName());
         return triggerRepository.save(trigger);
     }
