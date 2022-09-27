@@ -1,6 +1,7 @@
 package io.github.xpakx.habittracker.habit;
 
 import io.github.xpakx.habittracker.habit.dto.TriggerUpdateRequest;
+import io.github.xpakx.habittracker.habit.error.NoSuchObjectException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
