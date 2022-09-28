@@ -50,6 +50,8 @@ public class CityServiceImpl implements CityService {
         cityBuildingRepository.save(cityBuilding);
         entryRepository.saveAll(eqEntries);
 
+        BuildingResponse response = new BuildingResponse();
+        response.setName(building.getName());
         return null;
     }
 
