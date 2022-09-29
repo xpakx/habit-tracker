@@ -7,7 +7,9 @@ import io.github.xpakx.habittracker.habit.error.NoSuchObjectException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -40,8 +42,8 @@ public class HabitContextServiceImpl implements HabitContextService {
     }
 
     @Override
-    public List<HabitDetails> getHabitsForDayAndContext(LocalDateTime request, Long contextId, Long userId) {
-        LocalDateTime start = request.withHour(0).withMinute(0).withSecond(0).withNano(0);
+    public List<HabitDetails> getHabitsForDayAndContext(LocalDate date, Long contextId, Long userId) {
+        LocalDateTime start = LocalDateTime.of(date, LocalTime.MIDNIGHT);
         LocalDateTime end = start.plusDays(1);
         return habitRepository.findByNextDueBetweenAndContextIdAndUserId(start, end, contextId, userId);
     }

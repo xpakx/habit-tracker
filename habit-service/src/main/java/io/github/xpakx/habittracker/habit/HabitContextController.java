@@ -4,11 +4,12 @@ import io.github.xpakx.habittracker.habit.dto.ContextDetails;
 import io.github.xpakx.habittracker.habit.dto.HabitContextRequest;
 import io.github.xpakx.habittracker.habit.dto.HabitDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -33,7 +34,7 @@ public class HabitContextController {
     }
 
     @GetMapping("/{contextId}/habit/date")
-    public ResponseEntity<List<HabitDetails>> getHabitsForDayAndContext(@RequestParam("date") LocalDateTime date, @PathVariable Long contextId, @RequestHeader String id) {
+    public ResponseEntity<List<HabitDetails>> getHabitsForDayAndContext(@RequestParam("date") @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate date, @PathVariable Long contextId, @RequestHeader String id) {
         return new ResponseEntity<>(
                 service.getHabitsForDayAndContext(date, contextId, Long.valueOf(id)),
                 HttpStatus.OK
@@ -43,7 +44,7 @@ public class HabitContextController {
     @GetMapping("/{contextId}/habit/daily")
     public ResponseEntity<List<HabitDetails>> getDailyHabitsForContext(@PathVariable Long contextId, @RequestHeader String id) {
         return new ResponseEntity<>(
-                service.getHabitsForDayAndContext(LocalDateTime.now(), contextId, Long.valueOf(id)),
+                service.getHabitsForDayAndContext(LocalDate.now(), contextId, Long.valueOf(id)),
                 HttpStatus.OK
         );
     }
