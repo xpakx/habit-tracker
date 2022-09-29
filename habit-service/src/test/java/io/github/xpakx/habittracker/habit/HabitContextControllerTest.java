@@ -17,8 +17,8 @@ import java.util.List;
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.http.HttpStatus.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -140,4 +140,45 @@ class HabitContextControllerTest {
                 .body("name", equalTo(request.getName()));
     }
 
+    @Test
+    void shouldRespondWith401ToGetHabitsForDayAndContextIfNoUserIdGiven() {
+        when()
+                .get(baseUrl + "/{contextId}/habit/date", 1L)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldReturnHabitsForDateAndContext() {
+        LocalDateTime date = LocalDateTime.now().minusDays(5);
+        Long contextId = addNewContext("context");
+        Long otherContextId = addNewContext("second context");
+        addNewHabit("first", date, contextId);
+        addNewHabit("second", date, contextId);
+        addNewHabit("third", date, contextId);
+        addNewHabit("fourth", date, otherContextId);
+        addNewHabit("fifth", date.minusDays(1), contextId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .queryParam("date", date.toLocalDate().toString())
+                .log().uri()
+        .when()
+                .get(baseUrl + "/{contextId}/habit/date", contextId)
+        .then()
+                .statusCode(OK.value())
+                .body("$", hasSize(3))
+                .body("name", hasItem(equalTo("first")))
+                .body("name", hasItem(equalTo("second")))
+                .body("name", hasItem(equalTo("third")))
+                .body("name", not(hasItem(equalTo("fourth"))))
+                .body("name", not(hasItem(equalTo("fifth"))));
+    }
+
+    private void addNewHabit(String name, LocalDateTime date, Long contextId) {
+        Habit habit = new Habit();
+        habit.setUserId(userId);
+        habit.setName(name);
+        habit.setNextDue(date);
+        habitRepository.save(habit);
+    }
 }

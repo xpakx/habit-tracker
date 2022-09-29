@@ -178,7 +178,6 @@ class HabitControllerTest {
 
     @Test
     void shouldReturnHabitsForDate() {
-        HabitUpdateRequest request = getUpdateHabitRequest("new name");
         LocalDateTime date = LocalDateTime.now().minusDays(5);
         addNewHabit("first", date);
         addNewHabit("second", date);
@@ -186,7 +185,6 @@ class HabitControllerTest {
         addNewHabit("fourth", date.minusDays(1));
         given()
                 .contentType(ContentType.JSON)
-                .body(request)
                 .header(getHeaderForUserId(userId))
                 .queryParam("date", date.toLocalDate().toString())
                 .log().uri()
