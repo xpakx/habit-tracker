@@ -1,7 +1,7 @@
 package io.github.xpakx.habittracker.habit;
 
 import io.github.xpakx.habittracker.habit.dto.HabitContextRequest;
-import io.github.xpakx.habittracker.habit.dto.HabitRequest;
+import io.github.xpakx.habittracker.habit.dto.HabitUpdateRequest;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
@@ -80,6 +81,63 @@ class HabitContextControllerTest {
         HabitContextRequest request = new HabitContextRequest();
         request.setName(name);
         return request;
+    }
+
+    @Test
+    void shouldRespondWith401ToUpdateContextIfNoUserIdGiven() {
+        when()
+                .put(baseUrl + "/context/{contextId}", 1L)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWithNotFoundIfHContextWithGivenIdDoesNotExist() {
+        HabitContextRequest request = getContextRequest("new name");
+        given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .header(getHeaderForUserId(userId))
+        .when()
+                .put(baseUrl + "/context/{contextId}", 1L)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldRespondWithNotFoundIfContextForGivenUserDoesNotExist() {
+        HabitContextRequest request = getContextRequest("new name");
+        Long contextId = addNewContext("old name");
+        given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .header(getHeaderForUserId(userId+1))
+        .when()
+                .put(baseUrl + "/context/{contextId}", contextId)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    private Long addNewContext(String name) {
+        HabitContext context = new HabitContext();
+        context.setUserId(userId);
+        context.setName(name);
+        return contextRepository.save(context).getId();
+    }
+
+    @Test
+    void shouldUpdateHabit() {
+        HabitContextRequest request = getContextRequest("new name");
+        Long contextId = addNewContext("old name");
+        given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .header(getHeaderForUserId(userId))
+        .when()
+                .put(baseUrl + "/context/{contextId}", contextId)
+        .then()
+                .statusCode(OK.value())
+                .body("name", equalTo(request.getName()));
     }
 
 }
