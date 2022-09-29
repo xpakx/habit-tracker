@@ -3,6 +3,7 @@ package io.github.xpakx.habittracker.habit;
 import io.github.xpakx.habittracker.habit.dto.ContextDetails;
 import io.github.xpakx.habittracker.habit.dto.HabitContextRequest;
 import io.github.xpakx.habittracker.habit.dto.HabitDetails;
+import io.github.xpakx.habittracker.habit.error.NoSuchObjectException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,7 @@ public class HabitContextServiceImpl implements HabitContextService {
 
     @Override
     public HabitContext updateContext(Long contextId, HabitContextRequest request, Long userId) {
-        HabitContext context = contextRepository.findByIdAndUserId(contextId, userId).orElseThrow();
+        HabitContext context = contextRepository.findByIdAndUserId(contextId, userId).orElseThrow(() -> new NoSuchObjectException("No context with id "+ contextId+"!"));
         context.setName(request.getName());
         context.setDescription(request.getDescription());
         context.setTimeBounded(request.isTimeBounded());
