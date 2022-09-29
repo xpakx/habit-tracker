@@ -182,4 +182,36 @@ class HabitContextControllerTest {
         habit.setContext(contextRepository.getReferenceById(contextId));
         habitRepository.save(habit);
     }
+
+    @Test
+    void shouldRespondWith401ToGetDailyHabitsForContextIfNoUserIdGiven() {
+        when()
+                .get(baseUrl + "/context/{contextId}/habit/daily", 1L)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldReturnDailyHabitsForContext() {
+        LocalDateTime date = LocalDateTime.now();
+        Long contextId = addNewContext("context");
+        Long otherContextId = addNewContext("second context");
+        addNewHabit("first", date, contextId);
+        addNewHabit("second", date, contextId);
+        addNewHabit("third", date,contextId);
+        addNewHabit("fourth", date, otherContextId);
+        addNewHabit("fifth", date.minusDays(1), contextId);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/context/{contextId}/habit/daily", contextId)
+        .then()
+                .statusCode(OK.value())
+                .body("$", hasSize(3))
+                .body("name", hasItem(equalTo("first")))
+                .body("name", hasItem(equalTo("second")))
+                .body("name", hasItem(equalTo("third")))
+                .body("name", not(hasItem(equalTo("fourth"))))
+                .body("name", not(hasItem(equalTo("fifth"))));
+    }
 }

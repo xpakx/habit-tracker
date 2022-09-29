@@ -240,15 +240,12 @@ class HabitControllerTest {
 
     @Test
     void shouldReturnAllHabits() {
-        HabitUpdateRequest request = getUpdateHabitRequest("new name");
         LocalDateTime date = LocalDateTime.now();
         addNewHabit("first", date);
         addNewHabit("second", date.minusDays(1));
         addNewHabit("third", date.minusDays(5));
         addNewHabit("fourth", date.minusDays(100));
         given()
-                .contentType(ContentType.JSON)
-                .body(request)
                 .header(getHeaderForUserId(userId))
         .when()
                 .get(baseUrl + "/habit")
