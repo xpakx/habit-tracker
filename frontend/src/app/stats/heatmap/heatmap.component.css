@@ -1,0 +1,33 @@
+
+
+.heatmap {
+    display: grid;
+    grid-template-columns: repeat(52, var(--field-size));
+    grid-template-rows: repeat(7, var(--field-size));
+    row-gap: var(--gap-size);
+    column-gap: var(--gap-size);
+    grid-auto-flow: column;
+}
+
+.field {
+    background-color: #161b22;
+    border-radius: 3px;
+    width: var(--field-size);
+    height: var(--field-size);
+}
+
+.field.contr-lvl-1 {
+    background-color: #0e4429;
+}
+
+.field.contr-lvl-2 {
+    background-color: #006d32;
+}
+
+.field.contr-lvl-3 {
+    background-color: #26a641;
+}
+
+.field.contr-lvl-4 {
+    background-color: #39d353;
+}

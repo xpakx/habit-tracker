@@ -4,3 +4,8 @@ html, body {
     padding: 0;
     color: #696774;
 }
+
+:root {
+    --field-size: 13px;
+    --gap-size: 2px;
+}

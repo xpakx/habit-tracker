@@ -11,10 +11,13 @@ import { StatsService } from '../stats.service';
 export class OverallStatsComponent implements OnInit {
   stats?: StatsResponse = {completions:9, days: [
     {dayOfYear: 5, completions: 2},
-    {dayOfYear: 6, completions: 2},
-    {dayOfYear: 10, completions: 3},
-    {dayOfYear: 11, completions: 2},
-    {dayOfYear: 44, completions: 2}
+    {dayOfYear: 1, completions:5},
+    {dayOfYear: 2, completions:3},
+    {dayOfYear: 7, completions:11},
+    {dayOfYear: 20, completions:40},
+    {dayOfYear: 21, completions:16},
+    {dayOfYear: 100, completions: 2},
+    {dayOfYear: 363, completions: 13},
   ]};
 
   constructor(private statsService: StatsService) { }
