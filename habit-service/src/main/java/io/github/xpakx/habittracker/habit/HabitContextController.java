@@ -21,7 +21,7 @@ public class HabitContextController {
     public ResponseEntity<HabitContext> addContext(@RequestBody HabitContextRequest request, @RequestHeader String id) {
         return new ResponseEntity<>(
                 service.addContext(request, Long.valueOf(id)),
-                HttpStatus.OK
+                HttpStatus.CREATED
         );
     }
     @PutMapping("/{contextId}")
