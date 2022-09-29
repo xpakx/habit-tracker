@@ -5,18 +5,16 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-public class HabitDetails {
-    private Long id;
-    private String name;
-    private String description;
-    private Integer interval;
-    private Integer dailyCompletions;
-    private LocalDateTime start;
-    private LocalDateTime nextDue;
+public interface HabitDetails {
+    Long getId();
+    String getName();
+    String getDescription();
+    Integer getInterval();
+    Integer getDailyCompletions();
+    LocalDateTime getStart();
+    LocalDateTime getNextDue();
 
-    private HabitContextMin context;
-    private HabitTriggerMin trigger;
-    private Integer difficulty;
+    HabitContextMin getContext();
+    HabitTriggerMin getTrigger();
+    Integer getDifficulty();
 }

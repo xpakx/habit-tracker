@@ -143,7 +143,7 @@ class HabitContextControllerTest {
     @Test
     void shouldRespondWith401ToGetHabitsForDayAndContextIfNoUserIdGiven() {
         when()
-                .get(baseUrl + "/{contextId}/habit/date", 1L)
+                .get(baseUrl + "/context/{contextId}/habit/date", 1L)
         .then()
                 .statusCode(UNAUTHORIZED.value());
     }
@@ -163,7 +163,7 @@ class HabitContextControllerTest {
                 .queryParam("date", date.toLocalDate().toString())
                 .log().uri()
         .when()
-                .get(baseUrl + "/{contextId}/habit/date", contextId)
+                .get(baseUrl + "/context/{contextId}/habit/date", contextId)
         .then()
                 .statusCode(OK.value())
                 .body("$", hasSize(3))
@@ -179,6 +179,7 @@ class HabitContextControllerTest {
         habit.setUserId(userId);
         habit.setName(name);
         habit.setNextDue(date);
+        habit.setContext(contextRepository.getReferenceById(contextId));
         habitRepository.save(habit);
     }
 }
