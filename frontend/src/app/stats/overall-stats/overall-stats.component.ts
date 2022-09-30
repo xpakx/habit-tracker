@@ -17,7 +17,7 @@ export class OverallStatsComponent implements OnInit {
     {dayOfYear: 20, completions:40},
     {dayOfYear: 21, completions:16},
     {dayOfYear: 100, completions: 2},
-    {dayOfYear: 363, completions: 13},
+    {dayOfYear: 365, completions: 13},
   ]};
 
   constructor(private statsService: StatsService) { }
