@@ -26,4 +26,10 @@ export class HeatmapComponent implements OnInit {
     ));
   }
 
+  dayPlusDays(date: Date, days: number): Date {
+    var date = new Date(date.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+  }
+
 }

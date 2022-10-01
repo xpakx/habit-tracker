@@ -1,8 +1,10 @@
 <div class="heatmap">
     <ng-container *ngFor="let day of days; let i = index">
         <ng-container *ngIf="i > 0 && dateDiff(day.date, days[i-1].date) > 1">
-            <div class="field" *ngFor="let _ of [].constructor(dateDiff(day.date, days[i-1].date) - 1)">
-                <div class="tooltip">No completions</div>
+            <div class="field" *ngFor="let _ of [].constructor(dateDiff(day.date, days[i-1].date) - 1); let j = index">
+                <div class="tooltip">
+                    <strong>No completions</strong> on {{ dayPlusDays(days[i-1].date, j+1) | date: 'd MMM yyyy'}}
+                </div>
             </div>
         </ng-container>
         <div class="field" 
@@ -11,7 +13,9 @@
         [class.contr-lvl-3]="day.completions >= 10 && day.completions < 15" 
         [class.contr-lvl-4]="day.completions >= 15"
         >
-        <div class="tooltip">{{ day.completions }} completions</div>
+            <div class="tooltip">
+                <strong>{{ day.completions }} completions</strong> on {{ day.date | date: 'd MMM yyyy'}}
+            </div>
         </div>
     </ng-container>
 </div>
