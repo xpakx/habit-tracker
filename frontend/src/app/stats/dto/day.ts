@@ -1,4 +1,4 @@
 export interface Day {
-    dayOfYear: number;
+    date: Date;
     completions: number;
 }

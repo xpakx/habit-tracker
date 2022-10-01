@@ -1,7 +1,7 @@
 <div class="heatmap">
     <ng-container *ngFor="let day of days; let i = index">
-        <ng-container *ngIf="i > 0 && day.dayOfYear - days[i-1].dayOfYear > 1">
-            <div class="field" *ngFor="let _ of [].constructor(day.dayOfYear - days[i-1].dayOfYear - 1)">
+        <ng-container *ngIf="i > 0 && dateDiff(day.date, days[i-1].date) > 1">
+            <div class="field" *ngFor="let _ of [].constructor(dateDiff(day.date, days[i-1].date) - 1)">
                 <div class="tooltip">No completions</div>
             </div>
         </ng-container>

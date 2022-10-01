@@ -13,6 +13,17 @@ export class HeatmapComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    this.days[0].date.getDate()
+  }
+
+  dateDiff(date2: Date, date1: Date): number {
+    return Math.floor(
+      (
+        Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate()) - 
+        Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate()) 
+      ) 
+      /(1000 * 60 * 60 * 24
+    ));
   }
 
 }

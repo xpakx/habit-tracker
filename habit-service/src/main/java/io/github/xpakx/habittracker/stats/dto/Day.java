@@ -10,6 +10,6 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 public class Day {
-    LocalDate dayOfYear;
+    LocalDate date;
     int completions;
 }

@@ -42,7 +42,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .collect(Collectors.groupingBy((c) -> c.getDate().toLocalDate()));
         List<Day> heatMapElems = map.keySet().stream()
                 .map((c) -> new Day(c, map.get(c).size()))
-                .sorted(Comparator.comparing(Day::getDayOfYear))
+                .sorted(Comparator.comparing(Day::getDate))
                 .toList();
         StatsResponse response = new StatsResponse();
         response.setDays(heatMapElems);
