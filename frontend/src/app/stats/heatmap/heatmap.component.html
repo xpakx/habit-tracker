@@ -1,4 +1,5 @@
 <div class="heatmap">
+    <div class="field blank" *ngFor="let _ of [].constructor(days[0].date.getDay())"></div>
     <ng-container *ngFor="let day of days; let i = index">
         <ng-container *ngIf="i > 0 && dateDiff(day.date, days[i-1].date) > 1">
             <div class="field" *ngFor="let _ of [].constructor(dateDiff(day.date, days[i-1].date) - 1); let j = index">
