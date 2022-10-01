@@ -7,6 +7,7 @@ import io.github.xpakx.habittracker.stats.dto.StatsResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -37,12 +38,11 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private StatsResponse completionsToStats(List<HabitCompletion> completions) {
-        int currentDayOfYear = LocalDateTime.now().getDayOfYear();
-        Map<Integer, List<HabitCompletion>> map =  completions.stream()
-                .collect(Collectors.groupingBy((c) -> c.getDate().getDayOfYear()));
+        Map<LocalDate, List<HabitCompletion>> map =  completions.stream()
+                .collect(Collectors.groupingBy((c) -> c.getDate().toLocalDate()));
         List<Day> heatMapElems = map.keySet().stream()
-                .map((c) -> new Day(c > currentDayOfYear ? currentDayOfYear - c : c, map.get(c).size()))
-                .sorted(Comparator.comparingInt(Day::getDayOfYear))
+                .map((c) -> new Day(c, map.get(c).size()))
+                .sorted(Comparator.comparing(Day::getDayOfYear))
                 .toList();
         StatsResponse response = new StatsResponse();
         response.setDays(heatMapElems);
