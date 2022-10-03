@@ -119,10 +119,15 @@ class HabitContextControllerTest {
     }
 
     private Long addNewContext(String name) {
+        return addNewContext(name, userId);
+    }
+
+    private Long addNewContext(String name, Long owner) {
         HabitContext context = new HabitContext();
-        context.setUserId(userId);
+        context.setUserId(owner);
         context.setName(name);
         return contextRepository.save(context).getId();
+
     }
 
     @Test
@@ -245,5 +250,30 @@ class HabitContextControllerTest {
                 .body("name", hasItem(equalTo("third")))
                 .body("name", not(hasItem(equalTo("fourth"))))
                 .body("name", hasItem(equalTo("fifth")));
+    }
+
+    @Test
+    void shouldRespondWith401ToGetContextsIfNoUserIdGiven() {
+        when()
+                .get(baseUrl + "/context/all")
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldReturnContexts() {
+        addNewContext("first");
+        addNewContext("second");
+        addNewContext("third", userId+1);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/context/all")
+        .then()
+                .statusCode(OK.value())
+                .body("$", hasSize(2))
+                .body("name", hasItem(equalTo("first")))
+                .body("name", hasItem(equalTo("second")))
+                .body("name", not(hasItem(equalTo("third"))));
     }
 }
