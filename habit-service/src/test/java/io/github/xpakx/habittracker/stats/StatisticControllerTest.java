@@ -77,6 +77,13 @@ class StatisticControllerTest {
         return addNewHabit(name, contextId, userId);
     }
 
+    private Long addNewHabit(String name) {
+        Habit habit = new Habit();
+        habit.setUserId(userId);
+        habit.setName(name);
+        return habitRepository.save(habit).getId();
+    }
+
     @Test
     void shouldRespondWith401ToGetStatsForContextIfNoUserIdGiven() {
         when()
@@ -165,5 +172,71 @@ class StatisticControllerTest {
                 .body("completions", equalTo(3));
     }
 
+    @Test
+    void shouldRespondWith401ToGetStatsForHabitIfNoUserIdGiven() {
+        when()
+                .get(baseUrl + "/habit/{habitId}/stats", 1L)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
 
+    @Test
+    void shouldRespondEmptyListIfHabitDoesNotExist() {
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/habit/{habitId}/stats", 1L)
+        .then()
+                .statusCode(OK.value())
+                .body("days", hasSize(0))
+                .body("completions", equalTo(0));
+    }
+
+    @Test
+    void shouldRespondEmptyListIfHabitHasNoCompletions() {
+        Long habitId = addNewHabit("habit1");
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/habit/{habitId}/stats", habitId)
+        .then()
+                .statusCode(OK.value())
+                .body("days", hasSize(0))
+                .body("completions", equalTo(0));
+    }
+
+    @Test
+    void shouldRespondEmptyListIfHabitHasOnlyCompletionsOlderThanYear() {
+        LocalDateTime date = LocalDateTime.now().minusYears(1).minusDays(2);
+        Long habit1Id = addNewHabit("habit1");
+        completeHabit(habit1Id, date);
+        completeHabit(habit1Id, date);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/habit/{habitId}/stats", habit1Id)
+        .then()
+                .statusCode(OK.value())
+                .body("days", hasSize(0))
+                .body("completions", equalTo(0));
+    }
+
+    @Test
+    void shouldRespondWithStatsForHabit() {
+        LocalDateTime date = LocalDateTime.now().minusMonths(5);
+        Long habit1Id = addNewHabit("habit1");
+        completeHabit(habit1Id, date);
+        completeHabit(habit1Id, date.minusDays(3));
+        completeHabit(habit1Id, date.minusDays(5));
+        completeHabit(habit1Id, date.minusDays(5));
+        completeHabit(habit1Id, date.minusYears(3));
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/habit/{habitId}/stats", habit1Id)
+        .then()
+                .statusCode(OK.value())
+                .body("days", hasSize(3))
+                .body("completions", equalTo(4));
+    }
 }
