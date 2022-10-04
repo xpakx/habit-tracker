@@ -21,7 +21,7 @@ public class StatisticController {
     }
 
     @GetMapping("/habit/stats")
-    public ResponseEntity<StatsResponse> getDailyHabits(@RequestHeader String id) {
+    public ResponseEntity<StatsResponse> getOverallStats(@RequestHeader String id) {
         return new ResponseEntity<>(
                 service.getStats(Long.valueOf(id)),
                 HttpStatus.OK
@@ -29,7 +29,7 @@ public class StatisticController {
     }
 
     @GetMapping("/habit/{habitId}/stats")
-    public ResponseEntity<StatsResponse> getDailyHabits(@PathVariable Long habitId, @RequestHeader String id) {
+    public ResponseEntity<StatsResponse> getStatsForHabit(@PathVariable Long habitId, @RequestHeader String id) {
         return new ResponseEntity<>(
                 service.getStatsForHabit(habitId, Long.valueOf(id)),
                 HttpStatus.OK
