@@ -4,6 +4,7 @@ import io.github.xpakx.habittracker.habit.*;
 import io.github.xpakx.habittracker.habit.dto.HabitContextRequest;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
+import net.bytebuddy.asm.Advice;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,8 @@ class StatisticControllerTest {
     HabitRepository habitRepository;
     @Autowired
     HabitContextRepository contextRepository;
+    @Autowired
+    HabitCompletionRepository completionRepository;
 
     @BeforeEach
     void setUp() {
@@ -41,6 +44,7 @@ class StatisticControllerTest {
 
     @AfterEach
     void tearDown() {
+        completionRepository.deleteAll();
         habitRepository.deleteAll();
         contextRepository.deleteAll();
     }
@@ -61,13 +65,16 @@ class StatisticControllerTest {
 
     }
 
-    private void addNewHabit(String name, LocalDateTime date, Long contextId) {
+    private Long addNewHabit(String name, Long contextId, Long userId) {
         Habit habit = new Habit();
         habit.setUserId(userId);
         habit.setName(name);
-        habit.setNextDue(date);
         habit.setContext(contextRepository.getReferenceById(contextId));
-        habitRepository.save(habit);
+        return habitRepository.save(habit).getId();
+    }
+
+    private Long addNewHabit(String name, Long contextId) {
+        return addNewHabit(name, contextId, userId);
     }
 
     @Test
@@ -101,6 +108,39 @@ class StatisticControllerTest {
                 .statusCode(OK.value())
                 .body("days", hasSize(0))
                 .body("completions", equalTo(0));
+    }
+
+    @Test
+    void shouldRespondEmptyListIfContextHasOnlyCompletionsOlderThanYear() {
+        Long contextId = addNewContext("context");
+        LocalDateTime date = LocalDateTime.now().minusYears(1).minusDays(2);
+        Long habit1Id = addNewHabit("habit1", contextId);
+        Long habit2Id = addNewHabit("habit2", contextId);
+        Long habit3Id = addNewHabit("habit3", contextId, userId+1);
+        completeHabit(habit1Id, date);
+        completeHabit(habit1Id, date);
+        completeHabit(habit2Id, date);
+        completeHabit(habit3Id, date);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/context/{contextId}/stats", contextId)
+        .then()
+                .statusCode(OK.value())
+                .body("days", hasSize(0))
+                .body("completions", equalTo(0));
+    }
+
+    private void completeHabit(Long habitId, LocalDateTime date) {
+        completeHabit(habitId, date, userId);
+    }
+
+    private void completeHabit(Long habit1Id, LocalDateTime date, Long userId) {
+        HabitCompletion completion = new HabitCompletion();
+        completion.setUserId(userId);
+        completion.setDate(date);
+        completion.setHabit(habitRepository.getReferenceById(habit1Id));
+        completionRepository.save(completion);
     }
 
 
