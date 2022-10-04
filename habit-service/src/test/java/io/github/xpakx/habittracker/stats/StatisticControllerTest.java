@@ -143,5 +143,27 @@ class StatisticControllerTest {
         completionRepository.save(completion);
     }
 
+    @Test
+    void shouldRespondWithStatsForContext() {
+        Long contextId = addNewContext("context");
+        LocalDateTime date = LocalDateTime.now().minusMonths(5);
+        Long habit1Id = addNewHabit("habit1", contextId);
+        Long habit2Id = addNewHabit("habit2", contextId);
+        Long habitThatBelongToDifferentUser = addNewHabit("habit3", contextId, userId+1);
+        completeHabit(habit1Id, date);
+        completeHabit(habit1Id, date.minusDays(3));
+        completeHabit(habit1Id, date.minusYears(3));
+        completeHabit(habit2Id, date);
+        completeHabit(habitThatBelongToDifferentUser, date, userId+1);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/context/{contextId}/stats", contextId)
+        .then()
+                .statusCode(OK.value())
+                .body("days", hasSize(2))
+                .body("completions", equalTo(3));
+    }
+
 
 }
