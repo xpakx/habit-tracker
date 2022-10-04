@@ -1,7 +1,6 @@
 package io.github.xpakx.habittracker.habit;
 
 import io.github.xpakx.habittracker.habit.dto.HabitContextRequest;
-import io.github.xpakx.habittracker.habit.dto.HabitUpdateRequest;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
