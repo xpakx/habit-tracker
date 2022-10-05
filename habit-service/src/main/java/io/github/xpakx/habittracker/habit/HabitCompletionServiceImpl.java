@@ -2,6 +2,7 @@ package io.github.xpakx.habittracker.habit;
 
 import io.github.xpakx.habittracker.clients.GamificationPublisher;
 import io.github.xpakx.habittracker.habit.dto.CompletionRequest;
+import io.github.xpakx.habittracker.habit.error.NoSuchObjectException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +20,8 @@ public class HabitCompletionServiceImpl implements HabitCompletionService {
     @Override
     @Transactional
     public HabitCompletion completeHabit(Long habitId, CompletionRequest request, Long userId) {
-        Habit habit = habitRepository.findByIdAndUserId(habitId, userId).orElseThrow();
+        Habit habit = habitRepository.findByIdAndUserId(habitId, userId)
+                .orElseThrow(() -> new NoSuchObjectException("Habit with id "+habitId+" not found!"));
         HabitCompletion completion = new HabitCompletion();
         completion.setHabit(habit);
         completion.setDate(request.getDate());
