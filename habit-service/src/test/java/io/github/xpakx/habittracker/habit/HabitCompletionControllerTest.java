@@ -1,6 +1,8 @@
 package io.github.xpakx.habittracker.habit;
 
 import io.github.xpakx.habittracker.clients.GamificationPublisher;
+import io.github.xpakx.habittracker.habit.dto.CompletionRequest;
+import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
+
+import java.time.LocalDateTime;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
@@ -69,11 +73,20 @@ class HabitCompletionControllerTest {
 
     @Test
     void shouldRespondWith404ToCompleteHabitIfHabitDoesNotExist() {
+        CompletionRequest request = getCompletionRequest();
         given()
+                .contentType(ContentType.JSON)
+                .body(request)
                 .header(getHeaderForUserId(userId))
         .when()
-                .get(baseUrl + "/habit/{habitId}/completion", 1L)
+                .post(baseUrl + "/habit/{habitId}/completion", 1L)
         .then()
                 .statusCode(NOT_FOUND.value());
+    }
+
+    private CompletionRequest getCompletionRequest() {
+        CompletionRequest request = new CompletionRequest();
+        request.setDate(LocalDateTime.now());
+        return request;
     }
 }
