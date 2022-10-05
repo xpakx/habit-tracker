@@ -1,10 +1,7 @@
 package io.github.xpakx.habittracker.stats;
 
 import io.github.xpakx.habittracker.habit.*;
-import io.github.xpakx.habittracker.habit.dto.HabitContextRequest;
-import io.restassured.http.ContentType;
 import io.restassured.http.Header;
-import net.bytebuddy.asm.Advice;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -234,6 +231,62 @@ class StatisticControllerTest {
                 .header(getHeaderForUserId(userId))
         .when()
                 .get(baseUrl + "/habit/{habitId}/stats", habit1Id)
+        .then()
+                .statusCode(OK.value())
+                .body("days", hasSize(3))
+                .body("completions", equalTo(4));
+    }
+
+    @Test
+    void shouldRespondWith401ToGetStatsIfNoUserIdGiven() {
+        when()
+                .get(baseUrl + "/habit/stats")
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondEmptyListIfUserHasNoCompletions() {
+        addNewHabit("habit1");
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/habit/stats")
+        .then()
+                .statusCode(OK.value())
+                .body("days", hasSize(0))
+                .body("completions", equalTo(0));
+    }
+
+    @Test
+    void shouldRespondEmptyListIfUserHasOnlyCompletionsOlderThanYear() {
+        LocalDateTime date = LocalDateTime.now().minusYears(1).minusDays(2);
+        Long habit1Id = addNewHabit("habit1");
+        completeHabit(habit1Id, date);
+        completeHabit(habit1Id, date);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/habit/stats")
+        .then()
+                .statusCode(OK.value())
+                .body("days", hasSize(0))
+                .body("completions", equalTo(0));
+    }
+
+    @Test
+    void shouldRespondWithStats() {
+        LocalDateTime date = LocalDateTime.now().minusMonths(5);
+        Long habit1Id = addNewHabit("habit1");
+        completeHabit(habit1Id, date);
+        completeHabit(habit1Id, date.minusDays(3));
+        completeHabit(habit1Id, date.minusDays(5));
+        completeHabit(habit1Id, date.minusDays(5));
+        completeHabit(habit1Id, date.minusYears(3));
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/habit/stats")
         .then()
                 .statusCode(OK.value())
                 .body("days", hasSize(3))
