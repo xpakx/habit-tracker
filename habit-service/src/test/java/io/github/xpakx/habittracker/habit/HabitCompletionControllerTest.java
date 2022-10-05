@@ -12,14 +12,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpStatus.*;
 
@@ -110,5 +110,25 @@ class HabitCompletionControllerTest {
                 .statusCode(CREATED.value());
         List<HabitCompletion> completions = completionRepository.findAll();
         assertThat(completions, hasSize(1));
+    }
+
+
+
+    @Test
+    void shouldRescheduleHabitIfAllDailyCompletionsFinished() {
+        CompletionRequest request = getCompletionRequest();
+        Long habitId = addNewHabit("habit");
+        given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/habit/{habitId}/completion", habitId)
+        .then()
+                .statusCode(CREATED.value());
+        Habit habit = habitRepository.findById(habitId).orElse(null);
+        assertNotNull(habit);
+        assertThat(habit.getCompletions(), equalTo(0));
+        assertThat(habit.getNextDue().toLocalDate().minusDays(1), equalTo(LocalDate.now()));
     }
 }
