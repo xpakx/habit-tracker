@@ -13,9 +13,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,6 +62,10 @@ class HabitCompletionControllerTest {
         Habit habit = new Habit();
         habit.setUserId(userId);
         habit.setName(name);
+        habit.setCompletions(0);
+        habit.setDailyCompletions(1);
+        habit.setInterval(1);
+        habit.setNextDue(LocalDateTime.now());
         return habitRepository.save(habit).getId();
     }
 
@@ -88,5 +94,21 @@ class HabitCompletionControllerTest {
         CompletionRequest request = new CompletionRequest();
         request.setDate(LocalDateTime.now());
         return request;
+    }
+
+    @Test
+    void shouldCompleteHabit() {
+        CompletionRequest request = getCompletionRequest();
+        Long habitId = addNewHabit("habit");
+        given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/habit/{habitId}/completion", habitId)
+        .then()
+                .statusCode(CREATED.value());
+        List<HabitCompletion> completions = completionRepository.findAll();
+        assertThat(completions, hasSize(1));
     }
 }
