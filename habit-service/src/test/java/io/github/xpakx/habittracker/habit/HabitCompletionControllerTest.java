@@ -7,6 +7,8 @@ import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,6 +23,8 @@ import static io.restassured.RestAssured.when;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -112,8 +116,6 @@ class HabitCompletionControllerTest {
         assertThat(completions, hasSize(1));
     }
 
-
-
     @Test
     void shouldRescheduleHabitIfAllDailyCompletionsFinished() {
         CompletionRequest request = getCompletionRequest();
@@ -130,5 +132,19 @@ class HabitCompletionControllerTest {
         assertNotNull(habit);
         assertThat(habit.getCompletions(), equalTo(0));
         assertThat(habit.getNextDue().toLocalDate().minusDays(1), equalTo(LocalDate.now()));
+    }
+
+    @Test
+    void shouldSendEventAfterCompletion() {
+        CompletionRequest request = getCompletionRequest();
+        Long habitId = addNewHabit("habit");
+        given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/habit/{habitId}/completion", habitId);
+        verify(publisher, times(1))
+                .sendCompletion(ArgumentMatchers.any(HabitCompletion.class));
     }
 }
