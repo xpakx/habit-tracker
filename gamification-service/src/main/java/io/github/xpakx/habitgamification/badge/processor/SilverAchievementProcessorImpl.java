@@ -1,15 +1,16 @@
-package io.github.xpakx.habitgamification.badge;
+package io.github.xpakx.habitgamification.badge.processor;
 
-import io.github.xpakx.habitgamification.badge.AchievementProcessor;
 import io.github.xpakx.habitgamification.badge.Badge;
 import io.github.xpakx.habitgamification.gamification.dto.HabitCompletionEvent;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-public class GoldAchievementProcessorImpl implements AchievementProcessor {
+@Component
+public class SilverAchievementProcessorImpl implements AchievementProcessor {
     @Override
     public Optional<Badge> process(HabitCompletionEvent completion, int experience) {
-        if(experience >= 15000) {
+        if(experience >= 5000) {
             return Optional.of(type());
         }
         return Optional.empty();
@@ -17,6 +18,6 @@ public class GoldAchievementProcessorImpl implements AchievementProcessor {
 
     @Override
     public Badge type() {
-        return Badge.GOLD;
+        return Badge.SILVER;
     }
 }

@@ -1,5 +1,6 @@
-package io.github.xpakx.habitgamification.badge;
+package io.github.xpakx.habitgamification.badge.processor;
 
+import io.github.xpakx.habitgamification.badge.Badge;
 import io.github.xpakx.habitgamification.gamification.dto.HabitCompletionEvent;
 import org.springframework.stereotype.Component;
 

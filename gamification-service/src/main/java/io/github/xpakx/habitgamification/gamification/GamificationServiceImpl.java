@@ -1,7 +1,7 @@
 package io.github.xpakx.habitgamification.gamification;
 
 import io.github.xpakx.habitgamification.badge.Achievement;
-import io.github.xpakx.habitgamification.badge.AchievementProcessor;
+import io.github.xpakx.habitgamification.badge.processor.AchievementProcessor;
 import io.github.xpakx.habitgamification.badge.AchievementRepository;
 import io.github.xpakx.habitgamification.badge.Badge;
 import io.github.xpakx.habitgamification.gamification.dto.CompletionResult;

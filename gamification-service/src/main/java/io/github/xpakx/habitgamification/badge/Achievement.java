@@ -1,6 +1,5 @@
 package io.github.xpakx.habitgamification.badge;
 
-import io.github.xpakx.habitgamification.badge.Badge;
 import lombok.*;
 
 import javax.persistence.Entity;
