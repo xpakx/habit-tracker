@@ -1,4 +1,4 @@
-package io.github.xpakx.habitgamification.gamification;
+package io.github.xpakx.habitgamification.badge;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

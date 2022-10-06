@@ -1,5 +1,6 @@
-package io.github.xpakx.habitgamification.gamification;
+package io.github.xpakx.habitgamification.badge;
 
+import io.github.xpakx.habitgamification.badge.Badge;
 import io.github.xpakx.habitgamification.gamification.dto.HabitCompletionEvent;
 
 import java.util.Optional;
