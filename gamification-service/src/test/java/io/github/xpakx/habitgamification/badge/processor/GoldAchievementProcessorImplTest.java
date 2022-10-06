@@ -11,34 +11,35 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SilverAchievementProcessorImplTest {
+class GoldAchievementProcessorImplTest {
     private AchievementProcessor processor;
 
     @BeforeEach
     void setUp() {
-        processor = new SilverAchievementProcessorImpl();
+        processor = new GoldAchievementProcessorImpl();
     }
 
     @Test
     void shouldReturnBadgeType() {
         Badge result = processor.type();
-        assertEquals(Badge.SILVER, result);
+        assertEquals(Badge.GOLD, result);
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {5000, 5001, 7000, Integer.MAX_VALUE})
-    void shouldReturnBadgeForExpHigherThanOrEqual5000(int experience) {
+    @ValueSource(ints = {15000, 15001, 17000, Integer.MAX_VALUE})
+    void shouldReturnBadgeForExpHigherThanOrEqual15000(int experience) {
         HabitCompletionEvent event = new HabitCompletionEvent();
         Optional<Badge> result = processor.process(event, experience);
         assertTrue(result.isPresent());
-        assertEquals(Badge.SILVER, result.get());
+        assertEquals(Badge.GOLD, result.get());
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {0, 12, 4999, Integer.MIN_VALUE, -1, -100})
-    void shouldNotReturnBadgeForExpLowerThan5000(int experience) {
+    @ValueSource(ints = {0, 48, 14999, Integer.MIN_VALUE, -1, -100})
+    void shouldNotReturnBadgeForExpLowerThan15000(int experience) {
         HabitCompletionEvent event = new HabitCompletionEvent();
         Optional<Badge> result = processor.process(event, experience);
         assertTrue(result.isEmpty());
     }
+
 }
