@@ -2,6 +2,7 @@ package io.github.xpakx.habitgamification.gamification;
 
 import io.github.xpakx.habitgamification.badge.Achievement;
 import io.github.xpakx.habitgamification.badge.AchievementRepository;
+import io.github.xpakx.habitgamification.badge.Badge;
 import io.github.xpakx.habitgamification.gamification.dto.HabitCompletionEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,5 +87,16 @@ class GamificationServiceTest {
         entry.setUserId(userId);
         entry.setExperience(exp);
         return entry;
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {995, 999, 1000, 1001})
+    void shouldAddBadge(int initialExp) {
+        addExpEntries(initialExp);
+        HabitCompletionEvent event = getEvent();
+        service.newAttempt(event);
+        List<Achievement> result = achievementRepository.findAll();
+        assertEquals(1, result.size());
+        assertEquals(result.get(0).getBadgeType(), Badge.BRONZE);
     }
 }
