@@ -99,4 +99,20 @@ class GamificationServiceTest {
         assertEquals(1, result.size());
         assertEquals(result.get(0).getBadgeType(), Badge.BRONZE);
     }
+
+    @Test
+    void shouldNotAddAlreadyAddedBadge() {
+        addExpEntries(1000);
+        addAchievement(Badge.BRONZE);
+        HabitCompletionEvent event = getEvent();
+        service.newAttempt(event);
+        List<Achievement> result = achievementRepository.findAll();
+        assertEquals(1, result.size());
+    }
+
+    private void addAchievement(Badge badge) {
+        Achievement achievement = new Achievement();
+        achievement.setBadgeType(badge);
+        achievementRepository.save(achievement);
+    }
 }
