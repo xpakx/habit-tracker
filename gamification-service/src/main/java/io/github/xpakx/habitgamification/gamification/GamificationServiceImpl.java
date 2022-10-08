@@ -12,10 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,7 +31,7 @@ public class GamificationServiceImpl implements GamificationService {
         exp.setExperience(difficultyToExperience(completion.getDifficulty()));
         exp.setUserId(completion.getUserId());
         expRepository.save(exp);
-        int experience = expRepository.getExpForUser(completion.getUserId()) + exp.getExperience();
+        int experience = expRepository.getExpForUser(completion.getUserId());
         List<Achievement> achievements = processForAchievements(completion, experience);
         return new CompletionResult(
                 exp.getExperience(),
