@@ -1,13 +1,17 @@
 package io.github.xpakx.habitgamification.gamification;
 
+import io.github.xpakx.habitgamification.badge.Achievement;
+import io.github.xpakx.habitgamification.badge.AchievementRepository;
 import io.github.xpakx.habitgamification.gamification.dto.HabitCompletionEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,6 +23,8 @@ class GamificationServiceTest {
     private GamificationService service;
     @Autowired
     private ExpEntryRepository expRepository;
+    @Autowired
+    private AchievementRepository achievementRepository;
 
     @BeforeEach
     void setUp() {
@@ -28,6 +34,7 @@ class GamificationServiceTest {
     @AfterEach
     void tearDown() {
         expRepository.deleteAll();
+        achievementRepository.deleteAll();
     }
 
     @Test
@@ -39,11 +46,45 @@ class GamificationServiceTest {
     }
 
     private HabitCompletionEvent getEvent() {
+        return getEvent(0);
+    }
+
+    private HabitCompletionEvent getEvent(int difficulty) {
         HabitCompletionEvent event = new HabitCompletionEvent();
         event.setUserId(userId);
         event.setCompletionId(1L);
-        event.setDifficulty(10);
+        event.setDifficulty(difficulty);
         event.setHabitId(1L);
         return event;
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 12, 994})
+    void shouldNotReturnBadges(int initialExp) {
+        addExpEntries(initialExp);
+        HabitCompletionEvent event = getEvent();
+        service.newAttempt(event);
+        List<Achievement> result = achievementRepository.findAll();
+        assertEquals(0, result.size());
+    }
+
+    private void addExpEntries(int exp) {
+        int entriesToAdd = exp/5;
+        int lastEventExp = exp%5;
+        List<ExpEntry> entries = new ArrayList<>();
+        for(int i=0; i<entriesToAdd; i++) {
+            entries.add(getExpEntry(5));
+        }
+        if(lastEventExp > 0) {
+            entries.add(getExpEntry(lastEventExp));
+        }
+        expRepository.saveAll(entries);
+    }
+
+    private ExpEntry getExpEntry(int exp) {
+        ExpEntry entry = new ExpEntry();
+        entry.setUserId(userId);
+        entry.setExperience(exp);
+        return entry;
     }
 }
