@@ -21,4 +21,5 @@ public class Achievement {
 
     private LocalDateTime date;
     private Badge badgeType;
+    private Long userId;
 }

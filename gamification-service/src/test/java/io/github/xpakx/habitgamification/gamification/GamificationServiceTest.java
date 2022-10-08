@@ -113,6 +113,7 @@ class GamificationServiceTest {
     private void addAchievement(Badge badge) {
         Achievement achievement = new Achievement();
         achievement.setBadgeType(badge);
+        achievement.setUserId(userId);
         achievementRepository.save(achievement);
     }
 }

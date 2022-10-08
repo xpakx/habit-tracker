@@ -58,15 +58,16 @@ public class GamificationServiceImpl implements GamificationService {
                 .map((p) -> p.process(completion, expSum))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .map(this::badgeToAchievement)
+                .map((q) -> badgeToAchievement(q, completion.getUserId()))
                 .toList();
         achievementRepository.saveAll(achievements);
         return achievements;
     }
 
-    private Achievement badgeToAchievement(Badge badge) {
+    private Achievement badgeToAchievement(Badge badge, Long userId) {
         Achievement achievement = new Achievement();
         achievement.setBadgeType(badge);
+        achievement.setUserId(userId);
         achievement.setDate(LocalDateTime.now());
         return achievement;
     }
