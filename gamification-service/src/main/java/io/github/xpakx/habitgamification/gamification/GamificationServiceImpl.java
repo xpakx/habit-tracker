@@ -12,7 +12,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,10 +57,15 @@ public class GamificationServiceImpl implements GamificationService {
     }
 
     private List<Achievement> processForAchievements(HabitCompletionEvent completion, int expSum) {
+        Set<Badge> alreadyAddedBadges = achievementRepository.findAllByUserId(completion.getUserId())
+                .stream()
+                .map(Achievement::getBadgeType)
+                .collect(Collectors.toSet());
         List<Achievement> achievements = processors.stream()
                 .map((p) -> p.process(completion, expSum))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
+                .filter((p) -> !alreadyAddedBadges.contains(p))
                 .map((q) -> badgeToAchievement(q, completion.getUserId()))
                 .toList();
         achievementRepository.saveAll(achievements);
