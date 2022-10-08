@@ -30,7 +30,7 @@ public class GamificationServiceImpl implements GamificationService {
         exp.setExperience(difficultyToExperience(completion.getDifficulty()));
         exp.setUserId(completion.getUserId());
         expRepository.save(exp);
-        int experience = expRepository.getExpForUser(completion.getUserId());
+        int experience = expRepository.getExpForUser(completion.getUserId()) + exp.getExperience();
         List<Achievement> achievements = processForAchievements(completion, experience);
         return new CompletionResult(
                 exp.getExperience(),
@@ -45,7 +45,7 @@ public class GamificationServiceImpl implements GamificationService {
             return 5;
         }
         if(difficulty >= 0 && difficulty <=3) {
-            return difficulty * 5;
+            return (difficulty+1) * 5;
         }
         if(difficulty > 3) {
             return 15;
