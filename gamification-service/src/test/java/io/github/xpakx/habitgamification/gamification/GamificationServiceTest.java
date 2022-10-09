@@ -3,6 +3,7 @@ package io.github.xpakx.habitgamification.gamification;
 import io.github.xpakx.habitgamification.badge.Achievement;
 import io.github.xpakx.habitgamification.badge.AchievementRepository;
 import io.github.xpakx.habitgamification.badge.Badge;
+import io.github.xpakx.habitgamification.gamification.dto.CompletionResult;
 import io.github.xpakx.habitgamification.gamification.dto.HabitCompletionEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -115,5 +118,16 @@ class GamificationServiceTest {
         achievement.setBadgeType(badge);
         achievement.setUserId(userId);
         achievementRepository.save(achievement);
+    }
+
+    @Test
+    void shouldRespondWithTotalExpAndBadges() {
+        addExpEntries(5000);
+        HabitCompletionEvent event = getEvent();
+        CompletionResult result = service.newAttempt(event);
+        assertThat(result.getAchievements(), hasSize(2));
+        assertThat(result.getAchievements(), hasItem(Badge.BRONZE));
+        assertThat(result.getAchievements(), hasItem(Badge.SILVER));
+        assertThat(result.getExperience(), equalTo(5000+5));
     }
 }
