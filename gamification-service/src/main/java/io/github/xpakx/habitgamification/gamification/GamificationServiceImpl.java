@@ -34,7 +34,7 @@ public class GamificationServiceImpl implements GamificationService {
         int experience = expRepository.getExpForUser(completion.getUserId());
         List<Achievement> achievements = processForAchievements(completion, experience);
         return new CompletionResult(
-                exp.getExperience(),
+                experience,
                 achievements.stream()
                         .map(Achievement::getBadgeType)
                         .collect(Collectors.toList())
