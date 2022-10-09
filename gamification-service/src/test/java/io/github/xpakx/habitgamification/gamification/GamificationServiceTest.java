@@ -62,6 +62,15 @@ class GamificationServiceTest {
         return event;
     }
 
+    private HabitCompletionEvent getEventWithoutDifficulty() {
+        HabitCompletionEvent event = new HabitCompletionEvent();
+        event.setUserId(userId);
+        event.setCompletionId(1L);
+        event.setDifficulty(null);
+        event.setHabitId(1L);
+        return event;
+    }
+
     @ParameterizedTest
     @ValueSource(ints = {0, 12, 994})
     void shouldNotReturnBadges(int initialExp) {
@@ -147,5 +156,23 @@ class GamificationServiceTest {
         HabitCompletionEvent event = getEvent(difficulty);
         CompletionResult result = service.newAttempt(event);
         assertThat(result.getExperience(), equalTo(15+expThatShouldBeAdded));
+    }
+    @ParameterizedTest
+    @ValueSource(ints = {-1, -10, -134})
+    void shouldNotAddExpForNegativeDifficulty(int difficulty) {
+        int expThatShouldBeAdded = 0;
+        HabitCompletionEvent event = getEvent(difficulty);
+        CompletionResult result = service.newAttempt(event);
+        assertThat(result.getExperience(), equalTo(expThatShouldBeAdded));
+        List<ExpEntry> expEntries = expRepository.findAll();
+        assertEquals(0, expEntries.size());
+    }
+
+    @Test
+    void shouldNotAddExpForNullDifficulty() {
+        int expThatShouldBeAdded = 5;
+        HabitCompletionEvent event = getEventWithoutDifficulty();
+        CompletionResult result = service.newAttempt(event);
+        assertThat(result.getExperience(), equalTo(expThatShouldBeAdded));
     }
 }
