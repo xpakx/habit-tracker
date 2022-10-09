@@ -30,8 +30,11 @@ public class GamificationServiceImpl implements GamificationService {
         exp.setDate(LocalDateTime.now());
         exp.setExperience(difficultyToExperience(completion.getDifficulty()));
         exp.setUserId(completion.getUserId());
-        expRepository.save(exp);
-        int experience = expRepository.getExpForUser(completion.getUserId());
+        if(exp.getExperience() > 0) {
+            expRepository.save(exp);
+        }
+        Integer experience = expRepository.getExpForUser(completion.getUserId());
+        experience = experience != null ? experience : 0;
         List<Achievement> achievements = processForAchievements(completion, experience);
         return new CompletionResult(
                 experience,
