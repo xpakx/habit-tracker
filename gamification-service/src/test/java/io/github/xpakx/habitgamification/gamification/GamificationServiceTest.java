@@ -130,4 +130,22 @@ class GamificationServiceTest {
         assertThat(result.getAchievements(), hasItem(Badge.SILVER));
         assertThat(result.getExperience(), equalTo(5000+5));
     }
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 2, 3})
+    void shouldAddCorrectExpForGivenDifficulty(int difficulty) {
+        addExpEntries(15);
+        int expThatShouldBeAdded = 5*(difficulty+1);
+        HabitCompletionEvent event = getEvent(difficulty);
+        CompletionResult result = service.newAttempt(event);
+        assertThat(result.getExperience(), equalTo(15+expThatShouldBeAdded));
+    }
+    @ParameterizedTest
+    @ValueSource(ints = {4, 5, 20, 233})
+    void shouldCapAddedExpDifficulty(int difficulty) {
+        addExpEntries(15);
+        int expThatShouldBeAdded = 20;
+        HabitCompletionEvent event = getEvent(difficulty);
+        CompletionResult result = service.newAttempt(event);
+        assertThat(result.getExperience(), equalTo(15+expThatShouldBeAdded));
+    }
 }
