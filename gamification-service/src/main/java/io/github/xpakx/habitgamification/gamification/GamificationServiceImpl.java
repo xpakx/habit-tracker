@@ -49,7 +49,7 @@ public class GamificationServiceImpl implements GamificationService {
             return (difficulty+1) * 5;
         }
         if(difficulty > 3) {
-            return 15;
+            return 20;
         }
         return 0;
     }
