@@ -70,4 +70,16 @@ class AuthenticationControllerTest {
         return request;
     }
 
+    @Test
+    void passwordsShouldMatch() {
+        RegistrationRequest request = getRegRequest("User", "password", "password2");
+        given()
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/register")
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
 }
