@@ -15,8 +15,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.http.HttpStatus.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AuthenticationControllerTest {
@@ -80,6 +81,19 @@ class AuthenticationControllerTest {
                 .post(baseUrl + "/register")
         .then()
                 .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldRegisterNewUser() {
+        RegistrationRequest request = getRegRequest("User", "password", "password");
+        given()
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/register")
+        .then()
+                .statusCode(CREATED.value());
+        assertThat(userRepository.count(), equalTo(2L));
     }
 
 }
