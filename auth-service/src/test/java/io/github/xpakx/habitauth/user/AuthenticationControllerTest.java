@@ -165,7 +165,7 @@ class AuthenticationControllerTest {
                 .post(baseUrl + "/authenticate")
         .then()
                 .statusCode(OK.value())
-                .body("username", equalTo("User"))
+                .body("username", equalTo("Test"))
                 .body("token", notNullValue());
     }
 }
