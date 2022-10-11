@@ -143,6 +143,29 @@ class AuthenticationControllerTest {
                 .statusCode(FORBIDDEN.value());
     }
 
-    
+    @Test
+    void shouldAuthenticateUser() {
+        AuthenticationRequest request = getAuthRequest("Test", "password");
+        given()
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/authenticate")
+        .then()
+                .statusCode(OK.value());
+    }
 
+    @Test
+    void shouldReturnTokenAfterAuthentication() {
+        AuthenticationRequest request = getAuthRequest("Test", "password");
+        given()
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/authenticate")
+        .then()
+                .statusCode(OK.value())
+                .body("username", equalTo("User"))
+                .body("token", notNullValue());
+    }
 }
