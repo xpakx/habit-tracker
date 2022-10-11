@@ -1,6 +1,7 @@
 package io.github.xpakx.habitauth.user;
 
 import io.github.xpakx.habitauth.clients.AccountPublisher;
+import io.github.xpakx.habitauth.user.dto.AuthenticationRequest;
 import io.github.xpakx.habitauth.user.dto.RegistrationRequest;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
@@ -110,5 +111,38 @@ class AuthenticationControllerTest {
                 .body("username", equalTo("User"))
                 .body("token", notNullValue());
     }
+
+    @Test
+    void shouldNotAuthenticateIfPasswordIsWrong() {
+        AuthenticationRequest request = getAuthRequest("Test", "password2");
+        given()
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/authenticate")
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    private AuthenticationRequest getAuthRequest(String username, String password) {
+        AuthenticationRequest request = new AuthenticationRequest();
+        request.setUsername(username);
+        request.setPassword(password);
+        return request;
+    }
+
+    @Test
+    void shouldNotAuthenticateIfUserDoesNotExist() {
+        AuthenticationRequest request = getAuthRequest("User", "password");
+        given()
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/authenticate")
+        .then()
+                .statusCode(FORBIDDEN.value());
+    }
+
+    
 
 }
