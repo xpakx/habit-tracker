@@ -17,6 +17,7 @@ import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.http.HttpStatus.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -94,6 +95,20 @@ class AuthenticationControllerTest {
         .then()
                 .statusCode(CREATED.value());
         assertThat(userRepository.count(), equalTo(2L));
+    }
+
+    @Test
+    void shouldReturnTokenAfterRegistration() {
+        RegistrationRequest request = getRegRequest("User", "password", "password");
+        given()
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/register")
+        .then()
+                .statusCode(CREATED.value())
+                .body("username", equalTo("User"))
+                .body("token", notNullValue());
     }
 
 }
