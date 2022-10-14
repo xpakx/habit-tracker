@@ -53,6 +53,7 @@ services:
     depends_on:
       - dbcity
       - rabbitmq
+      - cache
     expose:
       - 8082
     environment:
@@ -61,6 +62,9 @@ services:
       - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_REDIS_HOST=cache
+      - SPRING_REDIS_PORT=6379
+      - SPRING_REDIS_PASSWORD=password
   dbcity:
     image: 'postgres:13.1-alpine'
     container_name: dbcity
