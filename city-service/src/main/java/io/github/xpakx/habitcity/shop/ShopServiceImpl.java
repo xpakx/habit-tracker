@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 @Service
@@ -69,7 +70,7 @@ public class ShopServiceImpl implements ShopService {
     @Override
     @Transactional
     public ItemResponse buy(BuyRequest request, Long shopEntryId, Long userId) {
-        ShopEntry entry = getShopEntry(request, shopEntryId);
+        ShopEntry entry = getShopEntry(request, shopEntryId, userId);
         UserEquipment eq = equipmentRepository.getByUserId(userId).orElseThrow();
         List<EquipmentEntry> eqEntries = prepareEqEntries(eq, entry, request.getAmount());
         exchangeMoney(entry, userId, entry.getAmount());
@@ -185,9 +186,12 @@ public class ShopServiceImpl implements ShopService {
         return "";
     }
 
-    private ShopEntry getShopEntry(BuyRequest request, Long shopEntryId) {
+    private ShopEntry getShopEntry(BuyRequest request, Long shopEntryId, Long userId) {
         ShopEntry entry = entryRepository.findById(shopEntryId)
                 .orElseThrow(WrongOwnerException::new);
+        if(!Objects.equals(entry.getShop().getId(), userId)) {
+            throw new WrongOwnerException();
+        }
         if(entry.getAmount() - request.getAmount() < 0) {
             throw new ShopItemEmptyException();
         }
