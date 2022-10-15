@@ -1,6 +1,8 @@
 package io.github.xpakx.habitcity.shop;
 
 import io.github.xpakx.habitcity.config.SchedulerConfig;
+import io.github.xpakx.habitcity.resource.Resource;
+import io.github.xpakx.habitcity.resource.ResourceRepository;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +14,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpStatus.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -26,6 +28,8 @@ class ShopControllerTest {
     ShopRepository shopRepository;
     @Autowired
     ShopEntryRepository entryRepository;
+    @Autowired
+    ResourceRepository resourceRepository;
     @MockBean
     SchedulerConfig config;
 
@@ -38,6 +42,7 @@ class ShopControllerTest {
     @AfterEach
     void tearDown() {
         entryRepository.deleteAll();
+        resourceRepository.deleteAll();
         shopRepository.deleteAll();
     }
 
@@ -74,11 +79,62 @@ class ShopControllerTest {
                 .statusCode(NOT_FOUND.value());
     }
 
+    private Long createShop() {
+        return createShop(userId);
+    }
+
     private Long createShop(Long ownerId) {
         Shop shop = new Shop();
         shop.setMaxRarity(1);
         shop.setMaxSize(5);
         shop.setUserId(ownerId);
         return shopRepository.save(shop).getId();
+    }
+
+    @Test
+    void shouldRespondWithEmptyShop() {
+        Long shopId = createShop();
+        given()
+                .header(getHeaderForUserId(userId))
+       .when()
+                .get(baseUrl + "/shop/{shopId}", shopId)
+       .then()
+                .statusCode(OK.value())
+                .body("items", hasSize(0));
+    }
+
+
+    @Test
+    void shouldRespondWithShop() {
+        Long shopId = createShop();
+        addItemToShop("item1", 50, 10, shopId);
+        addItemToShop("item2", 10, 11, shopId);
+        addItemToShop("item3", 25, 5, shopId);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/shop/{shopId}", shopId)
+        .then()
+                .statusCode(OK.value())
+                .body("items", hasSize(3))
+                .body("items.name", hasItem("item1"))
+                .body("items.name", hasItem("item2"))
+                .body("items.name", hasItem("item3"));
+    }
+
+    private void addItemToShop(String itemName, int amount, int price, Long shopId) {
+        Resource res = new Resource();
+        res.setName(itemName);
+        res.setBaseCost(price);
+        res.setCode(itemName.toUpperCase());
+        res.setMaxStock(64);
+        res.setRarity(0);
+        res = resourceRepository.save(res);
+        ShopEntry entry = new ShopEntry();
+        entry.setAmount(amount);
+        entry.setPrice(price);
+        entry.setResource(res);
+        entry.setShop(shopRepository.getReferenceById(shopId));
+        entryRepository.save(entry);
     }
 }
