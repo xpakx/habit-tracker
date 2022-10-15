@@ -3,6 +3,8 @@ package io.github.xpakx.habitcity.shop;
 import io.github.xpakx.habitcity.config.SchedulerConfig;
 import io.github.xpakx.habitcity.resource.Resource;
 import io.github.xpakx.habitcity.resource.ResourceRepository;
+import io.github.xpakx.habitcity.shop.dto.BuyRequest;
+import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -122,7 +124,7 @@ class ShopControllerTest {
                 .body("items.name", hasItem("item3"));
     }
 
-    private void addItemToShop(String itemName, int amount, int price, Long shopId) {
+    private Long addItemToShop(String itemName, int amount, int price, Long shopId) {
         Resource res = new Resource();
         res.setName(itemName);
         res.setBaseCost(price);
@@ -135,6 +137,48 @@ class ShopControllerTest {
         entry.setPrice(price);
         entry.setResource(res);
         entry.setShop(shopRepository.getReferenceById(shopId));
-        entryRepository.save(entry);
+        return entryRepository.save(entry).getId();
+    }
+
+    @Test
+    void shouldRespondWith401ToBuyIfNoUserIdGiven() {
+        when()
+                .post(baseUrl + "/shop/item/{entryId}", 1L)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404IfEntryDoesNotExist() {
+        BuyRequest request = getBuyRequest(1);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/shop/item/{entryId}", 1L)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    private BuyRequest getBuyRequest(int amount) {
+        BuyRequest request = new BuyRequest();
+        request.setAmount(amount);
+        return request;
+    }
+
+    @Test
+    void shouldRespondWith404IfEntryBelongsToDifferentPlayer() {
+        Long shopId = createShop(userId+1);
+        Long entryId = addItemToShop("item1", 10, 20, shopId);
+        BuyRequest request = getBuyRequest(1);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/shop/item/{entryId}", entryId)
+        .then()
+                .statusCode(NOT_FOUND.value());
     }
 }
