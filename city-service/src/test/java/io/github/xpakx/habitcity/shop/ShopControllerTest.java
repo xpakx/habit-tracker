@@ -10,8 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.http.HttpStatus.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ShopControllerTest {
@@ -51,4 +53,32 @@ class ShopControllerTest {
                 .statusCode(UNAUTHORIZED.value());
     }
 
+    @Test
+    void shouldRespondWith404IfShopDoesNotExist() {
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/shop/{shopId}", 1L)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldRespondWith404IfShopForActiveUserDoesNotExist() {
+        Long shopId = createShop(userId+1);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/shop/{shopId}", shopId)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    private Long createShop(Long ownerId) {
+        Shop shop = new Shop();
+        shop.setMaxRarity(1);
+        shop.setMaxSize(5);
+        shop.setUserId(ownerId);
+        return shopRepository.save(shop).getId();
+    }
 }
