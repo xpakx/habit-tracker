@@ -187,7 +187,7 @@ public class ShopServiceImpl implements ShopService {
 
     private ShopEntry getShopEntry(BuyRequest request, Long shopEntryId) {
         ShopEntry entry = entryRepository.findById(shopEntryId)
-                .orElseThrow();
+                .orElseThrow(WrongOwnerException::new);
         if(entry.getAmount() - request.getAmount() < 0) {
             throw new ShopItemEmptyException();
         }
