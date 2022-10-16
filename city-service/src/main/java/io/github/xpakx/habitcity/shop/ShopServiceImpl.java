@@ -6,6 +6,7 @@ import io.github.xpakx.habitcity.equipment.UserEquipment;
 import io.github.xpakx.habitcity.equipment.UserEquipmentRepository;
 import io.github.xpakx.habitcity.equipment.dto.AccountEvent;
 import io.github.xpakx.habitcity.equipment.error.EquipmentFullException;
+import io.github.xpakx.habitcity.equipment.error.EquipmentNotFoundException;
 import io.github.xpakx.habitcity.money.Money;
 import io.github.xpakx.habitcity.money.MoneyRepository;
 import io.github.xpakx.habitcity.resource.Resource;
@@ -71,7 +72,7 @@ public class ShopServiceImpl implements ShopService {
     @Transactional
     public ItemResponse buy(BuyRequest request, Long shopEntryId, Long userId) {
         ShopEntry entry = getShopEntry(request, shopEntryId, userId);
-        UserEquipment eq = equipmentRepository.getByUserId(userId).orElseThrow();
+        UserEquipment eq = equipmentRepository.getByUserId(userId).orElseThrow(EquipmentNotFoundException::new);
         List<EquipmentEntry> eqEntries = prepareEqEntries(eq, entry, request.getAmount());
         exchangeMoney(entry, userId, entry.getAmount());
         entry.setAmount(entry.getAmount()-request.getAmount());
