@@ -189,7 +189,7 @@ public class ShopServiceImpl implements ShopService {
     private ShopEntry getShopEntry(BuyRequest request, Long shopEntryId, Long userId) {
         ShopEntry entry = entryRepository.findById(shopEntryId)
                 .orElseThrow(WrongOwnerException::new);
-        if(!Objects.equals(entry.getShop().getId(), userId)) {
+        if(!Objects.equals(entry.getShop().getUserId(), userId)) {
             throw new WrongOwnerException();
         }
         if(entry.getAmount() - request.getAmount() < 0) {
