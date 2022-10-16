@@ -1,6 +1,10 @@
 package io.github.xpakx.habitcity.shop;
 
 import io.github.xpakx.habitcity.config.SchedulerConfig;
+import io.github.xpakx.habitcity.equipment.UserEquipment;
+import io.github.xpakx.habitcity.equipment.UserEquipmentRepository;
+import io.github.xpakx.habitcity.money.Money;
+import io.github.xpakx.habitcity.money.MoneyRepository;
 import io.github.xpakx.habitcity.resource.Resource;
 import io.github.xpakx.habitcity.resource.ResourceRepository;
 import io.github.xpakx.habitcity.shop.dto.BuyRequest;
@@ -32,6 +36,10 @@ class ShopControllerTest {
     ShopEntryRepository entryRepository;
     @Autowired
     ResourceRepository resourceRepository;
+    @Autowired
+    UserEquipmentRepository equipmentRepository;
+    @Autowired
+    MoneyRepository moneyRepository;
     @MockBean
     SchedulerConfig config;
 
@@ -46,6 +54,8 @@ class ShopControllerTest {
         entryRepository.deleteAll();
         resourceRepository.deleteAll();
         shopRepository.deleteAll();
+        moneyRepository.deleteAll();
+        equipmentRepository.deleteAll();
     }
 
     private Header getHeaderForUserId(Long userId) {
@@ -211,4 +221,37 @@ class ShopControllerTest {
         .then()
                 .statusCode(NOT_FOUND.value());
     }
+
+
+    @Test
+    void shouldRespondWith400IfEquipmentFull() {
+        Long shopId = createShop(userId);
+        Long entryId = addItemToShop("item1", 10, 20, shopId);
+        createEquipment(0);
+        BuyRequest request = getBuyRequest(1);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/shop/item/{entryId}", entryId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    private void createEquipment(int capacity) {
+        createEquipment(capacity, 0L);
+    }
+
+    private void createEquipment(int capacity, long cash) {
+        UserEquipment equipment = new UserEquipment();
+        equipment.setMaxSize(capacity);
+        equipment.setUserId(userId);
+        equipment = equipmentRepository.save(equipment);
+        Money money = new Money();
+        money.setAmount(cash);
+        money.setEquipment(equipment);
+        moneyRepository.save(money);
+    }
+
 }
