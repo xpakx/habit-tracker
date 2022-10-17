@@ -1,6 +1,8 @@
 package io.github.xpakx.habitcity.shop;
 
 import io.github.xpakx.habitcity.config.SchedulerConfig;
+import io.github.xpakx.habitcity.equipment.EquipmentEntry;
+import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
 import io.github.xpakx.habitcity.equipment.UserEquipment;
 import io.github.xpakx.habitcity.equipment.UserEquipmentRepository;
 import io.github.xpakx.habitcity.money.Money;
@@ -39,6 +41,8 @@ class ShopControllerTest {
     @Autowired
     UserEquipmentRepository equipmentRepository;
     @Autowired
+    EquipmentEntryRepository eqEntryRepository;
+    @Autowired
     MoneyRepository moneyRepository;
     @MockBean
     SchedulerConfig config;
@@ -52,6 +56,7 @@ class ShopControllerTest {
     @AfterEach
     void tearDown() {
         entryRepository.deleteAll();
+        eqEntryRepository.deleteAll();
         resourceRepository.deleteAll();
         shopRepository.deleteAll();
         moneyRepository.deleteAll();
@@ -211,6 +216,7 @@ class ShopControllerTest {
     void shouldRespondWith404IfUserEquipmentIsNotCreated() {
         Long shopId = createShop(userId);
         Long entryId = addItemToShop("item1", 10, 20, shopId);
+        createEquipment(0);
         BuyRequest request = getBuyRequest(1);
         given()
                 .header(getHeaderForUserId(userId))
@@ -254,4 +260,28 @@ class ShopControllerTest {
         moneyRepository.save(money);
     }
 
+    @Test
+    void shouldRespondWith400IfEquipmentHasOnlyFullStackOfGivenItem() {
+        Long shopId = createShop(userId);
+        Long entryId = addItemToShop("item1", 10, 20, shopId);
+        createEquipment(1);
+        addItemToEquipment(entryId, 10);
+        BuyRequest request = getBuyRequest(1);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/shop/item/{entryId}", entryId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    private void addItemToEquipment(Long entryId, int amount) {
+        EquipmentEntry entry = new EquipmentEntry();
+        entry.setAmount(amount);
+        entry.setEquipment(equipmentRepository.getByUserId(userId).orElse(null));
+        entry.setResource(entryRepository.findById(entryId).get().getResource());
+        eqEntryRepository.save(entry);
+    }
 }
