@@ -326,7 +326,7 @@ class ShopControllerTest {
     void shouldBuyItem() {
         Long shopId = createShop(userId);
         Long entryId = addItemToShop("item1", 10, 20, shopId);
-        createEquipment(1, 10);
+        createEquipment(1, 20);
         BuyRequest request = getBuyRequest(1);
         given()
                 .header(getHeaderForUserId(userId))

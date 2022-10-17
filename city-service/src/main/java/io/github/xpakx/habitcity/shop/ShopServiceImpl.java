@@ -74,7 +74,7 @@ public class ShopServiceImpl implements ShopService {
         ShopEntry entry = getShopEntry(request, shopEntryId, userId);
         UserEquipment eq = equipmentRepository.getByUserId(userId).orElseThrow(EquipmentNotFoundException::new);
         List<EquipmentEntry> eqEntries = prepareEqEntries(eq, entry, request.getAmount());
-        exchangeMoney(entry, userId, entry.getAmount());
+        exchangeMoney(entry, userId, request.getAmount());
         entry.setAmount(entry.getAmount()-request.getAmount());
         if(entry.getAmount() > 0) {
             entryRepository.save(entry);
