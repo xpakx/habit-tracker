@@ -305,4 +305,20 @@ class ShopControllerTest {
                 .then()
                 .statusCode(BAD_REQUEST.value());
     }
+
+    @Test
+    void shouldRespondWith400IfNotEnoughMoney() {
+        Long shopId = createShop(userId);
+        Long entryId = addItemToShop("item1", 10, 20, shopId);
+        createEquipment(1, 9);
+        BuyRequest request = getBuyRequest(1);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/shop/item/{entryId}", entryId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
 }
