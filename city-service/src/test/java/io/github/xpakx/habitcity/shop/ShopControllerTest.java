@@ -32,6 +32,8 @@ class ShopControllerTest {
     private String baseUrl;
     private Long userId;
 
+    private final static int FULL_STACK = 64;
+
     @Autowired
     ShopRepository shopRepository;
     @Autowired
@@ -144,7 +146,7 @@ class ShopControllerTest {
         res.setName(itemName);
         res.setBaseCost(price);
         res.setCode(itemName.toUpperCase());
-        res.setMaxStock(64);
+        res.setMaxStock(FULL_STACK);
         res.setRarity(0);
         res = resourceRepository.save(res);
         ShopEntry entry = new ShopEntry();
@@ -265,7 +267,7 @@ class ShopControllerTest {
         Long shopId = createShop(userId);
         Long entryId = addItemToShop("item1", 10, 20, shopId);
         createEquipment(1);
-        addItemToEquipment(entryId, 10);
+        addItemToEquipment(entryId, FULL_STACK);
         BuyRequest request = getBuyRequest(1);
         given()
                 .header(getHeaderForUserId(userId))
@@ -283,5 +285,24 @@ class ShopControllerTest {
         entry.setEquipment(equipmentRepository.getByUserId(userId).orElse(null));
         entry.setResource(entryRepository.findById(entryId).get().getResource());
         eqEntryRepository.save(entry);
+    }
+
+
+    @Test
+    void shouldRespondWith400IfEquipmentHasOnlyNonFullStackOfOtherItem() {
+        Long shopId = createShop(userId);
+        Long entryId = addItemToShop("item1", 10, 20, shopId);
+        Long entry2Id = addItemToShop("item2", 10, 20, shopId);
+        createEquipment(1);
+        addItemToEquipment(entry2Id, 10);
+        BuyRequest request = getBuyRequest(1);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+                .when()
+                .post(baseUrl + "/shop/item/{entryId}", entryId)
+                .then()
+                .statusCode(BAD_REQUEST.value());
     }
 }
