@@ -258,8 +258,9 @@ class ShopControllerTest {
         equipment = equipmentRepository.save(equipment);
         Money money = new Money();
         money.setAmount(cash);
-        money.setEquipment(equipment);
-        moneyRepository.save(money);
+        money = moneyRepository.save(money);
+        equipment.setMoney(money);
+        equipmentRepository.save(equipment);
     }
 
     @Test
