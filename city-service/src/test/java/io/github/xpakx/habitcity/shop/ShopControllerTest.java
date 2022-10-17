@@ -218,7 +218,6 @@ class ShopControllerTest {
     void shouldRespondWith404IfUserEquipmentIsNotCreated() {
         Long shopId = createShop(userId);
         Long entryId = addItemToShop("item1", 10, 20, shopId);
-        createEquipment(0);
         BuyRequest request = getBuyRequest(1);
         given()
                 .header(getHeaderForUserId(userId))
@@ -321,5 +320,21 @@ class ShopControllerTest {
                 .post(baseUrl + "/shop/item/{entryId}", entryId)
         .then()
                 .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldBuyItem() {
+        Long shopId = createShop(userId);
+        Long entryId = addItemToShop("item1", 10, 20, shopId);
+        createEquipment(1, 10);
+        BuyRequest request = getBuyRequest(1);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/shop/item/{entryId}", entryId)
+        .then()
+                .statusCode(OK.value());
     }
 }
