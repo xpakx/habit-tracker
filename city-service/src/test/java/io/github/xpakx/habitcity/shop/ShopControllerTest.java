@@ -383,4 +383,25 @@ class ShopControllerTest {
         Optional<ShopEntry> entry = entryRepository.findById(entryId);
         assertTrue(entry.isEmpty());
     }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 5, 7, 9, 50})
+    void shouldSubtractMoney(int itemsToBuy) {
+        final int price = 10;
+        final int playerMoney = price*itemsToBuy*2;
+        Long shopId = createShop(userId);
+        Long entryId = addItemToShop("item1", 64, price, shopId);
+        createEquipment(1, playerMoney);
+        BuyRequest request = getBuyRequest(itemsToBuy);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+                .when()
+                .post(baseUrl + "/shop/item/{entryId}", entryId)
+                .then()
+                .statusCode(OK.value());
+        Money money = moneyRepository.findByEquipmentUserId(userId).get();
+        assertThat(money.getAmount(), equalTo(playerMoney- (long) itemsToBuy*price));
+    }
 }
