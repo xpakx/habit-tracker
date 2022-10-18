@@ -427,4 +427,72 @@ class ShopControllerTest {
         assertThat(equipment.get(0), hasProperty("amount", equalTo(itemsToBuy)));
         assertThat(equipment.get(0).getResource(), hasProperty("name", equalTo("item1")));
     }
+
+    @Test
+    void shouldFillExistingStackFirst() {
+        Long shopId = createShop(userId);
+        Long entryId = addItemToShop("item1", 64, 1, shopId);
+        createEquipment(2, 2000);
+        addItemToEquipment(entryId, 32);
+        BuyRequest request = getBuyRequest(33);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/shop/item/{entryId}", entryId)
+        .then()
+                .statusCode(OK.value());
+        List<EquipmentEntry> equipment = eqEntryRepository.findAll();
+        assertThat(equipment, hasSize(2));
+        assertThat(equipment, everyItem(hasProperty("equipment", hasProperty("userId", equalTo(userId)))));
+        assertThat(equipment, hasItem(hasProperty("amount", equalTo(64))));
+        assertThat(equipment, hasItem(hasProperty("amount", equalTo(1))));
+    }
+
+    @Test
+    void shouldFillExistingStacksFirst() {
+        Long shopId = createShop(userId);
+        Long entryId = addItemToShop("item1", 64, 1, shopId);
+        createEquipment(3, 2000);
+        addItemToEquipment(entryId, 60);
+        addItemToEquipment(entryId, 60);
+        BuyRequest request = getBuyRequest(16);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/shop/item/{entryId}", entryId)
+        .then()
+                .statusCode(OK.value());
+        List<EquipmentEntry> equipment = eqEntryRepository.findAll();
+        assertThat(equipment, hasSize(3));
+        assertThat(equipment, everyItem(hasProperty("equipment", hasProperty("userId", equalTo(userId)))));
+        assertThat(equipment, hasItem(hasProperty("amount", equalTo(64))));
+        assertThat(equipment, hasItem(hasProperty("amount", equalTo(8))));
+        int itemsInEquipment = equipment.stream().map(EquipmentEntry::getAmount).reduce(0, Integer::sum);
+        assertThat(itemsInEquipment, equalTo(2*64+8));
+    }
+
+    @Test
+    void shouldFillExistingStackWithItems() {
+        Long shopId = createShop(userId);
+        Long entryId = addItemToShop("item1", 64, 1, shopId);
+        createEquipment(1, 2000);
+        addItemToEquipment(entryId, 32);
+        BuyRequest request = getBuyRequest(30);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/shop/item/{entryId}", entryId)
+        .then()
+                .statusCode(OK.value());
+        List<EquipmentEntry> equipment = eqEntryRepository.findAll();
+        assertThat(equipment, hasSize(1));
+        assertThat(equipment, everyItem(hasProperty("equipment", hasProperty("userId", equalTo(userId)))));
+        assertThat(equipment, hasItem(hasProperty("amount", equalTo(62))));
+    }
 }
