@@ -364,4 +364,23 @@ class ShopControllerTest {
         assertTrue(entry.isPresent());
         assertThat(entry.get().getAmount(), equalTo(itemsInShop-itemsToBuy));
     }
+
+    @Test
+    void shouldDeleteEmptyShopEntries() {
+        final int itemsInShop = 10;
+        Long shopId = createShop(userId);
+        Long entryId = addItemToShop("item1", itemsInShop, 20, shopId);
+        createEquipment(1, 2000);
+        BuyRequest request = getBuyRequest(itemsInShop);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/shop/item/{entryId}", entryId)
+        .then()
+                .statusCode(OK.value());
+        Optional<ShopEntry> entry = entryRepository.findById(entryId);
+        assertTrue(entry.isEmpty());
+    }
 }
