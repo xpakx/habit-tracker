@@ -15,14 +15,20 @@ import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import java.util.Optional;
+
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -336,5 +342,26 @@ class ShopControllerTest {
                 .post(baseUrl + "/shop/item/{entryId}", entryId)
         .then()
                 .statusCode(OK.value());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 5, 7, 9})
+    void shouldSubtractAmountInShopEntry(int itemsToBuy) {
+        final int itemsInShop = 10;
+        Long shopId = createShop(userId);
+        Long entryId = addItemToShop("item1", itemsInShop, 20, shopId);
+        createEquipment(1, 2000);
+        BuyRequest request = getBuyRequest(itemsToBuy);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/shop/item/{entryId}", entryId)
+        .then()
+                .statusCode(OK.value());
+        Optional<ShopEntry> entry = entryRepository.findById(entryId);
+        assertTrue(entry.isPresent());
+        assertThat(entry.get().getAmount(), equalTo(itemsInShop-itemsToBuy));
     }
 }
