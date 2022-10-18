@@ -118,7 +118,7 @@ public class ShopServiceImpl implements ShopService {
             }
         }
         long itemsInEquipment = equipmentEntryRepository.countByEquipmentId(eq.getId());
-        if(itemsInEquipment >= eq.getMaxSize()) {
+        if((amount == 0 && itemsInEquipment > eq.getMaxSize()) || (amount > 0 && itemsInEquipment >= eq.getMaxSize())) {
             throw new EquipmentFullException();
         }
         if(amount > 0) {
