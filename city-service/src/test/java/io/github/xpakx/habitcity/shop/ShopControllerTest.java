@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import java.util.List;
 import java.util.Optional;
 
 import static io.restassured.RestAssured.given;
@@ -397,11 +398,33 @@ class ShopControllerTest {
                 .header(getHeaderForUserId(userId))
                 .contentType(ContentType.JSON)
                 .body(request)
-                .when()
+        .when()
                 .post(baseUrl + "/shop/item/{entryId}", entryId)
-                .then()
+        .then()
                 .statusCode(OK.value());
         Money money = moneyRepository.findByEquipmentUserId(userId).get();
         assertThat(money.getAmount(), equalTo(playerMoney- (long) itemsToBuy*price));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 5, 7, 9, 50})
+    void shouldAddEquipmentEntry(int itemsToBuy) {
+        Long shopId = createShop(userId);
+        Long entryId = addItemToShop("item1", 64, 1, shopId);
+        createEquipment(1, 2000);
+        BuyRequest request = getBuyRequest(itemsToBuy);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/shop/item/{entryId}", entryId)
+        .then()
+                .statusCode(OK.value());
+        List<EquipmentEntry> equipment = eqEntryRepository.findAll();
+        assertThat(equipment, hasSize(1));
+        assertThat(equipment.get(0).getEquipment(), hasProperty("userId", equalTo(userId)));
+        assertThat(equipment.get(0), hasProperty("amount", equalTo(itemsToBuy)));
+        assertThat(equipment.get(0).getResource(), hasProperty("name", equalTo("item1")));
     }
 }
