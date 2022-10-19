@@ -506,7 +506,6 @@ class ShopControllerTest {
 
     @Test
     void shouldRespondWithEmptyShopList() {
-        Long shopId = createShop();
         given()
                 .header(getHeaderForUserId(userId))
         .when()
@@ -514,5 +513,18 @@ class ShopControllerTest {
         .then()
                 .statusCode(OK.value())
                 .body("$", hasSize(0));
+    }
+
+    @Test
+    void shouldRespondWithShopListWithOneElem() {
+        Long shopId = createShop();
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/shop/all")
+        .then()
+                .statusCode(OK.value())
+                .body("$", hasSize(1))
+                .body("id", hasItem(shopId));
     }
 }
