@@ -541,9 +541,7 @@ class ShopControllerTest {
         .then()
                 .statusCode(OK.value())
                 .body("$", hasSize(3))
-                .body("id", hasItem(shopId.intValue()))
-                .body("id", hasItem(shop2Id.intValue()))
-                .body("id", hasItem(shop3Id.intValue()))
+                .body("id", hasItems(shopId.intValue(), shop2Id.intValue(), shop3Id.intValue()))
                 .body("id", not(hasItem(shop4Id.intValue())));
     }
 }
