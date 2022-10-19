@@ -499,8 +499,20 @@ class ShopControllerTest {
     @Test
     void shouldRespondWith401ToGetShopsIfNoUserIdGiven() {
         when()
-                .get(baseUrl + "/shop")
+                .get(baseUrl + "/shop/all")
         .then()
                 .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWithEmptyShopList() {
+        Long shopId = createShop();
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/shop/all")
+        .then()
+                .statusCode(OK.value())
+                .body("$", hasSize(0));
     }
 }

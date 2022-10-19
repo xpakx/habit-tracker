@@ -104,6 +104,11 @@ public class ShopServiceImpl implements ShopService {
         shopRepository.save(shop);
     }
 
+    @Override
+    public List<Shop> getShops(Long userId) {
+        return new ArrayList<>();
+    }
+
     private List<EquipmentEntry> prepareEqEntries(UserEquipment eq, ShopEntry entry, int amount) {
         List<EquipmentEntry> eqEntries = getEntriesForItem(eq.getId(), entry);
         int pointer = 0;

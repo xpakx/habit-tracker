@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class ShopController {
@@ -26,6 +28,14 @@ public class ShopController {
         return new ResponseEntity<>(
             service.getShop(shopId, Long.valueOf(id)),
             HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/shop/all")
+    public ResponseEntity<List<Shop>> getShopList(@RequestHeader String id) {
+        return new ResponseEntity<>(
+                service.getShops(Long.valueOf(id)),
+                HttpStatus.OK
         );
     }
 }
