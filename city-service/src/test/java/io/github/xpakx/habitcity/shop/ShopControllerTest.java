@@ -495,4 +495,12 @@ class ShopControllerTest {
         assertThat(equipment, everyItem(hasProperty("equipment", hasProperty("userId", equalTo(userId)))));
         assertThat(equipment, hasItem(hasProperty("amount", equalTo(62))));
     }
+
+    @Test
+    void shouldRespondWith401ToGetShopsIfNoUserIdGiven() {
+        when()
+                .get(baseUrl + "/shop")
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
 }
