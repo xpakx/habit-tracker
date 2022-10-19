@@ -527,4 +527,23 @@ class ShopControllerTest {
                 .body("$", hasSize(1))
                 .body("id", hasItem(shopId.intValue()));
     }
+
+    @Test
+    void shouldRespondWithShopList() {
+        Long shopId = createShop();
+        Long shop2Id = createShop();
+        Long shop3Id = createShop();
+        Long shop4Id = createShop(userId+1);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/shop/all")
+        .then()
+                .statusCode(OK.value())
+                .body("$", hasSize(3))
+                .body("id", hasItem(shopId.intValue()))
+                .body("id", hasItem(shop2Id.intValue()))
+                .body("id", hasItem(shop3Id.intValue()))
+                .body("id", not(hasItem(shop4Id.intValue())));
+    }
 }
