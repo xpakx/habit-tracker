@@ -525,6 +525,6 @@ class ShopControllerTest {
         .then()
                 .statusCode(OK.value())
                 .body("$", hasSize(1))
-                .body("id", hasItem(shopId));
+                .body("id", hasItem(shopId.intValue()));
     }
 }

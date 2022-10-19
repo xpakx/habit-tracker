@@ -106,7 +106,7 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     public List<Shop> getShops(Long userId) {
-        return new ArrayList<>();
+        return shopRepository.findAllByUserId(userId);
     }
 
     private List<EquipmentEntry> prepareEqEntries(UserEquipment eq, ShopEntry entry, int amount) {
