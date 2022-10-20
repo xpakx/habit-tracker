@@ -2,6 +2,7 @@ package io.github.xpakx.habitcity.equipment;
 
 import io.github.xpakx.habitcity.crafting.error.NotEnoughResourcesException;
 import io.github.xpakx.habitcity.equipment.dto.*;
+import io.github.xpakx.habitcity.equipment.error.EquipmentNotFoundException;
 import io.github.xpakx.habitcity.money.MoneyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 
     @Override
     public EquipmentResponse getEquipment(Long userId) {
-        UserEquipment equipment = equipmentRepository.getByUserId(userId).orElseThrow();
+        UserEquipment equipment = equipmentRepository.getByUserId(userId).orElseThrow(EquipmentNotFoundException::new);
         EquipmentResponse response = new EquipmentResponse();
         response.setItems(entryRepository.findByEquipmentId(equipment.getId()));
         return response;
