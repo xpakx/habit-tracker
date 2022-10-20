@@ -307,9 +307,9 @@ class ShopControllerTest {
                 .header(getHeaderForUserId(userId))
                 .contentType(ContentType.JSON)
                 .body(request)
-                .when()
+        .when()
                 .post(baseUrl + "/shop/item/{entryId}", entryId)
-                .then()
+        .then()
                 .statusCode(BAD_REQUEST.value());
     }
 
