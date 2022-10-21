@@ -108,7 +108,7 @@ class CityControllerTest {
     @Test
     void shouldRespondWith401ToGetBuildingsIfNoUserIdGiven() {
         when()
-                .get(baseUrl + "/city/{cityId}", 1L)
+                .get(baseUrl + "/city/{cityId}/building", 1L)
         .then()
                 .statusCode(UNAUTHORIZED.value());
     }
@@ -118,7 +118,7 @@ class CityControllerTest {
         given()
                 .header(getHeaderForUserId(userId))
         .when()
-                .get(baseUrl + "/city/{cityId}", 1L)
+                .get(baseUrl + "/city/{cityId}/building", 1L)
         .then()
                 .statusCode(NOT_FOUND.value());
     }
@@ -129,7 +129,7 @@ class CityControllerTest {
         given()
                 .header(getHeaderForUserId(userId))
         .when()
-                .get(baseUrl + "/city/{cityId}", cityId)
+                .get(baseUrl + "/city/{cityId}/building", cityId)
         .then()
                 .statusCode(OK.value())
                 .body("$", hasSize(0));
@@ -141,7 +141,7 @@ class CityControllerTest {
         given()
                 .header(getHeaderForUserId(userId))
         .when()
-                .get(baseUrl + "/city/{cityId}", cityId)
+                .get(baseUrl + "/city/{cityId}/building", cityId)
         .then()
                 .statusCode(NOT_FOUND.value());
     }
