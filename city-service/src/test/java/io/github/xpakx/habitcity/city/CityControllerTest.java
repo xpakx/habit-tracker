@@ -14,8 +14,7 @@ import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CityControllerTest {
@@ -104,5 +103,35 @@ class CityControllerTest {
         city.setMaxSize(10);
         city.setUserId(userId);
         return cityRepository.save(city).getId();
+    }
+
+    @Test
+    void shouldRespondWith401ToGetBuildingsIfNoUserIdGiven() {
+        when()
+                .get(baseUrl + "/city/{cityId}", 1L)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToGetBuildingsIfCityNotFound() {
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/city/{cityId}", 1L)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+    
+    @Test
+    void shouldRespondWithEmptyListToGetBuildings() {
+        Long cityId = createCity();
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/city/{cityId}", cityId)
+        .then()
+                .statusCode(OK.value())
+                .body("$", hasSize(0));
     }
 }
