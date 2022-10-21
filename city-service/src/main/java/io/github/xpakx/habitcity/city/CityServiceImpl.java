@@ -4,6 +4,7 @@ import io.github.xpakx.habitcity.building.Building;
 import io.github.xpakx.habitcity.building.dto.BuildingCraftList;
 import io.github.xpakx.habitcity.city.dto.BuildingRequest;
 import io.github.xpakx.habitcity.city.dto.BuildingResponse;
+import io.github.xpakx.habitcity.city.error.CityNotFoundException;
 import io.github.xpakx.habitcity.city.error.NotEnoughSpaceException;
 import io.github.xpakx.habitcity.equipment.*;
 import io.github.xpakx.habitcity.equipment.dto.AccountEvent;
@@ -62,6 +63,9 @@ public class CityServiceImpl implements CityService {
 
     @Override
     public List<CityBuilding> getBuildings(Long cityId, Long userId) {
+        if(!cityRepository.existsByIdAndUserId(cityId, userId)) {
+            throw new CityNotFoundException();
+        }
         return cityBuildingRepository.findByCityIdAndCityUserId(cityId, userId);
     }
 

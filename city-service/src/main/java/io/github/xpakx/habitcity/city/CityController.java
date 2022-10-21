@@ -23,7 +23,7 @@ public class CityController {
     }
 
     @GetMapping("/city/{cityId}/building")
-    public ResponseEntity<List<CityBuilding>> getCities(@RequestHeader String id, @PathVariable Long cityId) {
+    public ResponseEntity<List<CityBuilding>> getBuildings(@RequestHeader String id, @PathVariable Long cityId) {
         return new ResponseEntity<>(
                 service.getBuildings(cityId, Long.valueOf(id)),
                 HttpStatus.OK
