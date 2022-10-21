@@ -122,7 +122,7 @@ class CityControllerTest {
         .then()
                 .statusCode(NOT_FOUND.value());
     }
-    
+
     @Test
     void shouldRespondWithEmptyListToGetBuildings() {
         Long cityId = createCity();
@@ -133,5 +133,16 @@ class CityControllerTest {
         .then()
                 .statusCode(OK.value())
                 .body("$", hasSize(0));
+    }
+
+    @Test
+    void shouldRespondWithEmptyListToGetBuildingsInCityBelongingToDifferentUser() {
+        Long cityId = createCity(userId+1);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/city/{cityId}", cityId)
+        .then()
+                .statusCode(NOT_FOUND.value());
     }
 }
