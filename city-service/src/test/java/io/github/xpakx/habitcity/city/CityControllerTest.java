@@ -167,7 +167,10 @@ class CityControllerTest {
                 .get(baseUrl + "/city/{cityId}/building", cityId)
         .then()
                 .statusCode(OK.value())
-                .body("$", hasSize(2));
+                .body("$", hasSize(2))
+                .body("name", hasItem("building1"))
+                .body("name", hasItem("building2"))
+                .body("name", not(hasItem("building3")));
     }
 
     private void addBuilding(String buildingName, Long cityId) {
