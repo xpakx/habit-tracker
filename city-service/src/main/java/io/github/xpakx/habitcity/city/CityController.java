@@ -2,6 +2,7 @@ package io.github.xpakx.habitcity.city;
 
 import io.github.xpakx.habitcity.city.dto.BuildingRequest;
 import io.github.xpakx.habitcity.city.dto.BuildingResponse;
+import io.github.xpakx.habitcity.city.dto.CityBuildingDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class CityController {
     }
 
     @GetMapping("/city/{cityId}/building")
-    public ResponseEntity<List<CityBuilding>> getBuildings(@RequestHeader String id, @PathVariable Long cityId) {
+    public ResponseEntity<List<CityBuildingDetails>> getBuildings(@RequestHeader String id, @PathVariable Long cityId) {
         return new ResponseEntity<>(
                 service.getBuildings(cityId, Long.valueOf(id)),
                 HttpStatus.OK
