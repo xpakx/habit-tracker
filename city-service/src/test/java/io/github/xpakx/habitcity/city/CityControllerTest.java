@@ -1,5 +1,7 @@
 package io.github.xpakx.habitcity.city;
 
+import io.github.xpakx.habitcity.building.Building;
+import io.github.xpakx.habitcity.building.BuildingRepository;
 import io.github.xpakx.habitcity.config.SchedulerConfig;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
@@ -27,6 +29,10 @@ class CityControllerTest {
 
     @Autowired
     CityRepository cityRepository;
+    @Autowired
+    BuildingRepository buildingRepository;
+    @Autowired
+    CityBuildingRepository cityBuildingRepository;
     @MockBean
     SchedulerConfig config;
 
@@ -38,6 +44,8 @@ class CityControllerTest {
 
     @AfterEach
     void tearDown() {
+        cityBuildingRepository.deleteAll();
+        buildingRepository.deleteAll();
         cityRepository.deleteAll();
     }
 
@@ -136,7 +144,7 @@ class CityControllerTest {
     }
 
     @Test
-    void shouldRespondWithEmptyListToGetBuildingsInCityBelongingToDifferentUser() {
+    void shouldRespondWith404ToGetBuildingsInCityBelongingToDifferentUser() {
         Long cityId = createCity(userId+1);
         given()
                 .header(getHeaderForUserId(userId))
@@ -144,5 +152,31 @@ class CityControllerTest {
                 .get(baseUrl + "/city/{cityId}/building", cityId)
         .then()
                 .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldRespondWithBuildingList() {
+        Long cityId = createCity();
+        Long city2Id = createCity();
+        addBuilding("building1", cityId);
+        addBuilding("building2", cityId);
+        addBuilding("building3", city2Id);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/city/{cityId}/building", cityId)
+        .then()
+                .statusCode(OK.value())
+                .body("$", hasSize(2));
+    }
+
+    private void addBuilding(String buildingName, Long cityId) {
+        Building building = new Building();
+        building.setName(buildingName);
+        Long buildingId = buildingRepository.save(building).getId();
+        CityBuilding cityBuilding = new CityBuilding();
+        cityBuilding.setCity(cityRepository.getReferenceById(cityId));
+        cityBuilding.setBuilding(buildingRepository.getReferenceById(buildingId));
+        cityBuildingRepository.save(cityBuilding);
     }
 }
