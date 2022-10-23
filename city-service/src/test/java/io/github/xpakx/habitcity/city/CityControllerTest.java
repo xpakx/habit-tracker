@@ -2,7 +2,9 @@ package io.github.xpakx.habitcity.city;
 
 import io.github.xpakx.habitcity.building.Building;
 import io.github.xpakx.habitcity.building.BuildingRepository;
+import io.github.xpakx.habitcity.city.dto.BuildingRequest;
 import io.github.xpakx.habitcity.config.SchedulerConfig;
+import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -181,5 +183,32 @@ class CityControllerTest {
         cityBuilding.setCity(cityRepository.getReferenceById(cityId));
         cityBuilding.setBuilding(buildingRepository.getReferenceById(buildingId));
         cityBuildingRepository.save(cityBuilding);
+    }
+
+    @Test
+    void shouldRespondWith401ToBuildIfNoUserIdGiven() {
+        when()
+                .post(baseUrl + "/city/{cityId}/building", 1L)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToBuildIfCityNotFound() {
+        BuildingRequest request = getBuildingRequest(1L);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/building", 1L)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    private BuildingRequest getBuildingRequest(Long id) {
+        BuildingRequest request = new BuildingRequest();
+        request.setBuildingId(id);
+        return request;
     }
 }
