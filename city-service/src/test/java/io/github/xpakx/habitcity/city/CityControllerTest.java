@@ -225,4 +225,17 @@ class CityControllerTest {
         equipment.setUserId(userId);
         equipmentRepository.save(equipment);
     }
+
+    @Test
+    void shouldRespondWith404ToBuildIfEquipmentNotFound() {
+        BuildingRequest request = getBuildingRequest(1L);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/building", 1L)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
 }
