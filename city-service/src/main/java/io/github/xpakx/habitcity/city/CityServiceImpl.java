@@ -40,7 +40,7 @@ public class CityServiceImpl implements CityService {
         BuildingCraftList craftList = new BuildingCraftList(1, recipeService.getRecipe(request.getBuildingId()));
         equipmentService.subtractResources(craftList, eqEntries);
 
-        City city = cityRepository.findByIdAndUserId(cityId, userId).orElseThrow();
+        City city = cityRepository.findByIdAndUserId(cityId, userId).orElseThrow(CityNotFoundException::new);
         long buildingsInCity = cityBuildingRepository.countByCityId(city.getId());
         if(buildingsInCity >= city.getMaxSize()) {
             throw new NotEnoughSpaceException();
