@@ -4,6 +4,9 @@ import io.github.xpakx.habitcity.building.Building;
 import io.github.xpakx.habitcity.building.BuildingRepository;
 import io.github.xpakx.habitcity.city.dto.BuildingRequest;
 import io.github.xpakx.habitcity.config.SchedulerConfig;
+import io.github.xpakx.habitcity.equipment.UserEquipment;
+import io.github.xpakx.habitcity.equipment.UserEquipmentRepository;
+import io.github.xpakx.habitcity.money.Money;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
@@ -35,6 +38,8 @@ class CityControllerTest {
     BuildingRepository buildingRepository;
     @Autowired
     CityBuildingRepository cityBuildingRepository;
+    @Autowired
+    UserEquipmentRepository equipmentRepository;
     @MockBean
     SchedulerConfig config;
 
@@ -46,6 +51,7 @@ class CityControllerTest {
 
     @AfterEach
     void tearDown() {
+        equipmentRepository.deleteAll();
         cityBuildingRepository.deleteAll();
         buildingRepository.deleteAll();
         cityRepository.deleteAll();
@@ -196,6 +202,7 @@ class CityControllerTest {
     @Test
     void shouldRespondWith404ToBuildIfCityNotFound() {
         BuildingRequest request = getBuildingRequest(1L);
+        createEquipment();
         given()
                 .header(getHeaderForUserId(userId))
                 .contentType(ContentType.JSON)
@@ -210,5 +217,12 @@ class CityControllerTest {
         BuildingRequest request = new BuildingRequest();
         request.setBuildingId(id);
         return request;
+    }
+
+    private void createEquipment() {
+        UserEquipment equipment = new UserEquipment();
+        equipment.setMaxSize(100);
+        equipment.setUserId(userId);
+        equipmentRepository.save(equipment);
     }
 }

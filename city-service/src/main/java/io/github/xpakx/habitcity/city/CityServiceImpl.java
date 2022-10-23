@@ -6,9 +6,11 @@ import io.github.xpakx.habitcity.city.dto.BuildingRequest;
 import io.github.xpakx.habitcity.city.dto.BuildingResponse;
 import io.github.xpakx.habitcity.city.dto.CityBuildingDetails;
 import io.github.xpakx.habitcity.city.error.CityNotFoundException;
+import io.github.xpakx.habitcity.city.error.ItemRequirementsNotMetException;
 import io.github.xpakx.habitcity.city.error.NotEnoughSpaceException;
 import io.github.xpakx.habitcity.equipment.*;
 import io.github.xpakx.habitcity.equipment.dto.AccountEvent;
+import io.github.xpakx.habitcity.equipment.error.EquipmentNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +29,7 @@ public class CityServiceImpl implements CityService {
 
     @Override
     public BuildingResponse build(BuildingRequest request, Long cityId, Long userId) {
-        UserEquipment eq = equipmentRepository.getByUserId(userId).orElseThrow();
+        UserEquipment eq = equipmentRepository.getByUserId(userId).orElseThrow(EquipmentNotFoundException::new);
         List<EquipmentEntry> eqEntries = entryRepository.getByEquipmentId(eq.getId());
 
         Building building = eqEntries.stream()
@@ -35,7 +37,7 @@ public class CityServiceImpl implements CityService {
                 .filter(Objects::nonNull)
                 .filter((a) -> Objects.equals(a.getId(), request.getBuildingId()))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(ItemRequirementsNotMetException::new);
 
         BuildingCraftList craftList = new BuildingCraftList(1, recipeService.getRecipe(request.getBuildingId()));
         equipmentService.subtractResources(craftList, eqEntries);
