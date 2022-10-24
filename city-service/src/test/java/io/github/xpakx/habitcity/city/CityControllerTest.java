@@ -297,4 +297,91 @@ class CityControllerTest {
         building.setName(buildingName);
         return buildingRepository.save(building).getId();
     }
+
+    @Test
+    void shouldRespondWith400ToBuildIfNoRecipeInEquipment() {
+        createEquipment();
+        Long cityId = createCity();
+        Long buildingId = addBuilding("building");
+        BuildingRequest request = getBuildingRequest(buildingId);
+        Long resId = addResource("item1");
+        addRecipe(buildingId, resId, 10);
+        addResourceToEquipment(resId, 10);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+                .when()
+                .post(baseUrl + "/city/{cityId}/building", cityId)
+                .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldRespondWith400ToBuildIfNotEnoughResourcesInEquipment() {
+        createEquipment();
+        Long cityId = createCity();
+        Long buildingId = addBuilding("building");
+        BuildingRequest request = getBuildingRequest(buildingId);
+        addBuildingToEquipment(buildingId);
+        Long resId = addResource("item1");
+        addRecipe(buildingId, resId, 10);
+        addResourceToEquipment(resId, 9);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+                .when()
+                .post(baseUrl + "/city/{cityId}/building", cityId)
+                .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldRespondWith400ToBuildIfNotEnoughSpaceInCity() {
+        createEquipment();
+        Long cityId = createCityWithSpace(1);
+        addBuilding("test", cityId);
+        Long buildingId = addBuilding("building");
+        BuildingRequest request = getBuildingRequest(buildingId);
+        addBuildingToEquipment(buildingId);
+        Long resId = addResource("item1");
+        addRecipe(buildingId, resId, 10);
+        addResourceToEquipment(resId, 10);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/building", cityId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    private Long createCityWithSpace(int space) {
+        City city = new City();
+        city.setMaxSize(space);
+        city.setUserId(userId);
+        return cityRepository.save(city).getId();
+    }
+
+    @Test
+    void shouldBuildBuilding() {
+        createEquipment();
+        Long cityId = createCity();
+        Long buildingId = addBuilding("building");
+        BuildingRequest request = getBuildingRequest(buildingId);
+        addBuildingToEquipment(buildingId);
+        Long resId = addResource("item1");
+        addRecipe(buildingId, resId, 10);
+        addResourceToEquipment(resId, 10);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/building", cityId)
+        .then()
+                .statusCode(OK.value());
+    }
 }
