@@ -435,4 +435,26 @@ class CityControllerTest {
         List<EquipmentEntry> entries = entryRepository.findAll();
         assertThat(entries, hasSize(1));
     }
+
+    @Test
+    void shouldAddCityBuildingToDb() {
+        createEquipment();
+        Long cityId = createCity();
+        Long buildingId = addBuilding("building");
+        BuildingRequest request = getBuildingRequest(buildingId);
+        addBuildingToEquipment(buildingId);
+        Long resId = addResource("item1");
+        addRecipe(buildingId, resId, 10);
+        addResourceToEquipment(resId, 10);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/building", cityId)
+        .then()
+                .statusCode(OK.value());
+        List<CityBuilding> entries = cityBuildingRepository.findAll();
+        assertThat(entries, hasSize(1));
+    }
 }
