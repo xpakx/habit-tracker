@@ -23,8 +23,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import java.util.List;
+
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpStatus.*;
@@ -383,5 +386,53 @@ class CityControllerTest {
                 .post(baseUrl + "/city/{cityId}/building", cityId)
         .then()
                 .statusCode(OK.value());
+    }
+
+    @Test
+    void shouldSubtractResources() {
+        createEquipment();
+        Long cityId = createCity();
+        Long buildingId = addBuilding("building");
+        BuildingRequest request = getBuildingRequest(buildingId);
+        addBuildingToEquipment(buildingId);
+        Long resId = addResource("item1");
+        addRecipe(buildingId, resId, 10);
+        addResourceToEquipment(resId, 12);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/building", cityId)
+        .then()
+                .statusCode(OK.value());
+        List<EquipmentEntry> entries = entryRepository.findAll();
+        assertThat(entries, hasSize(2));
+        assertThat(entries, everyItem(either(
+                hasProperty("building", notNullValue())
+                ).or(hasProperty("amount", equalTo(2)))
+                ));
+    }
+
+    @Test
+    void shouldDeleteEmptyEquipmentEntry() {
+        createEquipment();
+        Long cityId = createCity();
+        Long buildingId = addBuilding("building");
+        BuildingRequest request = getBuildingRequest(buildingId);
+        addBuildingToEquipment(buildingId);
+        Long resId = addResource("item1");
+        addRecipe(buildingId, resId, 10);
+        addResourceToEquipment(resId, 10);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/building", cityId)
+        .then()
+                .statusCode(OK.value());
+        List<EquipmentEntry> entries = entryRepository.findAll();
+        assertThat(entries, hasSize(1));
     }
 }
