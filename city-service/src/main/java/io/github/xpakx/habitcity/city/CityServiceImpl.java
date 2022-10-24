@@ -40,7 +40,7 @@ public class CityServiceImpl implements CityService {
                 .orElseThrow(ItemRequirementsNotMetException::new);
 
         BuildingCraftList craftList = new BuildingCraftList(1, recipeService.getRecipe(request.getBuildingId()));
-        equipmentService.subtractResources(craftList, eqEntries);
+        equipmentService.subtractResources(craftList, eqEntries.stream().filter((e) -> e.getResource() != null).toList());
 
         City city = cityRepository.findByIdAndUserId(cityId, userId).orElseThrow(CityNotFoundException::new);
         long buildingsInCity = cityBuildingRepository.countByCityId(city.getId());
