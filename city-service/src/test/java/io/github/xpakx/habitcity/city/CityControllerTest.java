@@ -4,6 +4,8 @@ import io.github.xpakx.habitcity.building.Building;
 import io.github.xpakx.habitcity.building.BuildingRepository;
 import io.github.xpakx.habitcity.city.dto.BuildingRequest;
 import io.github.xpakx.habitcity.config.SchedulerConfig;
+import io.github.xpakx.habitcity.equipment.EquipmentEntry;
+import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
 import io.github.xpakx.habitcity.equipment.UserEquipment;
 import io.github.xpakx.habitcity.equipment.UserEquipmentRepository;
 import io.github.xpakx.habitcity.money.Money;
@@ -40,6 +42,8 @@ class CityControllerTest {
     CityBuildingRepository cityBuildingRepository;
     @Autowired
     UserEquipmentRepository equipmentRepository;
+    @Autowired
+    EquipmentEntryRepository entryRepository;
     @MockBean
     SchedulerConfig config;
 
@@ -51,6 +55,7 @@ class CityControllerTest {
 
     @AfterEach
     void tearDown() {
+        entryRepository.deleteAll();
         equipmentRepository.deleteAll();
         cityBuildingRepository.deleteAll();
         buildingRepository.deleteAll();
@@ -203,6 +208,7 @@ class CityControllerTest {
     void shouldRespondWith404ToBuildIfCityNotFound() {
         BuildingRequest request = getBuildingRequest(1L);
         createEquipment();
+        addBuildingToEquipment(addBuilding("building"));
         given()
                 .header(getHeaderForUserId(userId))
                 .contentType(ContentType.JSON)
@@ -211,6 +217,14 @@ class CityControllerTest {
                 .post(baseUrl + "/city/{cityId}/building", 1L)
         .then()
                 .statusCode(NOT_FOUND.value());
+    }
+
+    private void addBuildingToEquipment(Long buildingId) {
+        EquipmentEntry entry = new EquipmentEntry();
+        entry.setBuilding(buildingRepository.getReferenceById(buildingId));
+        entry.setAmount(1);
+        entry.setEquipment(equipmentRepository.getByUserId(userId).get());
+        entryRepository.save(entry);
     }
 
     private BuildingRequest getBuildingRequest(Long id) {
@@ -237,5 +251,11 @@ class CityControllerTest {
                 .post(baseUrl + "/city/{cityId}/building", 1L)
         .then()
                 .statusCode(NOT_FOUND.value());
+    }
+
+    private Long addBuilding(String buildingName) {
+        Building building = new Building();
+        building.setName(buildingName);
+        return buildingRepository.save(building).getId();
     }
 }
