@@ -1,6 +1,8 @@
 package io.github.xpakx.habitcity.city;
 
 import io.github.xpakx.habitcity.building.Building;
+import io.github.xpakx.habitcity.building.BuildingRecipeElem;
+import io.github.xpakx.habitcity.building.BuildingRecipeElemRepository;
 import io.github.xpakx.habitcity.building.BuildingRepository;
 import io.github.xpakx.habitcity.city.dto.BuildingRequest;
 import io.github.xpakx.habitcity.config.SchedulerConfig;
@@ -9,6 +11,8 @@ import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
 import io.github.xpakx.habitcity.equipment.UserEquipment;
 import io.github.xpakx.habitcity.equipment.UserEquipmentRepository;
 import io.github.xpakx.habitcity.money.Money;
+import io.github.xpakx.habitcity.resource.Resource;
+import io.github.xpakx.habitcity.resource.ResourceRepository;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
@@ -44,6 +48,10 @@ class CityControllerTest {
     UserEquipmentRepository equipmentRepository;
     @Autowired
     EquipmentEntryRepository entryRepository;
+    @Autowired
+    BuildingRecipeElemRepository recipeRepository;
+    @Autowired
+    ResourceRepository resourceRepository;
     @MockBean
     SchedulerConfig config;
 
@@ -55,7 +63,9 @@ class CityControllerTest {
 
     @AfterEach
     void tearDown() {
+        recipeRepository.deleteAll();
         entryRepository.deleteAll();
+        resourceRepository.deleteAll();
         equipmentRepository.deleteAll();
         cityBuildingRepository.deleteAll();
         buildingRepository.deleteAll();
@@ -206,9 +216,13 @@ class CityControllerTest {
 
     @Test
     void shouldRespondWith404ToBuildIfCityNotFound() {
-        BuildingRequest request = getBuildingRequest(1L);
         createEquipment();
-        addBuildingToEquipment(addBuilding("building"));
+        Long buildingId = addBuilding("building");
+        BuildingRequest request = getBuildingRequest(buildingId);
+        addBuildingToEquipment(buildingId);
+        Long resId = addResource("item1");
+        addRecipe(buildingId, resId, 10);
+        addResourceToEquipment(resId, 10);
         given()
                 .header(getHeaderForUserId(userId))
                 .contentType(ContentType.JSON)
@@ -219,6 +233,24 @@ class CityControllerTest {
                 .statusCode(NOT_FOUND.value());
     }
 
+    private void addRecipe(Long buildingId, Long resId, Integer amount) {
+        BuildingRecipeElem elem = new BuildingRecipeElem();
+        elem.setAmount(amount);
+        elem.setBuilding(buildingRepository.getReferenceById(buildingId));
+        elem.setResource(resourceRepository.getReferenceById(resId));
+        recipeRepository.save(elem);
+    }
+
+    private Long addResource(String itemName) {
+        Resource resource = new Resource();
+        resource.setName(itemName);
+        resource.setRarity(0);
+        resource.setMaxStock(64);
+        resource.setBaseCost(1);
+        resource.setCode(itemName.toUpperCase());
+        return resourceRepository.save(resource).getId();
+    }
+
     private void addBuildingToEquipment(Long buildingId) {
         EquipmentEntry entry = new EquipmentEntry();
         entry.setBuilding(buildingRepository.getReferenceById(buildingId));
@@ -227,6 +259,13 @@ class CityControllerTest {
         entryRepository.save(entry);
     }
 
+    private void addResourceToEquipment(Long resourceId, Integer amount) {
+        EquipmentEntry entry = new EquipmentEntry();
+        entry.setResource(resourceRepository.getReferenceById(resourceId));
+        entry.setAmount(amount);
+        entry.setEquipment(equipmentRepository.getByUserId(userId).get());
+        entryRepository.save(entry);
+    }
     private BuildingRequest getBuildingRequest(Long id) {
         BuildingRequest request = new BuildingRequest();
         request.setBuildingId(id);
