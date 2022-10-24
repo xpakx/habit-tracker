@@ -52,7 +52,8 @@ public class CityServiceImpl implements CityService {
         cityBuilding.setBuilding(building);
         cityBuilding.setCity(city);
         cityBuildingRepository.save(cityBuilding);
-        entryRepository.saveAll(eqEntries);
+        entryRepository.saveAll(eqEntries.stream().filter((a -> a.getAmount() > 0)).toList());
+        entryRepository.deleteAll(eqEntries.stream().filter((a -> a.getAmount() <= 0)).toList());
 
         BuildingResponse response = new BuildingResponse();
         response.setName(building.getName());
