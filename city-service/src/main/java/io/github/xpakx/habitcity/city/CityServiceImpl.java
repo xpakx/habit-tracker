@@ -2,6 +2,7 @@ package io.github.xpakx.habitcity.city;
 
 import io.github.xpakx.habitcity.building.Building;
 import io.github.xpakx.habitcity.building.dto.BuildingCraftList;
+import io.github.xpakx.habitcity.building.dto.CraftBuildingElem;
 import io.github.xpakx.habitcity.city.dto.BuildingRequest;
 import io.github.xpakx.habitcity.city.dto.BuildingResponse;
 import io.github.xpakx.habitcity.city.dto.CityBuildingDetails;
@@ -39,7 +40,8 @@ public class CityServiceImpl implements CityService {
                 .findFirst()
                 .orElseThrow(ItemRequirementsNotMetException::new);
 
-        BuildingCraftList craftList = new BuildingCraftList(1, recipeService.getRecipe(request.getBuildingId()));
+
+        BuildingCraftList craftList = new BuildingCraftList(1, recipeService.getRecipe(request.getBuildingId()).stream().map(CraftBuildingElem::new).toList());
         equipmentService.subtractResources(craftList, eqEntries.stream().filter((e) -> e.getResource() != null).toList());
 
         City city = cityRepository.findByIdAndUserId(cityId, userId).orElseThrow(CityNotFoundException::new);

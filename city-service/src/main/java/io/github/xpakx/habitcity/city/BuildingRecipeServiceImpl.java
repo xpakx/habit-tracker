@@ -1,5 +1,6 @@
 package io.github.xpakx.habitcity.city;
 
+import io.github.xpakx.habitcity.building.BuildingRecipeElem;
 import io.github.xpakx.habitcity.building.BuildingRecipeElemRepository;
 import io.github.xpakx.habitcity.building.dto.CraftBuildingElem;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ public class BuildingRecipeServiceImpl implements BuildingRecipeService {
 
     @Override
     @Cacheable(cacheNames = "b_recipes", key = "'b_recipe_'.concat(#buildingId)")
-    public List<CraftBuildingElem> getRecipe(Long buildingId) {
+    public List<BuildingRecipeElem> getRecipe(Long buildingId) {
         return recipeRepository.findByBuildingId(buildingId);
     }
 }

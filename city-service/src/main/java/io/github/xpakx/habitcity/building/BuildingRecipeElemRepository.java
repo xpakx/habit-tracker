@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface BuildingRecipeElemRepository extends JpaRepository<BuildingRecipeElem, Long> {
-    List<CraftBuildingElem> findByBuildingId(Long buildingId);
+    List<BuildingRecipeElem> findByBuildingId(Long buildingId);
 }
