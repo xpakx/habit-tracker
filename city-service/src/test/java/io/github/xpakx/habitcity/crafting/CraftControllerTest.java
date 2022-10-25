@@ -131,7 +131,7 @@ class CraftControllerTest {
     void shouldRespondWith404ToCraftIfNotEquipmentFound() {
         List<Long> recipe = List.of(addItem("item1"));
         CraftRequest request = createCraftRequest(recipe);
-        addRecipe(recipe, addItem("product"), addBuilding("building1"));
+        addRecipe(recipe, addItem("product"), null);
         given()
                 .header(getHeaderForUserId(userId))
                 .contentType(ContentType.JSON)

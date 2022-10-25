@@ -39,7 +39,7 @@ public class CraftServiceImpl implements CraftService {
     }
 
     private void testRequirements(Long userId, Recipe recipe) {
-        if(recipe.getRequiredBuilding() != null && city.hasUserBuilding(recipe.getRequiredBuilding().getId(), userId)) {
+        if(recipe.getRequiredBuilding() != null && !city.hasUserBuilding(recipe.getRequiredBuilding().getId(), userId)) {
             throw new ItemRequirementsNotMetException();
         }
     }
