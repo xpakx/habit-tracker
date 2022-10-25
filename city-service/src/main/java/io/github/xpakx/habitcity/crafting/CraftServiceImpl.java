@@ -5,6 +5,7 @@ import io.github.xpakx.habitcity.city.error.ItemRequirementsNotMetException;
 import io.github.xpakx.habitcity.crafting.dto.CraftRequest;
 import io.github.xpakx.habitcity.equipment.*;
 import io.github.xpakx.habitcity.equipment.error.EquipmentFullException;
+import io.github.xpakx.habitcity.equipment.error.EquipmentNotFoundException;
 import io.github.xpakx.habitcity.shop.dto.ItemResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class CraftServiceImpl implements CraftService {
     public ItemResponse craft(CraftRequest request, Long userId) {
         Recipe recipe = recipeService.getRecipe(request);
         testRequirements(userId, recipe);
-        UserEquipment eq = equipmentRepository.getByUserId(userId).orElseThrow();
+        UserEquipment eq = equipmentRepository.getByUserId(userId).orElseThrow(EquipmentNotFoundException::new);
         List<EquipmentEntry> eqEntries = entryRepository.getByEquipmentId(eq.getId());
         equipment.subtractResources(request, eqEntries);
         eqEntries.addAll(prepareEqEntries(eqEntries, eq, recipe, request.getAmount()));
