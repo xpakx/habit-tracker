@@ -65,11 +65,11 @@ class CraftControllerTest {
     @AfterEach
     void tearDown() {
         entryRepository.deleteAll();
+        recipeRepository.deleteAll();
         resourceRepository.deleteAll();
         cityBuildingRepository.deleteAll();
         buildingRepository.deleteAll();
         equipmentRepository.deleteAll();
-        recipeRepository.deleteAll();
     }
 
     private Header getHeaderForUserId(Long userId) {
