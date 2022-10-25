@@ -1,12 +1,9 @@
 package io.github.xpakx.habitcity.equipment;
 
 import io.github.xpakx.habitcity.config.SchedulerConfig;
-import io.github.xpakx.habitcity.money.Money;
 import io.github.xpakx.habitcity.money.MoneyRepository;
 import io.github.xpakx.habitcity.resource.Resource;
 import io.github.xpakx.habitcity.resource.ResourceRepository;
-import io.github.xpakx.habitcity.shop.ShopEntryRepository;
-import io.github.xpakx.habitcity.shop.ShopRepository;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
