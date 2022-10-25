@@ -168,7 +168,7 @@ class CraftControllerTest {
 
     private void addRecipe(List<Long> items, Long item, Long building) {
         Recipe recipe = new Recipe();
-        recipe.setRequiredBuilding(buildingRepository.getReferenceById(building));
+        recipe.setRequiredBuilding(building!=null ? buildingRepository.getReferenceById(building): null);
         recipe.setResource1(items.size()>0 ? resourceRepository.getReferenceById(items.get(0)) : null);
         recipe.setResource2(items.size()>1 ? resourceRepository.getReferenceById(items.get(1)) : null);
         recipe.setResource3(items.size()>2 ? resourceRepository.getReferenceById(items.get(2)) : null);
@@ -178,7 +178,7 @@ class CraftControllerTest {
         recipe.setResource7(items.size()>6 ? resourceRepository.getReferenceById(items.get(6)) : null);
         recipe.setResource8(items.size()>7 ? resourceRepository.getReferenceById(items.get(7)) : null);
         recipe.setResource9(items.size()>8 ? resourceRepository.getReferenceById(items.get(8)) : null);
-        recipe.setResource(resourceRepository.getReferenceById(item));
+        recipe.setResource(item!=null ? resourceRepository.getReferenceById(item) : null);
         recipeRepository.save(recipe);
     }
 
