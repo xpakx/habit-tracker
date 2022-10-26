@@ -230,4 +230,22 @@ class CraftControllerTest {
         entry.setEquipment(equipmentRepository.getByUserId(userId).get());
         entryRepository.save(entry);
     }
+
+    @Test
+    void shouldCraftItem() {
+        Long itemId = addItem("item1");
+        List<Long> recipe = List.of(itemId, itemId, itemId, itemId);
+        CraftRequest request = createCraftRequest(recipe);
+        createEquipment();
+        addResourceToEquipment(recipe.get(0), 4);
+        addRecipe(recipe, addItem("product"), null);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/craft")
+        .then()
+                .statusCode(OK.value());
+    }
 }
