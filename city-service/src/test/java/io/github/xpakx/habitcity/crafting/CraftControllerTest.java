@@ -6,6 +6,7 @@ import io.github.xpakx.habitcity.city.CityBuildingRepository;
 import io.github.xpakx.habitcity.config.SchedulerConfig;
 import io.github.xpakx.habitcity.crafting.dto.CraftRequest;
 import io.github.xpakx.habitcity.crafting.dto.CraftRequestElem;
+import io.github.xpakx.habitcity.equipment.EquipmentEntry;
 import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
 import io.github.xpakx.habitcity.equipment.UserEquipment;
 import io.github.xpakx.habitcity.equipment.UserEquipmentRepository;
@@ -189,7 +190,7 @@ class CraftControllerTest {
     }
 
     @Test
-    void shouldRespondWith400ToCraftIfNotEnoughResources() {
+    void shouldRespondWith400ToCraftIfZeroResources() {
         List<Long> recipe = List.of(addItem("item1"));
         CraftRequest request = createCraftRequest(recipe);
         createEquipment();
@@ -204,4 +205,29 @@ class CraftControllerTest {
                 .statusCode(BAD_REQUEST.value());
     }
 
+    @Test
+    void shouldRespondWith400ToCraftIfNotEnoughResources() {
+        Long itemId = addItem("item1");
+        List<Long> recipe = List.of(itemId, itemId, itemId, itemId);
+        CraftRequest request = createCraftRequest(recipe);
+        createEquipment();
+        addResourceToEquipment(recipe.get(0), 3);
+        addRecipe(recipe, addItem("product"), null);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/craft")
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    private void addResourceToEquipment(Long resourceId, Integer amount) {
+        EquipmentEntry entry = new EquipmentEntry();
+        entry.setResource(resourceRepository.getReferenceById(resourceId));
+        entry.setAmount(amount);
+        entry.setEquipment(equipmentRepository.getByUserId(userId).get());
+        entryRepository.save(entry);
+    }
 }
