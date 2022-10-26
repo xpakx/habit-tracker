@@ -115,6 +115,7 @@ class CraftControllerTest {
         request.setElem7(items.size()>6 ? toCraftElem(items.get(6)) : new CraftRequestElem());
         request.setElem8(items.size()>7 ? toCraftElem(items.get(7)) : new CraftRequestElem());
         request.setElem9(items.size()>8 ? toCraftElem(items.get(8)) : new CraftRequestElem());
+        request.setAmount(1);
         return request;
     }
 
@@ -187,5 +188,20 @@ class CraftControllerTest {
         return buildingRepository.save(building).getId();
     }
 
+    @Test
+    void shouldRespondWith400ToCraftIfNotEnoughResources() {
+        List<Long> recipe = List.of(addItem("item1"));
+        CraftRequest request = createCraftRequest(recipe);
+        createEquipment();
+        addRecipe(recipe, addItem("product"), null);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/craft")
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
 
 }
