@@ -29,6 +29,8 @@ import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpStatus.*;
 
@@ -287,5 +289,82 @@ class CraftControllerTest {
         city.setUserId(userId);
         city.setMaxSize(50);
         return cityRepository.save(city).getId();
+    }
+
+    @Test
+    void shouldSubtractResources() {
+        Long itemId = addItem("item1");
+        List<Long> recipe = List.of(itemId, itemId, itemId, itemId);
+        CraftRequest request = createCraftRequest(recipe);
+        createEquipment();
+        addResourceToEquipment(recipe.get(0), 5);
+        addRecipe(recipe, addItem("product"), null);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/craft")
+        .then()
+                .statusCode(OK.value());
+        List<EquipmentEntry> entries = entryRepository.findAll();
+        assertThat(entries, hasSize(2));
+        assertThat(entries, hasItem(
+                both(hasProperty("amount", equalTo(1))).and(hasProperty("resource", hasProperty("name", equalTo("item1"))))
+        ));
+    }
+
+    @Test
+    void shouldDeleteEmptyStacks() {
+        Long itemId = addItem("item1");
+        List<Long> recipe = List.of(itemId, itemId, itemId, itemId);
+        CraftRequest request = createCraftRequest(recipe);
+        createEquipment();
+        addResourceToEquipment(recipe.get(0), 4);
+        addRecipe(recipe, addItem("product"), null);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/craft")
+        .then()
+                .statusCode(OK.value());
+        List<EquipmentEntry> entries = entryRepository.findAll();
+        assertThat(entries, not(hasItem(
+                hasProperty("name", equalTo("item1")))
+        ));
+    }
+
+    @Test
+    void shouldSubtractMultipleResources() {
+        Long item1Id = addItem("item1");
+        Long item2Id = addItem("item2");
+        Long item3Id = addItem("item3");
+        List<Long> recipe = List.of(item1Id, item1Id, item2Id, item3Id);
+        CraftRequest request = createCraftRequest(recipe);
+        createEquipment();
+        addResourceToEquipment(item1Id, 5);
+        addResourceToEquipment(item2Id, 15);
+        addResourceToEquipment(item3Id, 10);
+        addRecipe(recipe, addItem("product"), null);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/craft")
+        .then()
+                .statusCode(OK.value());
+        List<EquipmentEntry> entries = entryRepository.findAll();
+        assertThat(entries, hasItem(
+                both(hasProperty("amount", equalTo(3))).and(hasProperty("resource", hasProperty("name", equalTo("item1"))))
+        ));
+        assertThat(entries, hasItem(
+                both(hasProperty("amount", equalTo(14))).and(hasProperty("resource", hasProperty("name", equalTo("item2"))))
+        ));
+        assertThat(entries, hasItem(
+                both(hasProperty("amount", equalTo(9))).and(hasProperty("resource", hasProperty("name", equalTo("item3"))))
+        ));
     }
 }
