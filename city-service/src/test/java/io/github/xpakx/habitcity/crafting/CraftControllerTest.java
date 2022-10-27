@@ -367,4 +367,26 @@ class CraftControllerTest {
                 both(hasProperty("amount", equalTo(9))).and(hasProperty("resource", hasProperty("name", equalTo("item3"))))
         ));
     }
+
+    @Test
+    void shouldAddProductToEquipment() {
+        Long itemId = addItem("item1");
+        List<Long> recipe = List.of(itemId, itemId, itemId, itemId);
+        CraftRequest request = createCraftRequest(recipe);
+        createEquipment();
+        addResourceToEquipment(recipe.get(0), 5);
+        addRecipe(recipe, addItem("product"), null);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/craft")
+        .then()
+                .statusCode(OK.value());
+        List<EquipmentEntry> entries = entryRepository.findAll();
+        assertThat(entries, hasItem(
+                both(hasProperty("amount", equalTo(1))).and(hasProperty("resource", hasProperty("name", equalTo("product"))))
+        ));
+    }
 }
