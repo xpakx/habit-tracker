@@ -85,6 +85,6 @@ public class CityServiceImpl implements CityService {
 
     @Override
     public boolean hasUserBuilding(Long buildingId, Long userId) {
-        return false;
+        return cityBuildingRepository.existsByBuildingIdAndCityUserId(buildingId, userId);
     }
 }

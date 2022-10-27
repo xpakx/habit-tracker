@@ -9,4 +9,6 @@ public interface CityBuildingRepository extends JpaRepository<CityBuilding, Long
     long countByCityId(Long id);
 
     List<CityBuildingDetails> findByCityIdAndCityUserId(Long cityId, Long userId);
+    boolean existsByBuildingIdAndCityUserId(Long id, Long userId);
+
 }
