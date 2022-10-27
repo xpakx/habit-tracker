@@ -2,7 +2,10 @@ package io.github.xpakx.habitcity.crafting;
 
 import io.github.xpakx.habitcity.building.Building;
 import io.github.xpakx.habitcity.building.BuildingRepository;
+import io.github.xpakx.habitcity.city.City;
+import io.github.xpakx.habitcity.city.CityBuilding;
 import io.github.xpakx.habitcity.city.CityBuildingRepository;
+import io.github.xpakx.habitcity.city.CityRepository;
 import io.github.xpakx.habitcity.config.SchedulerConfig;
 import io.github.xpakx.habitcity.crafting.dto.CraftRequest;
 import io.github.xpakx.habitcity.crafting.dto.CraftRequestElem;
@@ -51,6 +54,8 @@ class CraftControllerTest {
     CityBuildingRepository cityBuildingRepository;
     @Autowired
     BuildingRepository buildingRepository;
+    @Autowired
+    CityRepository cityRepository;
     @MockBean
     SchedulerConfig config;
 
@@ -66,6 +71,7 @@ class CraftControllerTest {
         recipeRepository.deleteAll();
         resourceRepository.deleteAll();
         cityBuildingRepository.deleteAll();
+        cityRepository.deleteAll();
         buildingRepository.deleteAll();
         equipmentRepository.deleteAll();
     }
@@ -247,5 +253,39 @@ class CraftControllerTest {
                 .post(baseUrl + "/craft")
         .then()
                 .statusCode(OK.value());
+    }
+
+    @Test
+    void shouldCraftItemWithBuilding() {
+        Long itemId = addItem("item1");
+        List<Long> recipe = List.of(itemId, itemId, itemId, itemId);
+        CraftRequest request = createCraftRequest(recipe);
+        createEquipment();
+        addResourceToEquipment(recipe.get(0), 4);
+        Long buildingId =  addBuilding("building1");
+        addRecipe(recipe, addItem("product"), buildingId);
+        buildBuilding(buildingId, createCity());
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/craft")
+        .then()
+                .statusCode(OK.value());
+    }
+
+    private void buildBuilding(Long buildingId, Long cityId) {
+        CityBuilding building = new CityBuilding();
+        building.setBuilding(buildingRepository.getReferenceById(buildingId));
+        building.setCity(cityRepository.getReferenceById(cityId));
+        cityBuildingRepository.save(building);
+    }
+
+    private Long createCity() {
+        City city = new City();
+        city.setUserId(userId);
+        city.setMaxSize(50);
+        return cityRepository.save(city).getId();
     }
 }
