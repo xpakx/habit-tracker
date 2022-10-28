@@ -29,6 +29,7 @@ import { HeatmapComponent } from './stats/heatmap/heatmap.component';
 import { OverallStatsComponent } from './stats/overall-stats/overall-stats.component';
 import { ContextStatsComponent } from './stats/context-stats/context-stats.component';
 import { HabitStatsComponent } from './stats/habit-stats/habit-stats.component';
+import { ShopListComponent } from './shop/shop-list/shop-list.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +55,8 @@ import { HabitStatsComponent } from './stats/habit-stats/habit-stats.component';
     HeatmapComponent,
     OverallStatsComponent,
     ContextStatsComponent,
-    HabitStatsComponent
+    HabitStatsComponent,
+    ShopListComponent
   ],
   imports: [
     BrowserModule,

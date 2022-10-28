@@ -7,6 +7,7 @@ import { EquipmentComponent } from './equipment/equipment/equipment.component';
 import { ContextViewComponent } from './habit/context-view/context-view.component';
 import { DailyContextViewComponent } from './habit/daily-context-view/daily-context-view.component';
 import { DailyViewComponent } from './habit/daily-view/daily-view.component';
+import { ShopListComponent } from './shop/shop-list/shop-list.component';
 import { ShopComponent } from './shop/shop/shop.component';
 import { ContextStatsComponent } from './stats/context-stats/context-stats.component';
 import { HabitStatsComponent } from './stats/habit-stats/habit-stats.component';
@@ -22,6 +23,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'equipment', component: EquipmentComponent },
+  { path: 'shop', component: ShopListComponent },
   { path: 'shop/:id', component: ShopComponent },
   { path: 'city', component: CitiesComponent },
   { path: 'city/:id', component: CityComponent },

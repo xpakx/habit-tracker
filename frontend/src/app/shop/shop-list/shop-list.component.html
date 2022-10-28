@@ -1,0 +1,4 @@
+<div class="shop" *ngFor="let shop of shops">
+    <a [routerLink]="'/shop/'+shop.id"></a>
+    size: {{shop.maxSize}} | rarity: {{shop.maxRarity}}
+</div>
