@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { JwtService } from '../common/jwt-service';
 import { BuyRequest } from './dto/buy-request';
+import { Shop } from './dto/shop';
 import { ShopResponse } from './dto/shop-response';
 
 @Injectable({
@@ -23,4 +24,9 @@ export class ShopService extends JwtService {
   public buy(request: BuyRequest, entryId: number): Observable<ShopResponse> {
     return this.http.post<ShopResponse>(`${this.apiServerUrl}/shop/item/${entryId}`, request, { headers: this.getHeaders() });
   }
+
+  public getShops(): Observable<Shop[]> {
+    return this.http.get<Shop[]>(`${this.apiServerUrl}/shop/all`, { headers: this.getHeaders() });
+  }
+
 }
