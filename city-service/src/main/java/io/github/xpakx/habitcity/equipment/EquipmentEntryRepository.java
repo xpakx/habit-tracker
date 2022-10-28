@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EquipmentEntryRepository extends JpaRepository<EquipmentEntry, Long> {
     List<EquipmentEntry> findByEquipmentIdAndResourceId(Long equipmentId, Long resourceId);
@@ -17,4 +18,6 @@ public interface EquipmentEntryRepository extends JpaRepository<EquipmentEntry, 
     List<EquipmentEntry> getByEquipmentId(Long id);
 
     List<EquipmentEntrySummary> findByEquipmentIdAndBuildingIsNotNull(Long id);
+
+    Optional<EquipmentEntry> findByIdAndEquipmentUserId(Long id, Long userId);
 }

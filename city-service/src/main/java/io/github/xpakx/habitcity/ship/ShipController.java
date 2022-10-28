@@ -14,10 +14,10 @@ import java.util.List;
 public class ShipController {
     private final ShipService service;
 
-    @PostMapping("/city/{cityId}/ship/build")
-    public ResponseEntity<ShipResponse> build(@RequestBody ShipRequest request, @PathVariable Long cityId, @RequestHeader String id) {
+    @PostMapping("/city/{cityId}/ship")
+    public ResponseEntity<ShipResponse> add(@RequestBody ShipRequest request, @PathVariable Long cityId, @RequestHeader String id) {
         return new ResponseEntity<>(
-                service.build(request, cityId, Long.valueOf(id)),
+                service.addShip(request, cityId, Long.valueOf(id)),
                 HttpStatus.OK
         );
     }
