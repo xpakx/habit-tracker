@@ -1,6 +1,8 @@
 package io.github.xpakx.habitcity.ship;
 
+import io.github.xpakx.habitcity.city.City;
 import io.github.xpakx.habitcity.city.CityRepository;
+import io.github.xpakx.habitcity.city.error.CityNotFoundException;
 import io.github.xpakx.habitcity.equipment.EquipmentEntry;
 import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
 import io.github.xpakx.habitcity.ship.dto.ShipRequest;
@@ -25,6 +27,9 @@ public class ShipServiceImpl implements ShipService {
         EquipmentEntry entry = entryRepository.findByIdAndEquipmentUserId(request.getEntryId(), userId).orElseThrow(NotAShipException::new);
         if(entry.getShip() == null) {
             throw new NotAShipException();
+        }
+        if(!cityRepository.existsByIdAndUserId(cityId, userId) {
+            throw new CityNotFoundException();
         }
         entryRepository.delete(entry);
         saveShip(cityId, entry);
