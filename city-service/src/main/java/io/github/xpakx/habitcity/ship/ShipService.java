@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ShipService {
     ShipResponse deploy(ShipRequest request, Long cityId, Long userId);
-    List<Ship> getShipsInCity(Long cityId, Long userId);
+    List<PlayerShip> getShipsInCity(Long cityId, Long userId);
 }

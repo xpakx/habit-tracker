@@ -23,7 +23,7 @@ public class ShipController {
     }
 
     @GetMapping("/city/{cityId}/ship/all")
-    public ResponseEntity<List<Ship>> getShips(@PathVariable Long cityId, @RequestHeader String id) {
+    public ResponseEntity<List<PlayerShip>> getShips(@PathVariable Long cityId, @RequestHeader String id) {
         return new ResponseEntity<>(
                 service.getShipsInCity(cityId, Long.valueOf(id)),
                 HttpStatus.OK

@@ -54,7 +54,7 @@ public class ShipServiceImpl implements ShipService {
     }
 
     @Override
-    public List<Ship> getShipsInCity(Long cityId, Long userId) {
+    public List<PlayerShip> getShipsInCity(Long cityId, Long userId) {
         return shipRepository.findByCityIdAndCityUserId(cityId, userId);
     }
 }
