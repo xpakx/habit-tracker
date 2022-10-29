@@ -6,6 +6,6 @@ import io.github.xpakx.habitcity.ship.dto.ShipResponse;
 import java.util.List;
 
 public interface ShipService {
-    ShipResponse addShip(ShipRequest request, Long cityId, Long userId);
+    ShipResponse deploy(ShipRequest request, Long cityId, Long userId);
     List<Ship> getShipsInCity(Long cityId, Long userId);
 }

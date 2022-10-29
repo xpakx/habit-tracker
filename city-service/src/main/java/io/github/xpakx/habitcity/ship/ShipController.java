@@ -15,9 +15,9 @@ public class ShipController {
     private final ShipService service;
 
     @PostMapping("/city/{cityId}/ship")
-    public ResponseEntity<ShipResponse> add(@RequestBody ShipRequest request, @PathVariable Long cityId, @RequestHeader String id) {
+    public ResponseEntity<ShipResponse> deploy(@RequestBody ShipRequest request, @PathVariable Long cityId, @RequestHeader String id) {
         return new ResponseEntity<>(
-                service.addShip(request, cityId, Long.valueOf(id)),
+                service.deploy(request, cityId, Long.valueOf(id)),
                 HttpStatus.OK
         );
     }

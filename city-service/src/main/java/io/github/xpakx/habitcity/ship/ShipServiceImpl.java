@@ -23,7 +23,7 @@ public class ShipServiceImpl implements ShipService {
 
     @Override
     @Transactional
-    public ShipResponse addShip(ShipRequest request, Long cityId, Long userId) {
+    public ShipResponse deploy(ShipRequest request, Long cityId, Long userId) {
         EquipmentEntry entry = getEquipmentEntry(request, userId);
         testCityOwnership(cityId, userId);
         entryRepository.delete(entry);
