@@ -1,5 +1,6 @@
 package io.github.xpakx.habitcity.ship;
 
+import io.github.xpakx.habitcity.city.CityRepository;
 import io.github.xpakx.habitcity.equipment.EquipmentEntry;
 import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
 import io.github.xpakx.habitcity.ship.dto.ShipRequest;
@@ -15,6 +16,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ShipServiceImpl implements ShipService {
     private final EquipmentEntryRepository entryRepository;
+    private final CityRepository cityRepository;
+    private final PlayerShipRepository shipRepository;
 
     @Override
     @Transactional
@@ -24,7 +27,16 @@ public class ShipServiceImpl implements ShipService {
             throw new NotAShipException();
         }
         entryRepository.delete(entry);
+        saveShip(cityId, entry);
         return new ShipResponse();
+    }
+
+    private void saveShip(Long cityId, EquipmentEntry entry) {
+        PlayerShip ship = new PlayerShip();
+        ship.setBlocked(false);
+        ship.setCity(cityRepository.getReferenceById(cityId));
+        ship.setShip(entry.getShip());
+        shipRepository.save(ship);
     }
 
     @Override
