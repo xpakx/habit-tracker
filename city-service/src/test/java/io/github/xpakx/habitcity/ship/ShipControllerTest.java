@@ -131,4 +131,33 @@ class ShipControllerTest {
         return shipRepository.save(ship).getId();
     }
 
+    @Test
+    void shouldNotIncludeShipsInOtherCitiesInResponse() {
+        Long cityId = createCity();
+        Long city2Id = createCity();
+        deployShip(cityId, createShip("ship1"));
+        deployShip(cityId, createShip("ship2"));
+        deployShip(city2Id, createShip("ship3"));
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/city/{cityId}/ship/all", cityId)
+        .then()
+                .statusCode(OK.value())
+                .body("$", hasSize(2));
+    }
+
+    @Test
+    void shouldRespondWithEmptyListIfCityDoesNotBelongToUser() {
+        Long cityId = createCity(userId+1);
+        deployShip(cityId, createShip("ship1"));
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/city/{cityId}/ship/all", cityId)
+        .then()
+                .statusCode(OK.value())
+                .body("$", hasSize(0));
+    }
+
 }
