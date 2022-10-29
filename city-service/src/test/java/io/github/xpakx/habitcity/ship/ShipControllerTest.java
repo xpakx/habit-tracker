@@ -87,7 +87,7 @@ class ShipControllerTest {
         given()
                 .header(getHeaderForUserId(userId))
         .when()
-                .get(baseUrl + "/city/{cityId}/ship/all", 1L)
+                .get(baseUrl + "/city/{cityId}/ship/all", cityId)
         .then()
                 .statusCode(OK.value())
                 .body("$", hasSize(0));
@@ -111,7 +111,7 @@ class ShipControllerTest {
         given()
                 .header(getHeaderForUserId(userId))
         .when()
-                .get(baseUrl + "/city/{cityId}/ship/all", 1L)
+                .get(baseUrl + "/city/{cityId}/ship/all", cityId)
         .then()
                 .statusCode(OK.value())
                 .body("$", hasSize(1));
