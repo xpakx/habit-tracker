@@ -1,5 +1,6 @@
 package io.github.xpakx.habitcity.ship;
 
+import io.github.xpakx.habitcity.ship.dto.DeployedShip;
 import io.github.xpakx.habitcity.ship.dto.ShipRequest;
 import io.github.xpakx.habitcity.ship.dto.ShipResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class ShipController {
     }
 
     @GetMapping("/city/{cityId}/ship/all")
-    public ResponseEntity<List<PlayerShip>> getShips(@PathVariable Long cityId, @RequestHeader String id) {
+    public ResponseEntity<List<DeployedShip>> getShips(@PathVariable Long cityId, @RequestHeader String id) {
         return new ResponseEntity<>(
                 service.getShipsInCity(cityId, Long.valueOf(id)),
                 HttpStatus.OK

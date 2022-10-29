@@ -5,6 +5,7 @@ import io.github.xpakx.habitcity.city.CityRepository;
 import io.github.xpakx.habitcity.city.error.CityNotFoundException;
 import io.github.xpakx.habitcity.equipment.EquipmentEntry;
 import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
+import io.github.xpakx.habitcity.ship.dto.DeployedShip;
 import io.github.xpakx.habitcity.ship.dto.ShipRequest;
 import io.github.xpakx.habitcity.ship.dto.ShipResponse;
 import io.github.xpakx.habitcity.ship.error.NotAShipException;
@@ -54,7 +55,7 @@ public class ShipServiceImpl implements ShipService {
     }
 
     @Override
-    public List<PlayerShip> getShipsInCity(Long cityId, Long userId) {
+    public List<DeployedShip> getShipsInCity(Long cityId, Long userId) {
         return shipRepository.findByCityIdAndCityUserId(cityId, userId);
     }
 }
