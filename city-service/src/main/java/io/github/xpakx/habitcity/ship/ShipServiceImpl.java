@@ -24,16 +24,25 @@ public class ShipServiceImpl implements ShipService {
     @Override
     @Transactional
     public ShipResponse addShip(ShipRequest request, Long cityId, Long userId) {
+        EquipmentEntry entry = getEquipmentEntry(request, userId);
+        testCityOwnership(cityId, userId);
+        entryRepository.delete(entry);
+        saveShip(cityId, entry);
+        return new ShipResponse();
+    }
+
+    private void testCityOwnership(Long cityId, Long userId) {
+        if(!cityRepository.existsByIdAndUserId(cityId, userId)) {
+            throw new CityNotFoundException();
+        }
+    }
+
+    private EquipmentEntry getEquipmentEntry(ShipRequest request, Long userId) {
         EquipmentEntry entry = entryRepository.findByIdAndEquipmentUserId(request.getEntryId(), userId).orElseThrow(NotAShipException::new);
         if(entry.getShip() == null) {
             throw new NotAShipException();
         }
-        if(!cityRepository.existsByIdAndUserId(cityId, userId) {
-            throw new CityNotFoundException();
-        }
-        entryRepository.delete(entry);
-        saveShip(cityId, entry);
-        return new ShipResponse();
+        return entry;
     }
 
     private void saveShip(Long cityId, EquipmentEntry entry) {
