@@ -4,6 +4,7 @@ import io.github.xpakx.habitcity.equipment.EquipmentEntry;
 import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
 import io.github.xpakx.habitcity.ship.dto.ShipRequest;
 import io.github.xpakx.habitcity.ship.dto.ShipResponse;
+import io.github.xpakx.habitcity.ship.error.NotAShipException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,9 +19,9 @@ public class ShipServiceImpl implements ShipService {
     @Override
     @Transactional
     public ShipResponse addShip(ShipRequest request, Long cityId, Long userId) {
-        EquipmentEntry entry = entryRepository.findByIdAndEquipmentUserId(request.getEntryId(), userId).orElseThrow();
+        EquipmentEntry entry = entryRepository.findByIdAndEquipmentUserId(request.getEntryId(), userId).orElseThrow(NotAShipException::new);
         if(entry.getShip() == null) {
-            return null;
+            throw new NotAShipException();
         }
         entryRepository.delete(entry);
         return new ShipResponse();
