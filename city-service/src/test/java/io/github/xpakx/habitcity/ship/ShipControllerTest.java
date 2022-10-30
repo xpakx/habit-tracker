@@ -3,8 +3,14 @@ package io.github.xpakx.habitcity.ship;
 import io.github.xpakx.habitcity.city.City;
 import io.github.xpakx.habitcity.city.CityRepository;
 import io.github.xpakx.habitcity.config.SchedulerConfig;
+import io.github.xpakx.habitcity.equipment.EquipmentEntry;
 import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
+import io.github.xpakx.habitcity.equipment.UserEquipment;
 import io.github.xpakx.habitcity.equipment.UserEquipmentRepository;
+import io.github.xpakx.habitcity.resource.Resource;
+import io.github.xpakx.habitcity.resource.ResourceRepository;
+import io.github.xpakx.habitcity.ship.dto.ShipRequest;
+import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,8 +23,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static org.hamcrest.Matchers.*;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ShipControllerTest {
@@ -39,6 +44,8 @@ class ShipControllerTest {
     ShipRepository shipRepository;
     @Autowired
     PlayerShipRepository playerShipRepository;
+    @Autowired
+    ResourceRepository resourceRepository;
     @MockBean
     SchedulerConfig config;
 
@@ -53,6 +60,7 @@ class ShipControllerTest {
         playerShipRepository.deleteAll();
         entryRepository.deleteAll();
         shipRepository.deleteAll();
+        resourceRepository.deleteAll();
         equipmentRepository.deleteAll();
         cityRepository.deleteAll();
     }
@@ -164,4 +172,113 @@ class ShipControllerTest {
                 .body("$", hasSize(0));
     }
 
+    @Test
+    void shouldRespondWith401ToDeployShipIfNoUserIdGiven() {
+        when()
+                .post(baseUrl + "/city/{cityId}/ship", 1L)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldNotDeployShipIfPlayerDoesNotOwnCity() {
+        createEquipment();
+        Long entryId = addShipToEquipment(createShip("ship1"));
+        Long cityId = createCity(userId+1);
+        ShipRequest request = createShipRequest(entryId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/ship", cityId)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    private ShipRequest createShipRequest(Long entryId) {
+        ShipRequest request = new ShipRequest();
+        request.setEntryId(entryId);
+        return request;
+    }
+
+    private Long addShipToEquipment(Long shipId) {
+        EquipmentEntry entry = new EquipmentEntry();
+        entry.setShip(shipRepository.getReferenceById(shipId));
+        entry.setAmount(1);
+        entry.setEquipment(equipmentRepository.getByUserId(userId).get());
+        return entryRepository.save(entry).getId();
+    }
+
+    private Long addResourceToEquipment(Long resourceId) {
+        EquipmentEntry entry = new EquipmentEntry();
+        entry.setResource(resourceRepository.getReferenceById(resourceId));
+        entry.setAmount(1);
+        entry.setEquipment(equipmentRepository.getByUserId(userId).get());
+        return entryRepository.save(entry).getId();
+    }
+
+    private void createEquipment() {
+        UserEquipment equipment = new UserEquipment();
+        equipment.setMaxSize(100);
+        equipment.setUserId(userId);
+        equipmentRepository.save(equipment);
+    }
+
+    @Test
+    void shouldNotDeployShipIfCityDoesNotExist() {
+        createEquipment();
+        Long entryId = addShipToEquipment(createShip("ship1"));
+        ShipRequest request = createShipRequest(entryId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/ship", 1L)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldNotDeployShipIfEntryDoesNotExist() {
+        createEquipment();
+        Long cityId = createCity(userId+1);
+        createShip("ship1");
+        ShipRequest request = createShipRequest(1L);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/ship", cityId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldNotDeployShipIfEntryDoesNotHaveShip() {
+        createEquipment();
+        Long cityId = createCity(userId+1);
+        Long entryId = addResourceToEquipment(createResource("item1"));
+        ShipRequest request = createShipRequest(entryId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/ship", cityId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    private Long createResource(String itemName) {
+        Resource res = new Resource();
+        res.setName(itemName);
+        res.setBaseCost(5);
+        res.setCode(itemName.toUpperCase());
+        res.setMaxStock(FULL_STACK);
+        res.setRarity(0);
+        return resourceRepository.save(res).getId();
+    }
 }
