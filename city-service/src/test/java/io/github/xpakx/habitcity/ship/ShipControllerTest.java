@@ -20,8 +20,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import java.util.List;
+import java.util.Optional;
+
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpStatus.*;
 
@@ -281,4 +285,58 @@ class ShipControllerTest {
         res.setRarity(0);
         return resourceRepository.save(res).getId();
     }
+
+    @Test
+    void shouldDeployShip() {
+        createEquipment();
+        Long entryId = addShipToEquipment(createShip("ship1"));
+        Long cityId = createCity(userId);
+        ShipRequest request = createShipRequest(entryId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/ship", cityId)
+        .then()
+                .statusCode(OK.value());
+    }
+
+    @Test
+    void shouldDeleteEquipmentEntry() {
+        createEquipment();
+        Long entryId = addShipToEquipment(createShip("ship1"));
+        Long cityId = createCity(userId);
+        ShipRequest request = createShipRequest(entryId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/ship", cityId)
+        .then()
+                .statusCode(OK.value());
+        Optional<EquipmentEntry> entry = entryRepository.findById(entryId);
+        assertThat(entry.isEmpty(), is(true));
+    }
+
+    @Test
+    void shouldAddShipEntry() {
+        createEquipment();
+        Long entryId = addShipToEquipment(createShip("ship1"));
+        Long cityId = createCity(userId);
+        ShipRequest request = createShipRequest(entryId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/ship", cityId)
+        .then()
+                .statusCode(OK.value());
+        List<PlayerShip> ships = playerShipRepository.findAll();
+        assertThat(ships.size(), equalTo(1));
+        assertThat(ships.get(0).getShip().getName(), is("ship1"));
+    }
+
 }
