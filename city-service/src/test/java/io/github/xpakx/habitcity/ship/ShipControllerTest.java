@@ -16,7 +16,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
@@ -114,7 +114,8 @@ class ShipControllerTest {
                 .get(baseUrl + "/city/{cityId}/ship/all", cityId)
         .then()
                 .statusCode(OK.value())
-                .body("$", hasSize(1));
+                .body("$", hasSize(1))
+                .body("name", hasItem("ship1"));
     }
 
     private void deployShip(Long cityId, Long shipId) {
@@ -144,7 +145,10 @@ class ShipControllerTest {
                 .get(baseUrl + "/city/{cityId}/ship/all", cityId)
         .then()
                 .statusCode(OK.value())
-                .body("$", hasSize(2));
+                .body("$", hasSize(2))
+                .body("name", hasItem("ship1"))
+                .body("name", hasItem("ship2"))
+                .body("name", not(hasItem("ship3")));
     }
 
     @Test
