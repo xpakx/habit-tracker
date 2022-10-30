@@ -7,4 +7,8 @@ import lombok.Setter;
 @Setter
 public class ShipResponse {
     Long id;
+    String name;
+    String code;
+    Long cityId;
+    Long shipId;
 }

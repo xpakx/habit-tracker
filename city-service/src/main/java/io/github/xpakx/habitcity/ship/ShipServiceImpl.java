@@ -28,8 +28,18 @@ public class ShipServiceImpl implements ShipService {
         EquipmentEntry entry = getEquipmentEntry(request, userId);
         testCityOwnership(cityId, userId);
         entryRepository.delete(entry);
-        saveShip(cityId, entry);
-        return new ShipResponse();
+        PlayerShip ship = saveShip(cityId, entry);
+        return createShipResponse(ship, cityId, entry);
+    }
+
+    private ShipResponse createShipResponse(PlayerShip ship, Long cityId, EquipmentEntry entry) {
+        ShipResponse response = new ShipResponse();
+        response.setId(ship.getId());
+        response.setCode(entry.getShip().getCode());
+        response.setName(entry.getShip().getName());
+        response.setShipId(entry.getShip().getId());
+        response.setCityId(cityId);
+        return response;
     }
 
     private void testCityOwnership(Long cityId, Long userId) {
@@ -46,12 +56,12 @@ public class ShipServiceImpl implements ShipService {
         return entry;
     }
 
-    private void saveShip(Long cityId, EquipmentEntry entry) {
+    private PlayerShip saveShip(Long cityId, EquipmentEntry entry) {
         PlayerShip ship = new PlayerShip();
         ship.setBlocked(false);
         ship.setCity(cityRepository.getReferenceById(cityId));
         ship.setShip(entry.getShip());
-        shipRepository.save(ship);
+        return shipRepository.save(ship);
     }
 
     @Override
