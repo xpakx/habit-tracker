@@ -72,11 +72,13 @@ public class ShipServiceImpl implements ShipService {
     @Override
     @Transactional
     public ExpeditionResponse sendShips(ExpeditionRequest request, Long cityId, Long userId) {
-        testCityOwnership(cityId, userId);
-        if(request.getShips() == null || request.getShips().size() < 1) {
-            throw new WrongShipChoiceException("You must choose ships for expedition!");
-        }
+        testExpeditionRequest(request, cityId, userId);
         List<PlayerShip> shipsToSend = shipRepository.findByCityIdAndIdIn(cityId, request.getShips().stream().map(ExpeditionShip::getShipId).toList());
+        testShips(request, shipsToSend);
+        return null;
+    }
+
+    private void testShips(ExpeditionRequest request, List<PlayerShip> shipsToSend) {
         if(request.getShips().size() != shipsToSend.size()) {
             throw new WrongShipChoiceException();
         }
@@ -86,7 +88,12 @@ public class ShipServiceImpl implements ShipService {
             }
             ship.setBlocked(true);
         }
+    }
 
-        return null;
+    private void testExpeditionRequest(ExpeditionRequest request, Long cityId, Long userId) {
+        testCityOwnership(cityId, userId);
+        if(request.getShips() == null || request.getShips().size() < 1) {
+            throw new WrongShipChoiceException("You must choose ships for expedition!");
+        }
     }
 }
