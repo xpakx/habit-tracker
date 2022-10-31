@@ -7,6 +7,8 @@ import io.github.xpakx.habitcity.equipment.EquipmentEntry;
 import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
 import io.github.xpakx.habitcity.ship.dto.*;
 import io.github.xpakx.habitcity.ship.error.NotAShipException;
+import io.github.xpakx.habitcity.ship.error.WrongShipChoiceException;
+import io.github.xpakx.habitcity.shop.error.WrongOwnerException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,7 +70,23 @@ public class ShipServiceImpl implements ShipService {
     }
 
     @Override
+    @Transactional
     public ExpeditionResponse sendShips(ExpeditionRequest request, Long cityId, Long userId) {
+        testCityOwnership(cityId, userId);
+        if(request.getShips() == null || request.getShips().size() < 1) {
+            throw new WrongShipChoiceException("You must choose ships for expedition!");
+        }
+        List<PlayerShip> shipsToSend = shipRepository.findByCityIdAndIdIn(cityId, request.getShips().stream().map(ExpeditionShip::getShipId).toList());
+        if(request.getShips().size() != shipsToSend.size()) {
+            throw new WrongShipChoiceException();
+        }
+        for(PlayerShip ship : shipsToSend) {
+            if(ship.isBlocked()) {
+                throw new WrongShipChoiceException("Some ships are already on expedition!");
+            }
+            ship.setBlocked(true);
+        }
+
         return null;
     }
 }

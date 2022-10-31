@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ExpeditionRequest {
-    List<ExpeditionShip> ships;
-    Long islandId;
+public class ExpeditionShip {
+    Long shipId;
+    List<ExpeditionEquipment> equipment;
 }
