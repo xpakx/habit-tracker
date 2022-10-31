@@ -26,6 +26,7 @@ public class Ship implements Serializable {
     private String name;
     private String imgUrl;
     private Integer size;
+    private Integer maxCargo;
     private Integer baseCost;
     private Integer rarity;
     private String code;

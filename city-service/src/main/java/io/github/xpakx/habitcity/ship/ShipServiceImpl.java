@@ -1,19 +1,21 @@
 package io.github.xpakx.habitcity.ship;
 
-import io.github.xpakx.habitcity.city.City;
 import io.github.xpakx.habitcity.city.CityRepository;
 import io.github.xpakx.habitcity.city.error.CityNotFoundException;
+import io.github.xpakx.habitcity.city.error.NotEnoughSpaceException;
 import io.github.xpakx.habitcity.equipment.EquipmentEntry;
 import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
 import io.github.xpakx.habitcity.ship.dto.*;
 import io.github.xpakx.habitcity.ship.error.NotAShipException;
 import io.github.xpakx.habitcity.ship.error.WrongShipChoiceException;
-import io.github.xpakx.habitcity.shop.error.WrongOwnerException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -82,11 +84,23 @@ public class ShipServiceImpl implements ShipService {
         if(request.getShips().size() != shipsToSend.size()) {
             throw new WrongShipChoiceException();
         }
+        Map<Long, List<ExpeditionEquipment>> equipmentMap = request.getShips().stream()
+                .collect(Collectors.toMap(ExpeditionShip::getShipId, ExpeditionShip::getEquipment));
         for(PlayerShip ship : shipsToSend) {
             if(ship.isBlocked()) {
                 throw new WrongShipChoiceException("Some ships are already on expedition!");
             }
+            testShipCargo(equipmentMap, ship);
             ship.setBlocked(true);
+        }
+    }
+
+    private void testShipCargo(Map<Long, List<ExpeditionEquipment>> equipmentMap, PlayerShip ship) {
+        Integer maxCargo = ship.getShip().getMaxCargo();
+        int realCargo = equipmentMap.getOrDefault(ship.getId(), new ArrayList<>()).stream()
+                .mapToInt(ExpeditionEquipment::getAmount).sum();
+        if(realCargo > maxCargo) {
+            throw new NotEnoughSpaceException();
         }
     }
 
