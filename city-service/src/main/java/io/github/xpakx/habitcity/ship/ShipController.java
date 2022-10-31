@@ -1,8 +1,6 @@
 package io.github.xpakx.habitcity.ship;
 
-import io.github.xpakx.habitcity.ship.dto.DeployedShip;
-import io.github.xpakx.habitcity.ship.dto.ShipRequest;
-import io.github.xpakx.habitcity.ship.dto.ShipResponse;
+import io.github.xpakx.habitcity.ship.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +25,14 @@ public class ShipController {
     public ResponseEntity<List<DeployedShip>> getShips(@PathVariable Long cityId, @RequestHeader String id) {
         return new ResponseEntity<>(
                 service.getShipsInCity(cityId, Long.valueOf(id)),
+                HttpStatus.OK
+        );
+    }
+
+    @PostMapping("/city/{cityId}/expedition")
+    public ResponseEntity<ExpeditionResponse> sendShips(@RequestBody ExpeditionRequest request, @PathVariable Long cityId, @RequestHeader String id) {
+        return new ResponseEntity<>(
+                service.sendShips(request, cityId, Long.valueOf(id)),
                 HttpStatus.OK
         );
     }
