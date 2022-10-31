@@ -3,8 +3,8 @@ package io.github.xpakx.habitcity.ship;
 import io.github.xpakx.habitcity.city.CityRepository;
 import io.github.xpakx.habitcity.city.error.CityNotFoundException;
 import io.github.xpakx.habitcity.city.error.NotEnoughSpaceException;
-import io.github.xpakx.habitcity.equipment.EquipmentEntry;
-import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
+import io.github.xpakx.habitcity.equipment.*;
+import io.github.xpakx.habitcity.equipment.error.EquipmentNotFoundException;
 import io.github.xpakx.habitcity.ship.dto.*;
 import io.github.xpakx.habitcity.ship.error.NotAShipException;
 import io.github.xpakx.habitcity.ship.error.WrongShipChoiceException;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,6 +24,8 @@ public class ShipServiceImpl implements ShipService {
     private final EquipmentEntryRepository entryRepository;
     private final CityRepository cityRepository;
     private final PlayerShipRepository shipRepository;
+    private final EquipmentService equipment;
+    private final UserEquipmentRepository equipmentRepository;
 
     @Override
     @Transactional
@@ -77,7 +80,18 @@ public class ShipServiceImpl implements ShipService {
         testExpeditionRequest(request, cityId, userId);
         List<PlayerShip> shipsToSend = shipRepository.findByCityIdAndIdIn(cityId, request.getShips().stream().map(ExpeditionShip::getShipId).toList());
         testShips(request, shipsToSend);
+        List<EquipmentEntry> entries = prepareEquipmentEntries(request, userId);
+        entryRepository.saveAll(entries.stream().filter((a -> a.getAmount() > 0)).toList());
+        entryRepository.deleteAll(entries.stream().filter((a -> a.getAmount() <= 0)).toList());
+        shipRepository.saveAll(shipsToSend);
         return null;
+    }
+
+    private List<EquipmentEntry> prepareEquipmentEntries(ExpeditionRequest request, Long userId) {
+        UserEquipment eq = equipmentRepository.getByUserId(userId).orElseThrow(EquipmentNotFoundException::new);
+        List<EquipmentEntry> entries = entryRepository.getByEquipmentId(eq.getId());
+        equipment.subtractResources(request, entries);
+        return entries;
     }
 
     private void testShips(ExpeditionRequest request, List<PlayerShip> shipsToSend) {
