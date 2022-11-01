@@ -27,9 +27,9 @@ public class AMQPConfig {
     }
 
     @Bean
-    public Binding accountsBinding(final Queue gamificationQueue, final TopicExchange attemptsExchange) {
+    public Binding accountsBinding(final Queue gamificationQueue, final TopicExchange accountsTopicExchange) {
         return BindingBuilder.bind(gamificationQueue)
-                .to(attemptsExchange)
+                .to(accountsTopicExchange)
                 .with("account");
     }
 
@@ -50,7 +50,7 @@ public class AMQPConfig {
     }
 
     @Bean
-    public TopicExchange completionsTopicExchange(@Value("${amqp.exchange.expeditions}") final String expeditionsTopic) {
+    public TopicExchange expeditionsTopicExchange(@Value("${amqp.exchange.expeditions}") final String expeditionsTopic) {
         return ExchangeBuilder
                 .topicExchange(expeditionsTopic)
                 .durable(true)
