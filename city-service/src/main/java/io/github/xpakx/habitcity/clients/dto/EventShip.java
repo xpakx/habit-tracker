@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ExpeditionShip {
+public class EventShip {
     private Long shipId;
     private String name;
     private String code;

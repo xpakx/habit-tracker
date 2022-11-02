@@ -10,6 +10,6 @@ import java.util.List;
 public class ExpeditionEvent {
     Long userId;
     Long islandId;
-    List<ExpeditionShip> ships;
+    List<EventShip> ships;
 
 }
