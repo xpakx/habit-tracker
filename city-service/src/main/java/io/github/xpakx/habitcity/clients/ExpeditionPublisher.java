@@ -35,19 +35,23 @@ public class ExpeditionPublisher {
         ExpeditionEvent event = new ExpeditionEvent();
         event.setIslandId(request.getIslandId());
         event.setUserId(userId);
-        List<EventShip> shipsForEvent = new ArrayList<>();
-        for(ExpeditionShip ship : request.getShips()) {
-            EventShip shipForEvent = new EventShip();
-            Ship shipFromDb = shipMap.getOrDefault(ship.getShipId(), null);
-            shipForEvent.setShipId(ship.getShipId());
-            shipForEvent.setCode(shipFromDb.getCode());
-            shipForEvent.setName(shipFromDb.getName());
-            shipForEvent.setMaxCargo(shipFromDb.getMaxCargo());
-            shipForEvent.setRarity(shipFromDb.getRarity());
-            shipForEvent.setSize(shipFromDb.getSize());
-            shipsForEvent.add(shipForEvent);
-        }
-        event.setShips(shipsForEvent);
+        event.setShips(prepareShips(request, shipMap, resourceMap));
         template.convertAndSend(completionsTopic, "expedition", event);
+    }
+
+    private List<EventShip> prepareShips(ExpeditionRequest request, Map<Long, Ship> shipMap, Map<Long, Resource> resourceMap) {
+        return request.getShips().stream().map((a) -> createEventShip(shipMap, resourceMap, a)).toList();
+    }
+
+    private EventShip createEventShip(final Map<Long, Ship> shipMap,final Map<Long, Resource> resourceMap, ExpeditionShip ship) {
+        EventShip shipForEvent = new EventShip();
+        Ship shipFromDb = shipMap.getOrDefault(ship.getShipId(), null);
+        shipForEvent.setShipId(ship.getShipId());
+        shipForEvent.setCode(shipFromDb.getCode());
+        shipForEvent.setName(shipFromDb.getName());
+        shipForEvent.setMaxCargo(shipFromDb.getMaxCargo());
+        shipForEvent.setRarity(shipFromDb.getRarity());
+        shipForEvent.setSize(shipFromDb.getSize());
+        return shipForEvent;
     }
 }
