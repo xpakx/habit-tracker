@@ -3,6 +3,7 @@ package io.github.xpakx.habitcity.ship;
 import io.github.xpakx.habitcity.city.CityRepository;
 import io.github.xpakx.habitcity.city.error.CityNotFoundException;
 import io.github.xpakx.habitcity.city.error.NotEnoughSpaceException;
+import io.github.xpakx.habitcity.clients.ExpeditionPublisher;
 import io.github.xpakx.habitcity.equipment.*;
 import io.github.xpakx.habitcity.equipment.error.EquipmentNotFoundException;
 import io.github.xpakx.habitcity.ship.dto.*;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +27,7 @@ public class ShipServiceImpl implements ShipService {
     private final PlayerShipRepository shipRepository;
     private final EquipmentService equipment;
     private final UserEquipmentRepository equipmentRepository;
+    private final ExpeditionPublisher publisher;
 
     @Override
     @Transactional
@@ -83,6 +86,7 @@ public class ShipServiceImpl implements ShipService {
         entryRepository.saveAll(entries.stream().filter((a -> a.getAmount() > 0)).toList());
         entryRepository.deleteAll(entries.stream().filter((a -> a.getAmount() <= 0)).toList());
         shipRepository.saveAll(shipsToSend);
+        publisher.sendExpedition(request, shipsToSend, entries.stream().map(EquipmentEntry::getResource).filter(Objects::nonNull).toList(), userId);
         return null;
     }
 
