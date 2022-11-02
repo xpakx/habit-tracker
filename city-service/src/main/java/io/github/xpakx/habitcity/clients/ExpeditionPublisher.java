@@ -13,9 +13,9 @@ import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,12 +41,15 @@ public class ExpeditionPublisher {
     }
 
     private List<EventShip> prepareShips(ExpeditionRequest request, Map<Long, Ship> shipMap, Map<Long, Resource> resourceMap) {
-        return request.getShips().stream().map((a) -> createEventShip(shipMap, resourceMap, a)).toList();
+        return request.getShips().stream().map((a) -> createEventShip(shipMap, resourceMap, a)).filter(Objects::nonNull).toList();
     }
 
     private EventShip createEventShip(final Map<Long, Ship> shipMap,final Map<Long, Resource> resourceMap, ExpeditionShip ship) {
         EventShip shipForEvent = new EventShip();
         Ship shipFromDb = shipMap.getOrDefault(ship.getShipId(), null);
+        if(shipFromDb == null) {
+            return null;
+        }
         shipForEvent.setShipId(ship.getShipId());
         shipForEvent.setCode(shipFromDb.getCode());
         shipForEvent.setName(shipFromDb.getName());
@@ -58,12 +61,15 @@ public class ExpeditionPublisher {
     }
 
     private List<Cargo> prepareResources(ExpeditionShip ship, Map<Long, Resource> resourceMap) {
-        return ship.getEquipment().stream().map((a) -> createEventCargo(resourceMap, a)).toList();
+        return ship.getEquipment().stream().map((a) -> createEventCargo(resourceMap, a)).filter(Objects::nonNull).toList();
     }
 
     private Cargo createEventCargo(final Map<Long, Resource> resourceMap, ExpeditionEquipment resource) {
         Cargo cargo = new Cargo();
         Resource resourceFromDb = resourceMap.getOrDefault(resource.getId(), null);
+        if(resourceFromDb == null) {
+            return null;
+        }
         cargo.setResourceId(resource.getId());
         cargo.setCode(resourceFromDb.getCode());
         cargo.setName(resourceFromDb.getName());
