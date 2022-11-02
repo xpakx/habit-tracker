@@ -1,5 +1,6 @@
 package io.github.xpakx.habitcity.clients;
 
+import io.github.xpakx.habitcity.clients.dto.Cargo;
 import io.github.xpakx.habitcity.clients.dto.EventShip;
 import io.github.xpakx.habitcity.clients.dto.ExpeditionEvent;
 import io.github.xpakx.habitcity.resource.Resource;
@@ -52,6 +53,22 @@ public class ExpeditionPublisher {
         shipForEvent.setMaxCargo(shipFromDb.getMaxCargo());
         shipForEvent.setRarity(shipFromDb.getRarity());
         shipForEvent.setSize(shipFromDb.getSize());
+        shipForEvent.setCargo(prepareResources(ship, resourceMap));
         return shipForEvent;
+    }
+
+    private List<Cargo> prepareResources(ExpeditionShip ship, Map<Long, Resource> resourceMap) {
+        return ship.getEquipment().stream().map((a) -> createEventCargo(resourceMap, a)).toList();
+    }
+
+    private Cargo createEventCargo(final Map<Long, Resource> resourceMap, ExpeditionEquipment resource) {
+        Cargo cargo = new Cargo();
+        Resource resourceFromDb = resourceMap.getOrDefault(resource.getId(), null);
+        cargo.setResourceId(resource.getId());
+        cargo.setCode(resourceFromDb.getCode());
+        cargo.setName(resourceFromDb.getName());
+        cargo.setAmount(resource.getAmount());
+        cargo.setRarity(resourceFromDb.getRarity());
+        return cargo;
     }
 }
