@@ -136,12 +136,16 @@ class ShipControllerTest {
                 .body("name", hasItem("ship1"));
     }
 
-    private void deployShip(Long cityId, Long shipId) {
+    private Long deployShip(Long cityId, Long shipId) {
+        return deployShip(cityId, shipId, false);
+    }
+
+    private Long deployShip(Long cityId, Long shipId, boolean blocked) {
         PlayerShip ship = new PlayerShip();
-        ship.setBlocked(false);
+        ship.setBlocked(blocked);
         ship.setCity(cityRepository.getReferenceById(cityId));
         ship.setShip(shipRepository.getReferenceById(shipId));
-        playerShipRepository.save(ship);
+        return playerShipRepository.save(ship).getId();
     }
 
     private Long createShip(String name) {
@@ -395,6 +399,48 @@ class ShipControllerTest {
     void shouldNotSendExpeditionWithNullShipList() {
         ExpeditionRequest request = getExpeditionRequest(null);
         Long cityId = createCity();
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/expedition", cityId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldNotSendExpeditionWithShipFromWrongCity() {
+        Long cityId = createCity();
+        Long otherCityId = createCity();
+        Long shipId = createShip("ship1");
+        ExpeditionRequest request = getExpeditionRequest(getShipList(List.of(deployShip(cityId, shipId), deployShip(cityId, shipId), deployShip(otherCityId, shipId))));
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/expedition", cityId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    private List<ExpeditionShip> getShipList(List<Long> ids) {
+        List<ExpeditionShip> list = new ArrayList<>();
+        for(Long id : ids) {
+            ExpeditionShip ship = new ExpeditionShip();
+            ship.setShipId(id);
+            ship.setEquipment(new ArrayList<>());
+            list.add(ship);
+        }
+        return list;
+    }
+
+    @Test
+    void shouldNotSendExpeditionWithAlreadyBlockedShip() {
+        Long cityId = createCity();
+        Long shipId = createShip("ship1");
+        ExpeditionRequest request = getExpeditionRequest(getShipList(List.of(deployShip(cityId, shipId, true))));
         given()
                 .header(getHeaderForUserId(userId))
                 .contentType(ContentType.JSON)
