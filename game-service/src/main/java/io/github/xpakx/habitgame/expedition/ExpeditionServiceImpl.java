@@ -39,7 +39,6 @@ public class ExpeditionServiceImpl implements ExpeditionService {
             items.addAll(ship.getCargo().stream().map(a -> toItem(a, shipMap.get(ship.getShipId()))).toList());
         }
         itemRepository.saveAll(items);
-
     }
 
     private Item toItem(Cargo cargo, Ship ship) {

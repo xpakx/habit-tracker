@@ -2,6 +2,7 @@ package io.github.xpakx.habitcity.ship;
 
 import io.github.xpakx.habitcity.city.City;
 import io.github.xpakx.habitcity.city.CityRepository;
+import io.github.xpakx.habitcity.clients.ExpeditionPublisher;
 import io.github.xpakx.habitcity.config.SchedulerConfig;
 import io.github.xpakx.habitcity.equipment.EquipmentEntry;
 import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
@@ -9,6 +10,8 @@ import io.github.xpakx.habitcity.equipment.UserEquipment;
 import io.github.xpakx.habitcity.equipment.UserEquipmentRepository;
 import io.github.xpakx.habitcity.resource.Resource;
 import io.github.xpakx.habitcity.resource.ResourceRepository;
+import io.github.xpakx.habitcity.ship.dto.ExpeditionRequest;
+import io.github.xpakx.habitcity.ship.dto.ExpeditionShip;
 import io.github.xpakx.habitcity.ship.dto.ShipRequest;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
@@ -20,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,6 +56,8 @@ class ShipControllerTest {
     ResourceRepository resourceRepository;
     @MockBean
     SchedulerConfig config;
+    @MockBean
+    ExpeditionPublisher publisher;
 
     @BeforeEach
     void setUp() {
@@ -337,6 +343,66 @@ class ShipControllerTest {
         List<PlayerShip> ships = playerShipRepository.findAll();
         assertThat(ships.size(), equalTo(1));
         assertThat(ships.get(0).getShip().getName(), is("ship1"));
+    }
+
+    @Test
+    void shouldRespondWith401ToSendExpeditionIfNoUserIdGiven() {
+        when()
+                .post(baseUrl + "/city/{cityId}/expedition", 1L)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldNotSendExpeditionFromNonexistentCity() {
+        ExpeditionRequest request = getExpeditionRequest();
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/expedition", 1L)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    private ExpeditionRequest getExpeditionRequest() {
+        return getExpeditionRequest(new ArrayList<>());
+    }
+
+    private ExpeditionRequest getExpeditionRequest(List<ExpeditionShip> ships) {
+        ExpeditionRequest request = new ExpeditionRequest();
+        request.setIslandId(1L);
+        request.setShips(ships);
+        return request;
+    }
+
+    @Test
+    void shouldNotSendExpeditionWithEmptyShipList() {
+        ExpeditionRequest request = getExpeditionRequest();
+        Long cityId = createCity();
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/expedition", cityId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldNotSendExpeditionWithNullShipList() {
+        ExpeditionRequest request = getExpeditionRequest(null);
+        Long cityId = createCity();
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/expedition", cityId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
     }
 
 }
