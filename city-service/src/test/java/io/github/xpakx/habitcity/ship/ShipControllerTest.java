@@ -151,6 +151,7 @@ class ShipControllerTest {
     private Long createShip(String name) {
         Ship ship = new Ship();
         ship.setName(name);
+        ship.setMaxCargo(10);
         return shipRepository.save(ship).getId();
     }
 
@@ -449,6 +450,22 @@ class ShipControllerTest {
                 .post(baseUrl + "/city/{cityId}/expedition", cityId)
         .then()
                 .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldSendExpeditionWithoutCargo() {
+        Long cityId = createCity();
+        createEquipment();
+        Long shipId = createShip("ship1");
+        ExpeditionRequest request = getExpeditionRequest(getShipList(List.of(deployShip(cityId, shipId))));
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/expedition", cityId)
+        .then()
+                .statusCode(OK.value());
     }
 
 }
