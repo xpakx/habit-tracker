@@ -97,6 +97,29 @@ services:
       - POSTGRES_DB=habitgame
     expose:
       - 5432
+  game:
+    build: ./game-service/
+    container_name: game
+    depends_on:
+      - dbgame
+      - rabbitmq
+    expose:
+      - 8086
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbgame:5432/habitgame
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_RABBITMQ_HOST=rabbitmq
+  dbgame:
+    image: 'postgres:13.1-alpine'
+    container_name: dbgame
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=habitgame
+    expose:
+      - 5432
   gateway:
     build: ./gateway/
     container_name: gateway
