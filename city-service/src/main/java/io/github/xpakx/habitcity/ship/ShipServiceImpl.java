@@ -102,6 +102,7 @@ public class ShipServiceImpl implements ShipService {
             throw new WrongShipChoiceException();
         }
         Map<Long, List<ExpeditionEquipment>> equipmentMap = request.getShips().stream()
+                .filter((a) -> a.getEquipment() != null)
                 .collect(Collectors.toMap(ExpeditionShip::getShipId, ExpeditionShip::getEquipment));
         for(PlayerShip ship : shipsToSend) {
             if(ship.isBlocked()) {
