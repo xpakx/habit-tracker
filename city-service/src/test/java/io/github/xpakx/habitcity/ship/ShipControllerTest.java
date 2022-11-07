@@ -10,6 +10,7 @@ import io.github.xpakx.habitcity.equipment.UserEquipment;
 import io.github.xpakx.habitcity.equipment.UserEquipmentRepository;
 import io.github.xpakx.habitcity.resource.Resource;
 import io.github.xpakx.habitcity.resource.ResourceRepository;
+import io.github.xpakx.habitcity.ship.dto.ExpeditionEquipment;
 import io.github.xpakx.habitcity.ship.dto.ExpeditionRequest;
 import io.github.xpakx.habitcity.ship.dto.ExpeditionShip;
 import io.github.xpakx.habitcity.ship.dto.ShipRequest;
@@ -226,9 +227,13 @@ class ShipControllerTest {
     }
 
     private Long addResourceToEquipment(Long resourceId) {
+        return addResourceToEquipment(resourceId, 1);
+    }
+
+    private Long addResourceToEquipment(Long resourceId, int amount) {
         EquipmentEntry entry = new EquipmentEntry();
         entry.setResource(resourceRepository.getReferenceById(resourceId));
-        entry.setAmount(1);
+        entry.setAmount(amount);
         entry.setEquipment(equipmentRepository.getByUserId(userId).get());
         return entryRepository.save(entry).getId();
     }
@@ -485,6 +490,69 @@ class ShipControllerTest {
         List<PlayerShip> ships = playerShipRepository.findAll();
         assertThat(ships.size(), equalTo(1));
         assertThat(ships, everyItem(hasProperty("blocked", equalTo(true))));
+    }
+
+    @Test
+    void shouldNotSendExpeditionWithOverloadedCargo() {
+        Long cityId = createCity();
+        createEquipment();
+        Long resourceId = createResource("item1");
+        addResourceToEquipment(resourceId, 11);
+        Long shipId = createShip("ship1");
+        ExpeditionRequest request = getExpeditionRequest(getShipList(List.of(deployShip(cityId, shipId))));
+        request.getShips().get(0).getEquipment().add(getCargo(resourceId, 11));
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/expedition", cityId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    private ExpeditionEquipment getCargo(Long resourceId, int amount) {
+        ExpeditionEquipment request = new ExpeditionEquipment();
+        request.setAmount(amount);
+        request.setId(resourceId);
+        return request;
+    }
+
+    @Test
+    void shouldNotSendExpeditionWithItemsPlayerDoNotHave() {
+        Long cityId = createCity();
+        createEquipment();
+        Long resourceId = createResource("item1");
+        Long shipId = createShip("ship1");
+        ExpeditionRequest request = getExpeditionRequest(getShipList(List.of(deployShip(cityId, shipId))));
+        request.getShips().get(0).getEquipment().add(getCargo(resourceId, 10));
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+                .when()
+                .post(baseUrl + "/city/{cityId}/expedition", cityId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldNotSendExpeditionWithTooMuchItems() {
+        Long cityId = createCity();
+        createEquipment();
+        Long resourceId = createResource("item1");
+        addResourceToEquipment(resourceId, 9);
+        Long shipId = createShip("ship1");
+        ExpeditionRequest request = getExpeditionRequest(getShipList(List.of(deployShip(cityId, shipId))));
+        request.getShips().get(0).getEquipment().add(getCargo(resourceId, 10));
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+                .when()
+                .post(baseUrl + "/city/{cityId}/expedition", cityId)
+                .then()
+                .statusCode(BAD_REQUEST.value());
     }
 
 }
