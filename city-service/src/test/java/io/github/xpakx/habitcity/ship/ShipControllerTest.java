@@ -549,10 +549,29 @@ class ShipControllerTest {
                 .header(getHeaderForUserId(userId))
                 .contentType(ContentType.JSON)
                 .body(request)
-                .when()
+        .when()
                 .post(baseUrl + "/city/{cityId}/expedition", cityId)
-                .then()
+        .then()
                 .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldSendExpeditionWithCargo() {
+        Long cityId = createCity();
+        createEquipment();
+        Long resourceId = createResource("item1");
+        addResourceToEquipment(resourceId, 10);
+        Long shipId = createShip("ship1");
+        ExpeditionRequest request = getExpeditionRequest(getShipList(List.of(deployShip(cityId, shipId))));
+        request.getShips().get(0).getEquipment().add(getCargo(resourceId, 10));
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/expedition", cityId)
+        .then()
+                .statusCode(OK.value());
     }
 
 }
