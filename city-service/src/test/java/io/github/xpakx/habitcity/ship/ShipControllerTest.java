@@ -468,4 +468,23 @@ class ShipControllerTest {
                 .statusCode(OK.value());
     }
 
+    @Test
+    void shouldBlockShip() {
+        Long cityId = createCity();
+        createEquipment();
+        Long shipId = createShip("ship1");
+        ExpeditionRequest request = getExpeditionRequest(getShipList(List.of(deployShip(cityId, shipId))));
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/expedition", cityId)
+        .then()
+                .statusCode(OK.value());
+        List<PlayerShip> ships = playerShipRepository.findAll();
+        assertThat(ships.size(), equalTo(1));
+        assertThat(ships, everyItem(hasProperty("blocked", equalTo(true))));
+    }
+
 }
