@@ -574,4 +574,25 @@ class ShipControllerTest {
                 .statusCode(OK.value());
     }
 
+    @Test
+    void shouldSubtractResources() {
+        Long cityId = createCity();
+        createEquipment();
+        Long resourceId = createResource("item1");
+        addResourceToEquipment(resourceId, 10);
+        Long shipId = createShip("ship1");
+        ExpeditionRequest request = getExpeditionRequest(getShipList(List.of(deployShip(cityId, shipId))));
+        request.getShips().get(0).getEquipment().add(getCargo(resourceId, 10));
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/expedition", cityId)
+        .then()
+                .statusCode(OK.value());
+        List<EquipmentEntry> entries = entryRepository.findAll();
+        assertThat(entries, hasSize(0));
+    }
+
 }
