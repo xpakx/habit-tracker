@@ -643,4 +643,24 @@ class ShipControllerTest {
         ));
     }
 
+    @Test
+    void shouldBlockAllShips() {
+        Long cityId = createCity();
+        createEquipment();
+        Long shipId = createShip("ship1", 100);
+        Long ship2Id = createShip("ship2", 120);
+        ExpeditionRequest request = getExpeditionRequest(getShipList(List.of(deployShip(cityId, shipId), deployShip(cityId, shipId), deployShip(cityId, ship2Id))));
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/expedition", cityId)
+        .then()
+                .statusCode(OK.value());
+        List<PlayerShip> entries = playerShipRepository.findAll();
+        assertThat(entries, everyItem(hasProperty("blocked", equalTo(true))));
+
+    }
+
 }
