@@ -660,7 +660,27 @@ class ShipControllerTest {
                 .statusCode(OK.value());
         List<PlayerShip> entries = playerShipRepository.findAll();
         assertThat(entries, everyItem(hasProperty("blocked", equalTo(true))));
-
     }
 
+    @Test
+    void shouldNotSendShipsIfTooMuchCumulativeCargo() {
+        Long cityId = createCity();
+        createEquipment();
+        Long resourceId = createResource("item1");
+        addResourceToEquipment(resourceId, 64);
+        Long shipId = createShip("ship1", 100);
+        Long ship2Id = createShip("ship2", 120);
+        ExpeditionRequest request = getExpeditionRequest(getShipList(List.of(deployShip(cityId, shipId), deployShip(cityId, shipId), deployShip(cityId, ship2Id))));
+        request.getShips().get(0).getEquipment().add(getCargo(resourceId, 20));
+        request.getShips().get(1).getEquipment().add(getCargo(resourceId, 50));
+        request.getShips().get(2).getEquipment().add(getCargo(resourceId, 40));
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/expedition", cityId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
 }
