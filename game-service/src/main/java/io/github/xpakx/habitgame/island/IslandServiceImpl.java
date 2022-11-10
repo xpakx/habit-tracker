@@ -11,7 +11,7 @@ public class IslandServiceImpl implements IslandService {
     private final IslandRepository islandRepository;
 
     @Override
-    public List<Island> getAllIslands() {
+    public List<Island> getAllIslands(Long userId) {
         return islandRepository.findAll(); //TODO
     }
 }

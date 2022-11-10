@@ -15,7 +15,7 @@ public class IslandController {
     @GetMapping("/island/all")
     public ResponseEntity<List<Island>> getAllIslands(@RequestHeader String id) {
         return new ResponseEntity<>(
-                service.getAllIslands(),
+                service.getAllIslands(Long.valueOf(id)),
                 HttpStatus.OK
         );
     }
