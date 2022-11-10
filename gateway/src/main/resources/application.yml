@@ -19,13 +19,19 @@ spring:
                 - id: city
                   uri: http://localhost:8082
                   predicates:
-                    - Path=/equipment/**,/shop/**,/craft
+                    - Path=/equipment/**,/shop/**,/craft,/city/**
                   filters:
                     - AuthenticationFilterFactory
                 - id: auth
                   uri: http://localhost:8083
                   predicates:
                     - Path=/authenticate,/register
+                - id: game
+                  uri: http://localhost:8086
+                  predicates:
+                    - Path=/game/**,/island/**
+                  filters:
+                    - AuthenticationFilterFactory
             globalcors:
                 cors-configurations:
                     '[/**]':
