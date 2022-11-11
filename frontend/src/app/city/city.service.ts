@@ -9,6 +9,7 @@ import { BuildingResponse } from './dto/building-response';
 import { City } from './dto/city';
 import { DeployedShip } from './dto/deployed-ship';
 import { ExpeditionRequest } from './dto/expedition-request';
+import { ExpeditionResponse } from './dto/expedition-response';
 import { ShipRequest } from './dto/ship-request';
 import { ShipResponse } from './dto/ship-response';
 
@@ -42,7 +43,7 @@ export class CityService extends JwtService {
     return this.http.get<DeployedShip[]>(`${this.apiServerUrl}/city/${cityId}/ship/all`, { headers: this.getHeaders() });
   }
 
-  public sendExpedition(request: ExpeditionRequest, cityId: number): Observable<any> {
-    return this.http.post<any>(`${this.apiServerUrl}/city/${cityId}/expedition`, request, { headers: this.getHeaders() });
+  public sendExpedition(request: ExpeditionRequest, cityId: number): Observable<ExpeditionResponse> {
+    return this.http.post<ExpeditionResponse>(`${this.apiServerUrl}/city/${cityId}/expedition`, request, { headers: this.getHeaders() });
   }
 }
