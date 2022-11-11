@@ -7,6 +7,10 @@ import { Building } from './dto/building';
 import { BuildingRequest } from './dto/building-request';
 import { BuildingResponse } from './dto/building-response';
 import { City } from './dto/city';
+import { DeployedShip } from './dto/deployed-ship';
+import { ExpeditionRequest } from './dto/expedition-request';
+import { ShipRequest } from './dto/ship-request';
+import { ShipResponse } from './dto/ship-response';
 
 @Injectable({
   providedIn: 'root'
@@ -28,5 +32,17 @@ export class CityService extends JwtService {
 
   public getBuildings(cityId: number): Observable<Building[]> {
     return this.http.get<Building[]>(`${this.apiServerUrl}/city/${cityId}/building`, { headers: this.getHeaders() });
+  }
+
+  public deploy(request: ShipRequest, cityId: number): Observable<ShipResponse> {
+    return this.http.post<ShipResponse>(`${this.apiServerUrl}/city/${cityId}/ship`, request, { headers: this.getHeaders() });
+  }
+
+  public getShips(cityId: number): Observable<DeployedShip[]> {
+    return this.http.get<DeployedShip[]>(`${this.apiServerUrl}/city/${cityId}/ship/all`, { headers: this.getHeaders() });
+  }
+
+  public sendExpedition(request: ExpeditionRequest, cityId: number): Observable<any> {
+    return this.http.post<any>(`${this.apiServerUrl}/city/${cityId}/expedition`, request, { headers: this.getHeaders() });
   }
 }
