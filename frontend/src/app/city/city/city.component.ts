@@ -5,6 +5,7 @@ import { EquipmentEntry } from 'src/app/equipment/dto/equipment-entry';
 import { CityService } from '../city.service';
 import { Building } from '../dto/building';
 import { BuildingResponse } from '../dto/building-response';
+import { ShipResponse } from '../dto/ship-response';
 
 @Component({
   selector: 'app-city',
@@ -67,7 +68,16 @@ export class CityComponent implements OnInit {
   }
 
   onShipClick(ship: EquipmentEntry): void {
-    //TODO
+    if(this.cityId) {
+      this.cityService.deploy({entryId: ship.id}, this.cityId).subscribe({
+        next: (response: ShipResponse) => this.addShip(response),
+        error: (error: HttpErrorResponse) => this.onError(error)
+      });
+    }
+  }
+  
+  addShip(response: ShipResponse): void {
+    throw new Error('Method not implemented.');
   }
 
   switchShipContainer(): void {
