@@ -70,13 +70,14 @@ export class CityComponent implements OnInit {
   onShipClick(ship: EquipmentEntry): void {
     if(this.cityId) {
       this.cityService.deploy({entryId: ship.id}, this.cityId).subscribe({
-        next: (response: ShipResponse) => this.addShip(response),
+        next: (response: ShipResponse) => this.addShip(response, ship.id),
         error: (error: HttpErrorResponse) => this.onError(error)
       });
     }
   }
   
-  addShip(response: ShipResponse): void {
+  addShip(response: ShipResponse, entryId: number): void {
+    this.shipsToDeploy = this.shipsToDeploy.filter(a => a.id != entryId);
     throw new Error('Method not implemented.');
   }
 
