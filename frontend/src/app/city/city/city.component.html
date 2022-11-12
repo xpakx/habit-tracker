@@ -7,3 +7,9 @@
         <img [src]="'/assets/'+ item.icon +'.png'" alt="" class="icon">
     </button>
 </div>
+<button class="build-button" (click)="switchShipContainer()">Deploy</button>
+<div class="build-container" *ngIf="showShips">
+    <button *ngFor="let item of shipsToDeploy" class="eq-cell" (click)="onShipClick(item)">
+        <img [src]="'/assets/'+ item.icon +'.png'" alt="" class="icon">
+    </button>
+</div>

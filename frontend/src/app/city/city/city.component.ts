@@ -14,7 +14,9 @@ import { BuildingResponse } from '../dto/building-response';
 export class CityComponent implements OnInit {
   buildings: Building[] = [];
   plans: EquipmentEntry[] = [];
+  shipsToDeploy: EquipmentEntry[] = [];
   showPlans: boolean = false;
+  showShips: boolean = false;
   cityId?: number;
 
   constructor(private cityService: CityService, private route: ActivatedRoute) { }
@@ -62,5 +64,13 @@ export class CityComponent implements OnInit {
 
   onBuildingClick(plan: EquipmentEntry): void {
     this.build(plan.itemId);
+  }
+
+  onShipClick(ship: EquipmentEntry): void {
+    //TODO
+  }
+
+  switchShipContainer(): void {
+    this.showShips = !this.showShips;
   }
 }
