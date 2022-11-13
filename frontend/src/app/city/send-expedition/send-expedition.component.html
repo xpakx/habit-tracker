@@ -12,6 +12,6 @@
     <div class="ship" *ngFor="let ship of shipsToSend">
         <div class="name">{{ ship. name}}</div>
         <button class="ship-btn">Equip</button>
-        <button class="ship-btn">Cancel</button>
+        <button class="ship-btn" (click)="cancelShip(ship)">Cancel</button>
     </div>
 </div>

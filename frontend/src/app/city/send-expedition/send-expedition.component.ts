@@ -53,4 +53,11 @@ export class SendExpeditionComponent implements OnInit {
     }
   }
 
+  cancelShip(ship: DeployedShip) {
+    if(!this.ships.find(a => a.id == ship.id)) {
+      this.ships.push(ship);
+      this.shipsToSend = this.shipsToSend.filter(a => a.id != ship.id);
+    }
+  }
+
 }
