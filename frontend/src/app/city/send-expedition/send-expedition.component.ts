@@ -46,4 +46,11 @@ export class SendExpeditionComponent implements OnInit {
     this.ships = response;
   }
 
+  addShip(ship: DeployedShip) {
+    if(!this.shipsToSend.find(a => a.id == ship.id)) {
+      this.shipsToSend.push(ship);
+      this.ships = this.ships.filter(a => a.id != ship.id);
+    }
+  }
+
 }

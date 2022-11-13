@@ -4,6 +4,14 @@
 <div class="ships">
     <div class="ship" *ngFor="let ship of ships" [class.blocked]="ship.blocked">
         <div class="name">{{ ship. name}}</div>
-        <button class="ship-btn">Add</button>
+        <button class="ship-btn" (click)="addShip(ship)">Add</button>
+    </div>
+</div>
+
+<div class="ships ships-to-send">
+    <div class="ship" *ngFor="let ship of shipsToSend">
+        <div class="name">{{ ship. name}}</div>
+        <button class="ship-btn">Equip</button>
+        <button class="ship-btn">Cancel</button>
     </div>
 </div>
