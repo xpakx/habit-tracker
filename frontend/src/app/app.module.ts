@@ -30,6 +30,7 @@ import { OverallStatsComponent } from './stats/overall-stats/overall-stats.compo
 import { ContextStatsComponent } from './stats/context-stats/context-stats.component';
 import { HabitStatsComponent } from './stats/habit-stats/habit-stats.component';
 import { ShopListComponent } from './shop/shop-list/shop-list.component';
+import { SendExpeditionComponent } from './city/send-expedition/send-expedition.component';
 
 @NgModule({
   declarations: [
@@ -56,7 +57,8 @@ import { ShopListComponent } from './shop/shop-list/shop-list.component';
     OverallStatsComponent,
     ContextStatsComponent,
     HabitStatsComponent,
-    ShopListComponent
+    ShopListComponent,
+    SendExpeditionComponent
   ],
   imports: [
     BrowserModule,
