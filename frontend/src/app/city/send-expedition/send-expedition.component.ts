@@ -1,6 +1,8 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CityService } from '../city.service';
+import { DeployedShip } from '../dto/deployed-ship';
 
 @Component({
   selector: 'app-send-expedition',
@@ -9,6 +11,8 @@ import { CityService } from '../city.service';
 })
 export class SendExpeditionComponent implements OnInit {
   cityId?: number;
+  showShips: boolean = false;
+  ships: DeployedShip[] = [];
 
   constructor(private cityService: CityService, private route: ActivatedRoute) { }
 
@@ -23,6 +27,23 @@ export class SendExpeditionComponent implements OnInit {
   
   getExpeditions(cityId: number) {
     throw new Error('Method not implemented.');
+  }
+
+  getShips() {
+    if(this.cityId) {
+      this.cityService.getShips(this.cityId).subscribe({
+        next: (response: DeployedShip[]) => this.updateShips(response),
+        error: (error: HttpErrorResponse) => this.onError(error)
+      })
+    }
+  }
+
+  onError(error: HttpErrorResponse): void {
+    throw new Error('Method not implemented.');
+  }
+
+  updateShips(response: DeployedShip[]): void {
+    this.ships = response;
   }
 
 }
