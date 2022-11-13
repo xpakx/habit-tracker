@@ -13,6 +13,7 @@ export class SendExpeditionComponent implements OnInit {
   cityId?: number;
   showShips: boolean = false;
   ships: DeployedShip[] = [];
+  shipsToSend: DeployedShip[] = [];
 
   constructor(private cityService: CityService, private route: ActivatedRoute) { }
 

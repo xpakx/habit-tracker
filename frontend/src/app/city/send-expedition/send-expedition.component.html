@@ -1,1 +1,9 @@
 <p>send-expedition works!</p>
+
+
+<div class="ships">
+    <div class="ship" *ngFor="let ship of ships" [class.blocked]="ship.blocked">
+        <div class="name">{{ ship. name}}</div>
+        <button class="ship-btn">Add</button>
+    </div>
+</div>
