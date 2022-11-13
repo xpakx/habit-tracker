@@ -21,6 +21,7 @@ export class SendExpeditionComponent implements OnInit {
       this.cityId = routeParams['id'];
       if(this.cityId) {
         this.getExpeditions(this.cityId);
+        this.getShips(this.cityId);
       } 
     }); 
   }
@@ -29,13 +30,11 @@ export class SendExpeditionComponent implements OnInit {
     throw new Error('Method not implemented.');
   }
 
-  getShips() {
-    if(this.cityId) {
-      this.cityService.getShips(this.cityId).subscribe({
-        next: (response: DeployedShip[]) => this.updateShips(response),
-        error: (error: HttpErrorResponse) => this.onError(error)
-      })
-    }
+  getShips(cityId: number) {
+    this.cityService.getShips(cityId).subscribe({
+      next: (response: DeployedShip[]) => this.updateShips(response),
+      error: (error: HttpErrorResponse) => this.onError(error)
+    })
   }
 
   onError(error: HttpErrorResponse): void {
