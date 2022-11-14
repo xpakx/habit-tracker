@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CityService } from '../city.service';
 import { DeployedShip } from '../dto/deployed-ship';
+import { ExpeditionRequest } from '../dto/expedition-request';
+import { ExpeditionResponse } from '../dto/expedition-response';
 
 @Component({
   selector: 'app-send-expedition',
@@ -58,6 +60,23 @@ export class SendExpeditionComponent implements OnInit {
       this.ships.push(ship);
       this.shipsToSend = this.shipsToSend.filter(a => a.id != ship.id);
     }
+  }
+
+  sendExpedition() {
+    if(this.cityId) {
+      let request: ExpeditionRequest = {islandId: 1, ships: []};
+      for(let ship of this.shipsToSend) {
+        request.ships.push({shipId: ship.id, equipment: []});
+      }
+      this.cityService.sendExpedition(request, this.cityId).subscribe({
+        next: (response: ExpeditionResponse) => this.onSuccess(response),
+        error: (error: HttpErrorResponse) => this.onError(error)
+      });
+    }
+  }
+  
+  onSuccess(response: ExpeditionResponse): void {
+    throw new Error('Method not implemented.');
   }
 
 }
