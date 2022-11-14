@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CityService } from '../city.service';
 import { DeployedShip } from '../dto/deployed-ship';
+import { ExpeditionEquipment } from '../dto/expedition-equipment';
 import { ExpeditionRequest } from '../dto/expedition-request';
 import { ExpeditionResponse } from '../dto/expedition-response';
 
@@ -16,6 +17,7 @@ export class SendExpeditionComponent implements OnInit {
   showShips: boolean = false;
   ships: DeployedShip[] = [];
   shipsToSend: DeployedShip[] = [];
+  cargo: Map<number, ExpeditionEquipment[]> = new Map();
 
   constructor(private cityService: CityService, private route: ActivatedRoute) { }
 
@@ -66,7 +68,8 @@ export class SendExpeditionComponent implements OnInit {
     if(this.cityId) {
       let request: ExpeditionRequest = {islandId: 1, ships: []};
       for(let ship of this.shipsToSend) {
-        request.ships.push({shipId: ship.id, equipment: []});
+        let cargoForShip: ExpeditionEquipment[] | undefined = this.cargo.get(ship.id);
+        request.ships.push({shipId: ship.id, equipment: cargoForShip ? cargoForShip : []});
       }
       this.cityService.sendExpedition(request, this.cityId).subscribe({
         next: (response: ExpeditionResponse) => this.onSuccess(response),
@@ -74,7 +77,7 @@ export class SendExpeditionComponent implements OnInit {
       });
     }
   }
-  
+
   onSuccess(response: ExpeditionResponse): void {
     throw new Error('Method not implemented.');
   }
