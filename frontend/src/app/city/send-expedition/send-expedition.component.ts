@@ -78,6 +78,13 @@ export class SendExpeditionComponent implements OnInit {
     }
   }
 
+  addCargoToShip(shipId: number, itemId: number, amount: number) {
+    if(!this.cargo.get(shipId)) {
+      this.cargo.set(shipId, []);
+    }
+    this.cargo.get(shipId)?.push({id: itemId, amount: amount});
+  }
+
   onSuccess(response: ExpeditionResponse): void {
     throw new Error('Method not implemented.');
   }
