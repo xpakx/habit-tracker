@@ -85,6 +85,18 @@ export class SendExpeditionComponent implements OnInit {
     this.cargo.get(shipId)?.push({id: itemId, amount: amount});
   }
 
+  unloadCargo(shipId: number) {
+    this.cargo.set(shipId, []);
+  }
+
+  subtractCargoFromShip(shipId: number, itemId: number) {
+    if(!this.cargo.get(shipId)) {
+      this.cargo.set(shipId, []);
+    }
+    let shipCargo = this.cargo.get(shipId);
+    this.cargo.set(shipId, shipCargo ? shipCargo.filter(a => a.id == itemId) : []);
+  }
+
   onSuccess(response: ExpeditionResponse): void {
     throw new Error('Method not implemented.');
   }
