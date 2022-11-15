@@ -11,7 +11,13 @@
 <div class="ships ships-to-send">
     <div class="ship" *ngFor="let ship of shipsToSend">
         <div class="name">{{ ship. name}}</div>
-        <button class="ship-btn">Equip</button>
+        <button class="ship-btn" (click)="switchEquipment(ship.id)">Equip</button>
+        <div class="equpiment">
+            <button *ngFor="let item of equipment" class="eq-cell">
+                <img [src]="'/assets/'+ item.icon +'.png'" alt="" class="icon">
+                <div class="amount">{{item.amount}}</div>
+            </button>
+        </div>
         <button class="ship-btn" (click)="cancelShip(ship)">Cancel</button>
     </div>
 </div>

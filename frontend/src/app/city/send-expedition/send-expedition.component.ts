@@ -1,6 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { EquipmentEntry } from 'src/app/equipment/dto/equipment-entry';
+import { EquipmentResponse } from 'src/app/equipment/dto/equipment-response';
+import { EquipmentService } from 'src/app/equipment/equipment.service';
 import { CityService } from '../city.service';
 import { DeployedShip } from '../dto/deployed-ship';
 import { ExpeditionEquipment } from '../dto/expedition-equipment';
@@ -18,8 +21,10 @@ export class SendExpeditionComponent implements OnInit {
   ships: DeployedShip[] = [];
   shipsToSend: DeployedShip[] = [];
   cargo: Map<number, ExpeditionEquipment[]> = new Map();
+  equipment: EquipmentEntry[] = [];
+  eqView: number|undefined;
 
-  constructor(private cityService: CityService, private route: ActivatedRoute) { }
+  constructor(private cityService: CityService, private eqService: EquipmentService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(routeParams => {
@@ -101,4 +106,26 @@ export class SendExpeditionComponent implements OnInit {
     throw new Error('Method not implemented.');
   }
 
+  switchEquipment(shipId: number): void {
+    if(!this.eqView || this.eqView != shipId) {
+      this.openEquipment(shipId);
+    } else {
+      this.closeEquipment();
+    }
+  }
+
+  openEquipment(shipId: number): void {
+    this.eqService.getEquipment().subscribe({
+      next: (response: EquipmentResponse) => this.saveEquipment(response, shipId)
+    });
+  }
+
+  closeEquipment(): void {
+    this.eqView = undefined;
+  }
+
+  saveEquipment(response: EquipmentResponse, shipId: number): void {
+    this.equipment = response.items;
+    this.eqView = shipId;
+  }
 }
