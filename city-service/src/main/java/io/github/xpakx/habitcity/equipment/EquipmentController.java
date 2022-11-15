@@ -20,4 +20,20 @@ public class EquipmentController {
                 HttpStatus.OK
         );
     }
+
+    @GetMapping("/equipment/building")
+    public ResponseEntity<EquipmentResponse> getBuildingPlans(@RequestHeader String id) {
+        return new ResponseEntity<>(
+                service.getBuildingPlans(Long.valueOf(id)),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/equipment/ships")
+    public ResponseEntity<EquipmentResponse> getShips(@RequestHeader String id) {
+        return new ResponseEntity<>(
+                service.getShips(Long.valueOf(id)),
+                HttpStatus.OK
+        );
+    }
 }

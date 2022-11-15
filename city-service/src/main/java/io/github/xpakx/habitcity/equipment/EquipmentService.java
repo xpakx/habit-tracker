@@ -11,4 +11,5 @@ public interface EquipmentService {
     EquipmentResponse getEquipment(Long userId);
     void subtractResources(CraftList request, List<EquipmentEntry> eqEntries);
     EquipmentResponse getBuildingPlans(Long userId);
+    EquipmentResponse getShips(Long userId);
 }
