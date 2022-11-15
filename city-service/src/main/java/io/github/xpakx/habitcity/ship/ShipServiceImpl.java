@@ -87,7 +87,14 @@ public class ShipServiceImpl implements ShipService {
         entryRepository.deleteAll(entries.stream().filter((a -> a.getAmount() <= 0)).toList());
         shipRepository.saveAll(shipsToSend);
         publisher.sendExpedition(request, shipsToSend, entries.stream().map(EquipmentEntry::getResource).filter(Objects::nonNull).toList(), userId);
-        return null;
+        return createExpeditionResponse(request);
+    }
+
+    private ExpeditionResponse createExpeditionResponse(ExpeditionRequest request) {
+        ExpeditionResponse response = new ExpeditionResponse();
+        response.setShips(request.getShips().size());
+        response.setTotalCargo(request.getShips().stream().flatMap((a) -> a.getEquipment().stream()).map(ExpeditionEquipment::getAmount).reduce(0, Integer::sum));
+        return response;
     }
 
     private List<EquipmentEntry> prepareEquipmentEntries(ExpeditionRequest request, Long userId) {
