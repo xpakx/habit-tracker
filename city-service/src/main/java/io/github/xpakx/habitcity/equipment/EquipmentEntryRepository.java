@@ -18,6 +18,7 @@ public interface EquipmentEntryRepository extends JpaRepository<EquipmentEntry, 
     List<EquipmentEntry> getByEquipmentId(Long id);
 
     List<EquipmentEntrySummary> findByEquipmentIdAndBuildingIsNotNull(Long id);
+    List<EquipmentEntrySummary> findByEquipmentIdAndShipIsNotNull(Long id);
 
     Optional<EquipmentEntry> findByIdAndEquipmentUserId(Long id, Long userId);
 }

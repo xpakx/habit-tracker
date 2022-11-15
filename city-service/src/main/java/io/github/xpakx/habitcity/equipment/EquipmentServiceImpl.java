@@ -63,4 +63,12 @@ public class EquipmentServiceImpl implements EquipmentService {
         response.setItems(entryRepository.findByEquipmentIdAndBuildingIsNotNull(equipment.getId()));
         return response;
     }
+
+    @Override
+    public EquipmentResponse getShips(Long userId) {
+        UserEquipment equipment = equipmentRepository.getByUserId(userId).orElseThrow();
+        EquipmentResponse response = new EquipmentResponse();
+        response.setItems(entryRepository.findByEquipmentIdAndShipIsNotNull(equipment.getId()));
+        return response;
+    }
 }
