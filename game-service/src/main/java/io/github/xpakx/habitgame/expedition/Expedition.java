@@ -1,5 +1,6 @@
 package io.github.xpakx.habitgame.expedition;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.github.xpakx.habitgame.island.Island;
 import lombok.*;
 
@@ -23,5 +24,6 @@ public class Expedition {
 
     @ManyToOne
     @JoinColumn(name = "island_id")
+    @JsonIgnore
     private Island destination;
 }
