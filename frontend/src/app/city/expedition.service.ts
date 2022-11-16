@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { JwtService } from '../common/jwt-service';
-import { Expedition } from './dto/expedition';
+import { ExpeditionSummary } from './dto/expedition-summary';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +15,7 @@ export class ExpeditionService extends JwtService {
     super();
   }
 
-  public getActiveExpeditions(): Observable<Expedition[]> {
-    return this.http.get<Expedition[]>(`${this.apiServerUrl}/expedition/active`, { headers: this.getHeaders() });
+  public getActiveExpeditions(): Observable<ExpeditionSummary[]> {
+    return this.http.get<ExpeditionSummary[]>(`${this.apiServerUrl}/expedition/active`, { headers: this.getHeaders() });
   }
 }

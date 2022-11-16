@@ -1,4 +1,4 @@
-export interface Expedition {
+export interface ExpeditionSummary {
     id: number;
     userId: number;
     start: Date;
