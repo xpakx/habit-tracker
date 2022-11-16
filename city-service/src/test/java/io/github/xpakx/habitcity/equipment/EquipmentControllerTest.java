@@ -1,9 +1,13 @@
 package io.github.xpakx.habitcity.equipment;
 
+import io.github.xpakx.habitcity.building.Building;
+import io.github.xpakx.habitcity.building.BuildingRepository;
 import io.github.xpakx.habitcity.config.SchedulerConfig;
 import io.github.xpakx.habitcity.money.MoneyRepository;
 import io.github.xpakx.habitcity.resource.Resource;
 import io.github.xpakx.habitcity.resource.ResourceRepository;
+import io.github.xpakx.habitcity.ship.Ship;
+import io.github.xpakx.habitcity.ship.ShipRepository;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +19,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -32,6 +36,10 @@ class EquipmentControllerTest {
 
     @Autowired
     ResourceRepository resourceRepository;
+    @Autowired
+    BuildingRepository buildingRepository;
+    @Autowired
+    ShipRepository shipRepository;
     @Autowired
     UserEquipmentRepository equipmentRepository;
     @Autowired
@@ -51,6 +59,8 @@ class EquipmentControllerTest {
     void tearDown() {
         entryRepository.deleteAll();
         resourceRepository.deleteAll();
+        buildingRepository.deleteAll();
+        shipRepository.deleteAll();
         moneyRepository.deleteAll();
         equipmentRepository.deleteAll();
     }
@@ -131,5 +141,90 @@ class EquipmentControllerTest {
         .then()
                 .statusCode(OK.value())
                 .body("items", hasSize(4));
+    }
+
+    private Long addShip(String itemName) {
+        Ship res = new Ship();
+        res.setName(itemName);
+        res.setBaseCost(5);
+        res.setCode(itemName.toUpperCase());
+        res.setSize(3);
+        res.setRarity(0);
+        return shipRepository.save(res).getId();
+    }
+
+    private Long addBuilding(String itemName) {
+        Building res = new Building();
+        res.setName(itemName);
+        res.setBaseCost(5);
+        res.setCode(itemName.toUpperCase());
+        res.setRarity(0);
+        return buildingRepository.save(res).getId();
+    }
+
+    private void addShipToEquipment(Long shipId) {
+        EquipmentEntry entry = new EquipmentEntry();
+        entry.setAmount(1);
+        entry.setEquipment(equipmentRepository.getByUserId(userId).orElse(null));
+        entry.setShip(shipRepository.getReferenceById(shipId));
+        entryRepository.save(entry);
+    }
+
+    private void addBuildingToEquipment(Long buildingId) {
+        EquipmentEntry entry = new EquipmentEntry();
+        entry.setAmount(1);
+        entry.setEquipment(equipmentRepository.getByUserId(userId).orElse(null));
+        entry.setBuilding(buildingRepository.getReferenceById(buildingId));
+        entryRepository.save(entry);
+    }
+
+    @Test
+    void shouldRespondWith401ToGetShipsIfNoUserIdGiven() {
+        when()
+                .get(baseUrl + "/equipment/ship")
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToGetShipsIfEquipmentDoesNotExist() {
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/equipment/ship")
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+    @Test
+    void shouldRespondWithEmptyShipList() {
+        createEquipment();
+        addItemToEquipment(addResource("item1"), 40);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/equipment/ship")
+        .then()
+                .statusCode(OK.value())
+                .body("items", hasSize(0));
+    }
+
+    @Test
+    void shouldReturnListOfShipsInEquipment() {
+        createEquipment();
+        addItemToEquipment(addResource("item1"), 40);
+        addBuildingToEquipment(addBuilding("building1"));
+        addShipToEquipment(addShip("ship1"));
+        addShipToEquipment(addShip("ship2"));
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/equipment/ship")
+        .then()
+                .statusCode(OK.value())
+                .body("items", hasSize(2))
+                .body("items.name", hasItem("ship1"))
+                .body("items.name", hasItem("ship2"))
+                .body("items.name", not(hasItem("building1")))
+                .body("items.name", not(hasItem("item1")));
     }
 }

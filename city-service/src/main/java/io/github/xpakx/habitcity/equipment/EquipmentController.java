@@ -29,7 +29,7 @@ public class EquipmentController {
         );
     }
 
-    @GetMapping("/equipment/ships")
+    @GetMapping("/equipment/ship")
     public ResponseEntity<EquipmentResponse> getShips(@RequestHeader String id) {
         return new ResponseEntity<>(
                 service.getShips(Long.valueOf(id)),
