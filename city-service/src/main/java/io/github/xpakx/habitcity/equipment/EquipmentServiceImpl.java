@@ -58,7 +58,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 
     @Override
     public EquipmentResponse getBuildingPlans(Long userId) {
-        UserEquipment equipment = equipmentRepository.getByUserId(userId).orElseThrow();
+        UserEquipment equipment = equipmentRepository.getByUserId(userId).orElseThrow(EquipmentNotFoundException::new);
         EquipmentResponse response = new EquipmentResponse();
         response.setItems(entryRepository.findByEquipmentIdAndBuildingIsNotNull(equipment.getId()));
         return response;
@@ -66,7 +66,7 @@ public class EquipmentServiceImpl implements EquipmentService {
 
     @Override
     public EquipmentResponse getShips(Long userId) {
-        UserEquipment equipment = equipmentRepository.getByUserId(userId).orElseThrow();
+        UserEquipment equipment = equipmentRepository.getByUserId(userId).orElseThrow(EquipmentNotFoundException::new);
         EquipmentResponse response = new EquipmentResponse();
         response.setItems(entryRepository.findByEquipmentIdAndShipIsNotNull(equipment.getId()));
         return response;
