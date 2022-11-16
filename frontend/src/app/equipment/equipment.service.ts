@@ -18,4 +18,12 @@ export class EquipmentService  extends JwtService {
   public getEquipment(): Observable<EquipmentResponse> {
     return this.http.get<EquipmentResponse>(`${this.apiServerUrl}/equipment`, { headers: this.getHeaders() });
   }
+
+  public getShips(): Observable<EquipmentResponse> {
+    return this.http.get<EquipmentResponse>(`${this.apiServerUrl}/equipment/ship`, { headers: this.getHeaders() });
+  }
+
+  public getBuildings(): Observable<EquipmentResponse> {
+    return this.http.get<EquipmentResponse>(`${this.apiServerUrl}/equipment/building`, { headers: this.getHeaders() });
+  }
 }

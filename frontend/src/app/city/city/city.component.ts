@@ -2,6 +2,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EquipmentEntry } from 'src/app/equipment/dto/equipment-entry';
+import { EquipmentResponse } from 'src/app/equipment/dto/equipment-response';
+import { EquipmentService } from 'src/app/equipment/equipment.service';
 import { CityService } from '../city.service';
 import { Building } from '../dto/building';
 import { BuildingResponse } from '../dto/building-response';
@@ -20,7 +22,7 @@ export class CityComponent implements OnInit {
   showShips: boolean = false;
   cityId?: number;
 
-  constructor(private cityService: CityService, private route: ActivatedRoute) { }
+  constructor(private cityService: CityService, private eqService: EquipmentService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(routeParams => {
@@ -61,6 +63,14 @@ export class CityComponent implements OnInit {
 
   switchBuildContainer(): void {
     this.showPlans = !this.showPlans;
+    this.eqService.getBuildings().subscribe({
+      next: (response: EquipmentResponse) => this.showEquipment(response),
+      error: (error: HttpErrorResponse) => this.onError(error)
+    });
+  }
+
+  showEquipment(response: EquipmentResponse): void {
+    this.plans = response.items;
   }
 
   onBuildingClick(plan: EquipmentEntry): void {
