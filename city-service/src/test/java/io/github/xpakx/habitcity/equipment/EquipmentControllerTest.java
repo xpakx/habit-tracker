@@ -227,4 +227,54 @@ class EquipmentControllerTest {
                 .body("items.name", not(hasItem("building1")))
                 .body("items.name", not(hasItem("item1")));
     }
+
+    @Test
+    void shouldRespondWith401ToGetBuildingsIfNoUserIdGiven() {
+        when()
+                .get(baseUrl + "/equipment/building")
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToGetBuildingsIfEquipmentDoesNotExist() {
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/equipment/building")
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+    @Test
+    void shouldRespondWithEmptyBuildingList() {
+        createEquipment();
+        addItemToEquipment(addResource("item1"), 40);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/equipment/building")
+        .then()
+                .statusCode(OK.value())
+                .body("items", hasSize(0));
+    }
+
+    @Test
+    void shouldReturnListOfBuildingsInEquipment() {
+        createEquipment();
+        addItemToEquipment(addResource("item1"), 40);
+        addBuildingToEquipment(addBuilding("building1"));
+        addBuildingToEquipment(addBuilding("building2"));
+        addShipToEquipment(addShip("ship1"));
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/equipment/building")
+        .then()
+                .statusCode(OK.value())
+                .body("items", hasSize(2))
+                .body("items.name", hasItem("building1"))
+                .body("items.name", hasItem("building2"))
+                .body("items.name", not(hasItem("ship1")))
+                .body("items.name", not(hasItem("item1")));
+    }
 }
