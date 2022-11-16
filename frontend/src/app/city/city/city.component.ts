@@ -64,12 +64,12 @@ export class CityComponent implements OnInit {
   switchBuildContainer(): void {
     this.showPlans = !this.showPlans;
     this.eqService.getBuildings().subscribe({
-      next: (response: EquipmentResponse) => this.showEquipment(response),
+      next: (response: EquipmentResponse) => this.updatePlans(response),
       error: (error: HttpErrorResponse) => this.onError(error)
     });
   }
 
-  showEquipment(response: EquipmentResponse): void {
+  updatePlans(response: EquipmentResponse): void {
     this.plans = response.items;
   }
 
@@ -93,5 +93,13 @@ export class CityComponent implements OnInit {
 
   switchShipContainer(): void {
     this.showShips = !this.showShips;
+    this.eqService.getShips().subscribe({
+      next: (response: EquipmentResponse) => this.updateShips(response),
+      error: (error: HttpErrorResponse) => this.onError(error)
+    });
+  }
+
+  updateShips(response: EquipmentResponse): void {
+    this.shipsToDeploy = response.items;
   }
 }
