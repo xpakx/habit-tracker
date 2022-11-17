@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +23,7 @@ public class ExpeditionServiceImpl implements ExpeditionService {
     private final ItemRepository itemRepository;
     private final ShipRepository shipRepository;
     private final IslandRepository islandRepository;
+    private final ExpeditionResultRepository resultRepository;
 
     @Override
     public void addExpedition(ExpeditionEvent event) {
@@ -76,6 +78,22 @@ public class ExpeditionServiceImpl implements ExpeditionService {
 
     @Override
     public ExpeditionResultResponse getResult(Long expeditionId, Long userId) {
+        Expedition expedition = expeditionRepository.findById(expeditionId).orElseThrow();
+        Random random = new Random();
+        int rand = random.nextInt(10);
+        ExpeditionResult result = new ExpeditionResult();
+        result.setExpedition(expedition);
+        if(rand < 5) {
+            result.setType(ResultType.NONE);
+        } else if (rand < 8) {
+            result.setType(ResultType.BATTLE);
+        } else if (rand == 8) {
+            result.setType(ResultType.TREASURE);
+        } else {
+            result.setType(ResultType.MONSTER);
+        }
+        resultRepository.save(result);
+
         return null;
     }
 }

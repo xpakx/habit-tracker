@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum ResultType {
+    NONE("None"),
     TREASURE("Treasure"),
     BATTLE("Battle"),
     MONSTER("Monster");
