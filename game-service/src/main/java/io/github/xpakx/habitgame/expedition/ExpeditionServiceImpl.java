@@ -80,24 +80,32 @@ public class ExpeditionServiceImpl implements ExpeditionService {
     @Override
     public ExpeditionResultResponse getResult(Long expeditionId, Long userId) {
         Expedition expedition = expeditionRepository.findById(expeditionId).orElseThrow();
-        if(expedition.getEnd().isBefore(LocalDateTime.now())) {
-            throw new ExpeditionNotFinishedException();
-        }
-        Random random = new Random();
-        int rand = random.nextInt(10);
+        testIfExpeditionIsFinished(expedition);
         ExpeditionResult result = new ExpeditionResult();
         result.setExpedition(expedition);
-        if(rand < 5) {
-            result.setType(ResultType.NONE);
-        } else if (rand < 8) {
-            result.setType(ResultType.BATTLE);
-        } else if (rand == 8) {
-            result.setType(ResultType.TREASURE);
-        } else {
-            result.setType(ResultType.MONSTER);
-        }
+        result.setType(generateResult());
         resultRepository.save(result);
 
         return null;
+    }
+
+    private ResultType generateResult() {
+        Random random = new Random();
+        int rand = random.nextInt(10);
+        if(rand < 5) {
+            return ResultType.NONE;
+        } else if (rand < 8) {
+             return ResultType.BATTLE;
+        } else if (rand == 8) {
+            return ResultType.TREASURE;
+        } else {
+            return ResultType.MONSTER;
+        }
+    }
+
+    private void testIfExpeditionIsFinished(Expedition expedition) {
+        if(expedition.getEnd().isBefore(LocalDateTime.now())) {
+            throw new ExpeditionNotFinishedException();
+        }
     }
 }
