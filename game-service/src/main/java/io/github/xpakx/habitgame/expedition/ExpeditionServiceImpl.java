@@ -3,6 +3,7 @@ package io.github.xpakx.habitgame.expedition;
 import io.github.xpakx.habitgame.expedition.dto.Cargo;
 import io.github.xpakx.habitgame.expedition.dto.EventShip;
 import io.github.xpakx.habitgame.expedition.dto.ExpeditionEvent;
+import io.github.xpakx.habitgame.expedition.dto.ExpeditionResultResponse;
 import io.github.xpakx.habitgame.island.Island;
 import io.github.xpakx.habitgame.island.IslandRepository;
 import lombok.RequiredArgsConstructor;
@@ -70,6 +71,11 @@ public class ExpeditionServiceImpl implements ExpeditionService {
     }
 
     private Island getDefaultIsland() {
+        return null;
+    }
+
+    @Override
+    public ExpeditionResultResponse getResult(Long expeditionId, Long userId) {
         return null;
     }
 }
