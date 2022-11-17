@@ -26,4 +26,8 @@ public class Expedition {
     @JoinColumn(name = "island_id")
     @JsonIgnore
     private Island destination;
+
+    @OneToOne(mappedBy = "expedition")
+    private ExpeditionResult expeditionResult;
+
 }
