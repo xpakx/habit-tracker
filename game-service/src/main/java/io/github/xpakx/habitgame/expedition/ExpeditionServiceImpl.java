@@ -85,8 +85,13 @@ public class ExpeditionServiceImpl implements ExpeditionService {
         result.setExpedition(expedition);
         result.setType(generateResult());
         resultRepository.save(result);
+        return getResultResponse(result);
+    }
 
-        return null;
+    private ExpeditionResultResponse getResultResponse(ExpeditionResult result) {
+        ExpeditionResultResponse response = new ExpeditionResultResponse();
+        response.setResult(result.getType().getName());
+        return response;
     }
 
     private ResultType generateResult() {
