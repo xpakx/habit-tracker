@@ -4,6 +4,7 @@ import io.github.xpakx.habitgame.expedition.dto.Cargo;
 import io.github.xpakx.habitgame.expedition.dto.EventShip;
 import io.github.xpakx.habitgame.expedition.dto.ExpeditionEvent;
 import io.github.xpakx.habitgame.expedition.dto.ExpeditionResultResponse;
+import io.github.xpakx.habitgame.expedition.error.ExpeditionNotFinishedException;
 import io.github.xpakx.habitgame.island.Island;
 import io.github.xpakx.habitgame.island.IslandRepository;
 import lombok.RequiredArgsConstructor;
@@ -79,6 +80,9 @@ public class ExpeditionServiceImpl implements ExpeditionService {
     @Override
     public ExpeditionResultResponse getResult(Long expeditionId, Long userId) {
         Expedition expedition = expeditionRepository.findById(expeditionId).orElseThrow();
+        if(expedition.getEnd().isBefore(LocalDateTime.now())) {
+            throw new ExpeditionNotFinishedException();
+        }
         Random random = new Random();
         int rand = random.nextInt(10);
         ExpeditionResult result = new ExpeditionResult();
