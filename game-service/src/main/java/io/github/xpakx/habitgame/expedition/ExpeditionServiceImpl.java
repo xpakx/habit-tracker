@@ -1,9 +1,6 @@
 package io.github.xpakx.habitgame.expedition;
 
-import io.github.xpakx.habitgame.expedition.dto.Cargo;
-import io.github.xpakx.habitgame.expedition.dto.EventShip;
-import io.github.xpakx.habitgame.expedition.dto.ExpeditionEvent;
-import io.github.xpakx.habitgame.expedition.dto.ExpeditionResultResponse;
+import io.github.xpakx.habitgame.expedition.dto.*;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionNotFinishedException;
 import io.github.xpakx.habitgame.island.Island;
 import io.github.xpakx.habitgame.island.IslandRepository;
@@ -113,5 +110,15 @@ public class ExpeditionServiceImpl implements ExpeditionService {
         if(expedition.getEnd().isBefore(LocalDateTime.now())) {
             throw new ExpeditionNotFinishedException();
         }
+    }
+
+    @Override
+    public ActionResponse completeExpedition(ActionRequest request, Long expeditionId, Long userId) {
+        return null;
+    }
+
+    @Override
+    public ActionResponse returnToCity(ActionRequest request, Long expeditionId, Long userId) {
+        return null;
     }
 }
