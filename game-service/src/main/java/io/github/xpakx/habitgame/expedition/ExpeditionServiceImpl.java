@@ -3,6 +3,7 @@ package io.github.xpakx.habitgame.expedition;
 import io.github.xpakx.habitgame.expedition.dto.*;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionHasResultException;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionNotFinishedException;
+import io.github.xpakx.habitgame.expedition.error.ExpeditionNotReturnedException;
 import io.github.xpakx.habitgame.island.Island;
 import io.github.xpakx.habitgame.island.IslandRepository;
 import lombok.RequiredArgsConstructor;
@@ -121,6 +122,12 @@ public class ExpeditionServiceImpl implements ExpeditionService {
         }
     }
 
+    private void testIfExpeditionReturned(Expedition expedition) {
+        if(expedition.getReturnEnd().isBefore(LocalDateTime.now())) {
+            throw new ExpeditionNotReturnedException();
+        }
+    }
+
     @Override
     public ActionResponse completeExpedition(ActionRequest request, Long expeditionId, Long userId) {
         if(!request.isAction()) {
@@ -147,6 +154,29 @@ public class ExpeditionServiceImpl implements ExpeditionService {
 
     @Override
     public ActionResponse returnToCity(ActionRequest request, Long expeditionId, Long userId) {
-        return null;
+        if(!request.isAction()) {
+            ActionResponse response = new ActionResponse();
+            response.setCompleted(false);
+            response.setExpeditionId(expeditionId);
+            return response;
+        }
+        Expedition expedition = expeditionRepository.findById(expeditionId).orElseThrow();
+        testIfExpeditionReturning(expedition);
+        testIfExpeditionReturned(expedition);
+        expedition.setFinished(true);
+        expeditionRepository.save(expedition);
+
+        // TODO: send ships back to msg broker
+
+        ActionResponse response = new ActionResponse();
+        response.setCompleted(true);
+        response.setExpeditionId(expeditionId);
+        return response;
+    }
+
+    private void testIfExpeditionReturning(Expedition expedition) {
+        if(!expedition.isReturning()) {
+            throw new ExpeditionNotReturnedException();
+        }
     }
 }
