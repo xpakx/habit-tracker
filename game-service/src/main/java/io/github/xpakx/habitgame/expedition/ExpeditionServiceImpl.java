@@ -131,10 +131,7 @@ public class ExpeditionServiceImpl implements ExpeditionService {
     @Override
     public ActionResponse completeExpedition(ActionRequest request, Long expeditionId, Long userId) {
         if(!request.isAction()) {
-            ActionResponse response = new ActionResponse();
-            response.setCompleted(false);
-            response.setExpeditionId(expeditionId);
-            return response;
+            return getActionResponse(false, expeditionId);
         }
         Expedition expedition = expeditionRepository.findById(expeditionId).orElseThrow();
         if(expedition.getExpeditionResult() == null) {
@@ -146,19 +143,13 @@ public class ExpeditionServiceImpl implements ExpeditionService {
         expedition.setReturning(true);
         expedition.setReturnEnd(LocalDateTime.now().plusHours(10));
 
-        ActionResponse response = new ActionResponse();
-        response.setCompleted(true);
-        response.setExpeditionId(expeditionId);
-        return response;
+        return getActionResponse(true, expeditionId);
     }
 
     @Override
     public ActionResponse returnToCity(ActionRequest request, Long expeditionId, Long userId) {
         if(!request.isAction()) {
-            ActionResponse response = new ActionResponse();
-            response.setCompleted(false);
-            response.setExpeditionId(expeditionId);
-            return response;
+            return getActionResponse(false, expeditionId);
         }
         Expedition expedition = expeditionRepository.findById(expeditionId).orElseThrow();
         testIfExpeditionReturning(expedition);
@@ -168,8 +159,12 @@ public class ExpeditionServiceImpl implements ExpeditionService {
 
         // TODO: send ships back to msg broker
 
+        return getActionResponse(true, expeditionId);
+    }
+
+    private ActionResponse getActionResponse(boolean completed, Long expeditionId) {
         ActionResponse response = new ActionResponse();
-        response.setCompleted(true);
+        response.setCompleted(completed);
         response.setExpeditionId(expeditionId);
         return response;
     }
