@@ -18,5 +18,6 @@ public class ExpeditionResult {
     private Expedition expedition;
 
     private ResultType type;
+    private boolean completed;
 
 }
