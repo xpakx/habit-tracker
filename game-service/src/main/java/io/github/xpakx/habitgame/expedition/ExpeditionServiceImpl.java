@@ -1,6 +1,7 @@
 package io.github.xpakx.habitgame.expedition;
 
 import io.github.xpakx.habitgame.expedition.dto.*;
+import io.github.xpakx.habitgame.expedition.error.ExpeditionHasResultException;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionNotFinishedException;
 import io.github.xpakx.habitgame.island.Island;
 import io.github.xpakx.habitgame.island.IslandRepository;
@@ -90,7 +91,7 @@ public class ExpeditionServiceImpl implements ExpeditionService {
 
     private void testIfExpeditionHasResult(Expedition expedition) {
         if(expedition.getExpeditionResult() != null) {
-            throw new ExpeditionNotFinishedException();
+            throw new ExpeditionHasResultException();
         }
     }
 
