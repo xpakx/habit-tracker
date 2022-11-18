@@ -32,6 +32,7 @@ public class ExpeditionServiceImpl implements ExpeditionService {
         expedition.setStart(LocalDateTime.now().plusHours(10));
         expedition.setDestination(island);
         expedition.setFinished(false);
+        expedition.setReturning(false);
         expeditionRepository.save(expedition);
         List<Ship> ships = event.getShips().stream().map(a -> toShip(a, expedition)).toList();
         Map<Long, Ship> shipMap = shipRepository.saveAll(ships).stream()
@@ -114,7 +115,26 @@ public class ExpeditionServiceImpl implements ExpeditionService {
 
     @Override
     public ActionResponse completeExpedition(ActionRequest request, Long expeditionId, Long userId) {
-        return null;
+        if(!request.isAction()) {
+            ActionResponse response = new ActionResponse();
+            response.setCompleted(false);
+            response.setExpeditionId(expeditionId);
+            return response;
+        }
+        Expedition expedition = expeditionRepository.findById(expeditionId).orElseThrow();
+        if(expedition.getExpeditionResult() == null) {
+            throw new ExpeditionNotFinishedException();
+        }
+        if(!expedition.getExpeditionResult().isCompleted()) {
+            throw new ExpeditionNotFinishedException("Task not completed!");
+        }
+        expedition.setReturning(true);
+        expedition.setReturnEnd(LocalDateTime.now().plusHours(10));
+        
+        ActionResponse response = new ActionResponse();
+        response.setCompleted(true);
+        response.setExpeditionId(expeditionId);
+        return response;
     }
 
     @Override

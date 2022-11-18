@@ -21,6 +21,9 @@ public class Expedition {
     private LocalDateTime start;
     private LocalDateTime end;
     private boolean finished;
+    private boolean returning;
+    private LocalDateTime returnEnd;
+
 
     @ManyToOne
     @JoinColumn(name = "island_id")
