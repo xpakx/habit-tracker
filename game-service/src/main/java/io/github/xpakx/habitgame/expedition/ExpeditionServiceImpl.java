@@ -79,12 +79,19 @@ public class ExpeditionServiceImpl implements ExpeditionService {
     public ExpeditionResultResponse getResult(Long expeditionId, Long userId) {
         Expedition expedition = expeditionRepository.findById(expeditionId).orElseThrow();
         testIfExpeditionIsFinished(expedition);
+        testIfExpeditionHasResult(expedition);
         ExpeditionResult result = new ExpeditionResult();
         result.setExpedition(expedition);
         result.setType(generateResult());
         result.setCompleted(result.getType() == ResultType.NONE);
         resultRepository.save(result);
         return getResultResponse(result);
+    }
+
+    private void testIfExpeditionHasResult(Expedition expedition) {
+        if(expedition.getExpeditionResult() != null) {
+            throw new ExpeditionNotFinishedException();
+        }
     }
 
     private ExpeditionResultResponse getResultResponse(ExpeditionResult result) {
@@ -130,7 +137,7 @@ public class ExpeditionServiceImpl implements ExpeditionService {
         }
         expedition.setReturning(true);
         expedition.setReturnEnd(LocalDateTime.now().plusHours(10));
-        
+
         ActionResponse response = new ActionResponse();
         response.setCompleted(true);
         response.setExpeditionId(expeditionId);
