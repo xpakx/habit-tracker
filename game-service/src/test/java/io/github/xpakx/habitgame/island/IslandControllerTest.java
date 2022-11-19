@@ -66,7 +66,7 @@ class IslandControllerTest {
     void shouldReturnListOfIslandsForUser() {
         addIsland(userId, "island1");
         addIsland(userId, "island2");
-        //addIsland(userId+1, "island3");
+        addIsland(userId+1, "island3");
         given()
                 .header(getHeaderForUserId(userId))
         .when()
@@ -82,6 +82,7 @@ class IslandControllerTest {
     private void addIsland(long userId, String islandName) {
         Island island = new Island();
         island.setName(islandName);
+        island.setUserId(userId);
         islandRepository.save(island);
     }
 }
