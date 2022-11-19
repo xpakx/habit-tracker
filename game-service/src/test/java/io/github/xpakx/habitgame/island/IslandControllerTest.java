@@ -74,9 +74,9 @@ class IslandControllerTest {
         .then()
                 .statusCode(OK.value())
                 .body("$", hasSize(2))
-                .body("$", hasItem("island1"))
-                .body("$", hasItem("island2"))
-                .body("$", not(hasItem("island3")));
+                .body("name", hasItem("island1"))
+                .body("name", hasItem("island2"))
+                .body("name", not(hasItem("island3")));
     }
 
     private void addIsland(long userId, String islandName) {
