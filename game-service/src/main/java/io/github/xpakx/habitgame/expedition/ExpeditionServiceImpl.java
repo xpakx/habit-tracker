@@ -85,7 +85,7 @@ public class ExpeditionServiceImpl implements ExpeditionService {
         ExpeditionResult result = new ExpeditionResult();
         result.setExpedition(expedition);
         result.setType(generateResult());
-        result.setCompleted(result.getType() == ResultType.NONE);
+        result.setCompleted(result.getType() == ResultType.NONE || result.getType() == ResultType.ISLAND);
         resultRepository.save(result);
         return getResultResponse(result);
     }
@@ -104,15 +104,17 @@ public class ExpeditionServiceImpl implements ExpeditionService {
 
     private ResultType generateResult() {
         Random random = new Random();
-        int rand = random.nextInt(10);
+        int rand = random.nextInt(11);
         if(rand < 5) {
             return ResultType.NONE;
         } else if (rand < 8) {
             return ResultType.BATTLE;
         } else if (rand == 8) {
             return ResultType.TREASURE;
-        } else {
+        } else if (rand == 9) {
             return ResultType.MONSTER;
+        } else {
+            return ResultType.ISLAND;
         }
     }
 
