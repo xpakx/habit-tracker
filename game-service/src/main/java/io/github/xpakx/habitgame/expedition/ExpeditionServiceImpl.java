@@ -85,7 +85,7 @@ public class ExpeditionServiceImpl implements ExpeditionService {
         ExpeditionResult result = new ExpeditionResult();
         result.setExpedition(expedition);
         result.setType(generateResult());
-        result.setCompleted(result.getType() == ResultType.NONE || result.getType() == ResultType.ISLAND);
+        result.setCompleted(result.getType() == ResultType.NONE);
         resultRepository.save(result);
         return getResultResponse(result);
     }
