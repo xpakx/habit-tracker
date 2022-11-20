@@ -19,8 +19,10 @@ public class Expedition {
     private Long id;
     private Long userId;
     private LocalDateTime start;
+    @Column(name = "end_time")
     private LocalDateTime end;
     private boolean finished;
+    @Column(name = "ret")
     private boolean returning;
     private LocalDateTime returnEnd;
 
