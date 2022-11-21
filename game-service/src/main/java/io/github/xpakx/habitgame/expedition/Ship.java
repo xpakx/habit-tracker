@@ -25,4 +25,7 @@ public class Ship {
     @JoinColumn(name = "expedition_id")
     private Expedition expedition;
 
+    private boolean destroyed;
+    private boolean damaged;
+
 }
