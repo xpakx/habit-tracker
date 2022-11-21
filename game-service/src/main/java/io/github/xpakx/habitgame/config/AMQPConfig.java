@@ -46,4 +46,12 @@ public class AMQPConfig {
             final MessageHandlerMethodFactory messageHandlerMethodFactory) {
         return (c) -> c.setMessageHandlerMethodFactory(messageHandlerMethodFactory);
     }
+
+    @Bean
+    public TopicExchange returningTopicExchange(@Value("${amqp.exchange.returning}") final String returningTopic) {
+        return ExchangeBuilder
+                .topicExchange(returningTopic)
+                .durable(true)
+                .build();
+    }
 }
