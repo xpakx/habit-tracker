@@ -24,6 +24,7 @@ public class ExpeditionServiceImpl implements ExpeditionService {
     private final ShipRepository shipRepository;
     private final IslandRepository islandRepository;
     private final ExpeditionResultRepository resultRepository;
+    private final ReturningExpeditionPublisher publisher;
 
     @Override
     public void addExpedition(ExpeditionEvent event) {
@@ -159,7 +160,7 @@ public class ExpeditionServiceImpl implements ExpeditionService {
         expedition.setFinished(true);
         expeditionRepository.save(expedition);
 
-        // TODO: send ships back to msg broker
+        publisher.sendExpedition(shipRepository.findByExpeditionId(expeditionId), null, userId);
 
         return getActionResponse(true, expeditionId);
     }
