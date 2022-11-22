@@ -20,6 +20,7 @@ public class ReturningExpeditionPublisher {
 
     public void sendExpedition(List<Ship> ships, List<Cargo> cargo, Long userId) {
         ExpeditionEndEvent event = new ExpeditionEndEvent();
+        event.setUserId(userId);
         event.setShipsIds(ships.stream().filter(a -> !a.isDamaged() && !a.isDestroyed()).map(Ship::getShipId).toList());
         event.setDamagedShipsIds(ships.stream().filter(Ship::isDamaged).map(Ship::getShipId).toList());
         event.setDestroyedShipsIds(ships.stream().filter(Ship::isDestroyed).map(Ship::getShipId).toList());
