@@ -8,4 +8,5 @@ public interface ShipService {
     ShipResponse deploy(ShipRequest request, Long cityId, Long userId);
     List<DeployedShip> getShipsInCity(Long cityId, Long userId);
     ExpeditionResponse sendShips(ExpeditionRequest request, Long cityId, Long userId);
+    void unlockShips(ExpeditionEndEvent event);
 }

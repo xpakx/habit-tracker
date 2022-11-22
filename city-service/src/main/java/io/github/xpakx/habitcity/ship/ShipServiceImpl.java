@@ -135,4 +135,9 @@ public class ShipServiceImpl implements ShipService {
             throw new WrongShipChoiceException("You must choose ships for expedition!");
         }
     }
+
+    @Override
+    public void unlockShips(ExpeditionEndEvent event) {
+
+    }
 }
