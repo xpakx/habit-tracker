@@ -27,8 +27,8 @@ public class AMQPConfig {
     }
 
     @Bean
-    public Binding accountsBinding(final Queue gamificationQueue, final TopicExchange accountsTopicExchange) {
-        return BindingBuilder.bind(gamificationQueue)
+    public Binding accountsBinding(final Queue accountsQueue, final TopicExchange accountsTopicExchange) {
+        return BindingBuilder.bind(accountsQueue)
                 .to(accountsTopicExchange)
                 .with("account");
     }
@@ -60,5 +60,22 @@ public class AMQPConfig {
     @Bean
     public Jackson2JsonMessageConverter producerJackson2MessageConverter() {
         return new Jackson2JsonMessageConverter();
+    }
+
+    @Bean
+    public TopicExchange returningTopicExchange(@Value("${amqp.exchange.returning}") final String exchangeName) {
+        return ExchangeBuilder.topicExchange(exchangeName).durable(true).build();
+    }
+
+    @Bean
+    public Queue returningQueue(@Value("${amqp.queue.returning}") final String queueName) {
+        return QueueBuilder.durable(queueName).build();
+    }
+
+    @Bean
+    public Binding returningBinding(final Queue returningQueue, final TopicExchange returningTopicExchange) {
+        return BindingBuilder.bind(returningQueue)
+                .to(returningTopicExchange)
+                .with("expedition");
     }
 }
