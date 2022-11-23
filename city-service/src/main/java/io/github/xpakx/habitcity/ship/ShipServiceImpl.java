@@ -141,6 +141,8 @@ public class ShipServiceImpl implements ShipService {
         List<PlayerShip> ships = shipRepository.findAllById(event.getShipsIds());
         ships.forEach(s -> s.setBlocked(false));
         shipRepository.saveAll(ships);
+        List<PlayerShip> destroyedShips = shipRepository.findAllById(event.getDestroyedShipsIds());
+        shipRepository.deleteAll(destroyedShips);
         // TODO
     }
 }
