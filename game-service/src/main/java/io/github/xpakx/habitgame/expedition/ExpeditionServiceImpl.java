@@ -3,6 +3,7 @@ package io.github.xpakx.habitgame.expedition;
 import io.github.xpakx.habitgame.expedition.dto.*;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionHasResultException;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionNotFinishedException;
+import io.github.xpakx.habitgame.expedition.error.ExpeditionNotFoundException;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionNotReturnedException;
 import io.github.xpakx.habitgame.island.Island;
 import io.github.xpakx.habitgame.island.IslandRepository;
@@ -82,7 +83,7 @@ public class ExpeditionServiceImpl implements ExpeditionService {
 
     @Override
     public ExpeditionResultResponse getResult(Long expeditionId, Long userId) {
-        Expedition expedition = expeditionRepository.findById(expeditionId).orElseThrow();
+        Expedition expedition = expeditionRepository.findById(expeditionId).orElseThrow(ExpeditionNotFoundException::new);
         testIfExpeditionIsFinished(expedition);
         testIfExpeditionHasResult(expedition);
         ExpeditionResult result = new ExpeditionResult();
@@ -138,7 +139,7 @@ public class ExpeditionServiceImpl implements ExpeditionService {
         if(!request.isAction()) {
             return getActionResponse(false, expeditionId);
         }
-        Expedition expedition = expeditionRepository.findById(expeditionId).orElseThrow();
+        Expedition expedition = expeditionRepository.findById(expeditionId).orElseThrow(ExpeditionNotFoundException::new);
         if(expedition.getExpeditionResult() == null) {
             throw new ExpeditionNotFinishedException();
         }
@@ -156,7 +157,7 @@ public class ExpeditionServiceImpl implements ExpeditionService {
         if(!request.isAction()) {
             return getActionResponse(false, expeditionId);
         }
-        Expedition expedition = expeditionRepository.findById(expeditionId).orElseThrow();
+        Expedition expedition = expeditionRepository.findById(expeditionId).orElseThrow(ExpeditionNotFoundException::new);
         testIfExpeditionReturning(expedition);
         testIfExpeditionReturned(expedition);
         expedition.setFinished(true);
