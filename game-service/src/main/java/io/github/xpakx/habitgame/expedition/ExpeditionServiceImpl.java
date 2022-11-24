@@ -123,7 +123,7 @@ public class ExpeditionServiceImpl implements ExpeditionService {
     }
 
     private void testIfExpeditionIsFinished(Expedition expedition) {
-        if(expedition.getEnd().isBefore(LocalDateTime.now())) {
+        if(expedition.getEnd().isAfter(LocalDateTime.now())) {
             throw new ExpeditionNotFinishedException();
         }
     }
