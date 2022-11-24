@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import java.time.LocalDateTime;
+
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static org.hamcrest.Matchers.*;
@@ -72,11 +74,16 @@ class ExpeditionControllerTest {
                 .body("$", hasSize(2));
     }
 
-    private void addExpedition(long userId) {
+    private Long addExpedition(long userId) {
+        return addExpedition(userId, null);
+    }
+
+    private Long addExpedition(long userId, LocalDateTime end) {
         Expedition expedition = new Expedition();
         expedition.setUserId(userId);
         expedition.setFinished(false);
-        expeditionRepository.save(expedition);
+        expedition.setEnd(end);
+        return expeditionRepository.save(expedition).getId();
     }
 
     @Test
@@ -95,5 +102,15 @@ class ExpeditionControllerTest {
                 .get(baseUrl + "/expedition/{expeditionId}/result", 1L)
         .then()
                 .statusCode(NOT_FOUND.value());
+    }
+    @Test
+    void shouldNotGenerateResultIfExpeditionNotFinished() {
+        Long expeditionId = addExpedition(userId, LocalDateTime.now().plusDays(1));
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/expedition/{expeditionId}/result", expeditionId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
     }
 }
