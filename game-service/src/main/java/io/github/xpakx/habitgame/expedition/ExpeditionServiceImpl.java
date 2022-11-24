@@ -148,6 +148,7 @@ public class ExpeditionServiceImpl implements ExpeditionService {
         }
         expedition.setReturning(true);
         expedition.setReturnEnd(LocalDateTime.now().plusHours(10));
+        expeditionRepository.save(expedition);
 
         return getActionResponse(true, expeditionId);
     }
