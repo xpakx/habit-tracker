@@ -9,9 +9,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.http.HttpStatus.*;
@@ -25,6 +27,8 @@ class ExpeditionControllerTest {
 
     @Autowired
     ExpeditionRepository expeditionRepository;
+    @Autowired
+    ExpeditionResultRepository resultRepository;
 
     @BeforeEach
     void setUp() {
@@ -34,6 +38,7 @@ class ExpeditionControllerTest {
 
     @AfterEach
     void tearDown() {
+        resultRepository.deleteAll();
         expeditionRepository.deleteAll();
     }
 
@@ -112,5 +117,36 @@ class ExpeditionControllerTest {
                 .get(baseUrl + "/expedition/{expeditionId}/result", expeditionId)
         .then()
                 .statusCode(BAD_REQUEST.value());
+    }
+    @Test
+    void shouldNotGenerateSecondResultForExpedition() {
+        Long expeditionId = addExpedition(userId, LocalDateTime.now().minusDays(1));
+        addResult(expeditionId, ResultType.NONE);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/expedition/{expeditionId}/result", expeditionId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    private void addResult(Long expeditionId, ResultType type) {
+        ExpeditionResult result = new ExpeditionResult();
+        result.setExpedition(expeditionRepository.getReferenceById(expeditionId));
+        result.setCompleted(false);
+        result.setType(type);
+        resultRepository.save(result);
+    }
+    @Test
+    void shouldGenerateExpeditionResult() {
+        Long expeditionId = addExpedition(userId, LocalDateTime.now().minusDays(1));
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/expedition/{expeditionId}/result", expeditionId)
+        .then()
+                .statusCode(OK.value());
+        List<ExpeditionResult> results = resultRepository.findAll();
+        assertThat(results, hasSize(1));
     }
 }
