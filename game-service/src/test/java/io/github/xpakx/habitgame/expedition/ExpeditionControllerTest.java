@@ -1,5 +1,7 @@
 package io.github.xpakx.habitgame.expedition;
 
+import io.github.xpakx.habitgame.expedition.dto.ActionRequest;
+import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -108,6 +110,7 @@ class ExpeditionControllerTest {
         .then()
                 .statusCode(NOT_FOUND.value());
     }
+
     @Test
     void shouldNotGenerateResultIfExpeditionNotFinished() {
         Long expeditionId = addExpedition(userId, LocalDateTime.now().plusDays(1));
@@ -131,9 +134,13 @@ class ExpeditionControllerTest {
     }
 
     private void addResult(Long expeditionId, ResultType type) {
+        addResult(expeditionId, type, false);
+    }
+
+    private void addResult(Long expeditionId, ResultType type, boolean completed) {
         ExpeditionResult result = new ExpeditionResult();
         result.setExpedition(expeditionRepository.getReferenceById(expeditionId));
-        result.setCompleted(false);
+        result.setCompleted(completed);
         result.setType(type);
         resultRepository.save(result);
     }
@@ -149,5 +156,79 @@ class ExpeditionControllerTest {
         List<ExpeditionResult> results = resultRepository.findAll();
         assertThat(results, hasSize(1));
         assertThat(results.get(0).getExpedition().getId(), equalTo(expeditionId));
+    }
+
+    @Test
+    void shouldRespondWith401ToCompleteExpeditionResultIfNoUserIdGiven() {
+        when()
+                .post(baseUrl + "/expedition/{expeditionId}/complete", 1L)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToCompleteExpeditionIfExpeditionDoesNotExist() {
+        ActionRequest request = getActionRequest(true);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/expedition/{expeditionId}/complete", 1L)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    private ActionRequest getActionRequest(boolean action) {
+        ActionRequest  request = new ActionRequest();
+        request.setAction(action);
+        return request;
+    }
+
+    @Test
+    void shouldNotCompleteUnfinishedExpedition() {
+        ActionRequest request = getActionRequest(true);
+        Long expeditionId = addExpedition(userId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/expedition/{expeditionId}/complete", expeditionId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldNotCompleteFinishedExpeditionWithUncompletedResult() {
+        ActionRequest request = getActionRequest(true);
+        Long expeditionId = addExpedition(userId);
+        addResult(expeditionId, ResultType.NONE);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/expedition/{expeditionId}/complete", expeditionId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldCompleteExpedition() {
+        ActionRequest request = getActionRequest(true);
+        Long expeditionId = addExpedition(userId);
+        addResult(expeditionId, ResultType.NONE, true);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/expedition/{expeditionId}/complete", expeditionId)
+        .then()
+                .statusCode(OK.value());
+        List<Expedition> expeditions = expeditionRepository.findAll();
+        assertThat(expeditions, hasSize(1));
+        assertThat(expeditions, hasItem(hasProperty("returning", equalTo(true))));
     }
 }
