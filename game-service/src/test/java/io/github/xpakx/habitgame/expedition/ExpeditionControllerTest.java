@@ -12,8 +12,7 @@ import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ExpeditionControllerTest {
@@ -78,5 +77,23 @@ class ExpeditionControllerTest {
         expedition.setUserId(userId);
         expedition.setFinished(false);
         expeditionRepository.save(expedition);
+    }
+
+    @Test
+    void shouldRespondWith401ToGetExpeditionResultIfNoUserIdGiven() {
+        when()
+                .get(baseUrl + "/expedition/{expeditionId}/result", 1L)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToGetExpeditionResultIfExpeditionDoesNotExist() {
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/expedition/{expeditionId}/result", 1L)
+        .then()
+                .statusCode(NOT_FOUND.value());
     }
 }
