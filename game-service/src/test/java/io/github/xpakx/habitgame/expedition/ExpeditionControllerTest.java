@@ -148,5 +148,6 @@ class ExpeditionControllerTest {
                 .statusCode(OK.value());
         List<ExpeditionResult> results = resultRepository.findAll();
         assertThat(results, hasSize(1));
+        assertThat(results.get(0).getExpedition().getId(), equalTo(expeditionId));
     }
 }
