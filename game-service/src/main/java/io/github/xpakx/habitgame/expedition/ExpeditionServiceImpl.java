@@ -129,7 +129,7 @@ public class ExpeditionServiceImpl implements ExpeditionService {
     }
 
     private void testIfExpeditionReturned(Expedition expedition) {
-        if(expedition.getReturnEnd().isBefore(LocalDateTime.now())) {
+        if(expedition.getReturnEnd().isAfter(LocalDateTime.now())) {
             throw new ExpeditionNotReturnedException();
         }
     }
