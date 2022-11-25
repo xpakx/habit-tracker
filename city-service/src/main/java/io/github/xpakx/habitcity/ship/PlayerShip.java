@@ -28,4 +28,5 @@ public class PlayerShip {
     private City city;
 
     private boolean blocked;
+    private boolean damaged;
 }
