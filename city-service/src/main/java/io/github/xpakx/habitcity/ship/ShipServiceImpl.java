@@ -138,11 +138,13 @@ public class ShipServiceImpl implements ShipService {
 
     @Override
     public void unlockShips(ExpeditionEndEvent event) {
-        List<PlayerShip> ships = shipRepository.findAllById(event.getShipsIds());
+        List<Long> ids = new ArrayList<>(event.getShipsIds());
+        ids.addAll(event.getDamagedShipsIds());
+        ids.addAll(event.getDestroyedShipsIds());
+        List<PlayerShip> ships = shipRepository.findAllById(ids);
         ships.forEach(s -> s.setBlocked(false));
-        shipRepository.saveAll(ships);
-        List<PlayerShip> destroyedShips = shipRepository.findAllById(event.getDestroyedShipsIds());
-        shipRepository.deleteAll(destroyedShips);
+        shipRepository.saveAll(ships.stream().filter(a -> !event.getDestroyedShipsIds().contains(a.getId())).toList());
+        shipRepository.deleteAll(ships.stream().filter(a -> event.getDestroyedShipsIds().contains(a.getId())).toList());
         // TODO
     }
 }

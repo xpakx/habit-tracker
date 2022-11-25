@@ -306,5 +306,4 @@ class ExpeditionControllerTest {
         .then()
                 .statusCode(OK.value());
     }
-
 }
