@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
 import java.time.LocalDateTime;
@@ -31,6 +32,8 @@ class ExpeditionControllerTest {
     ExpeditionRepository expeditionRepository;
     @Autowired
     ExpeditionResultRepository resultRepository;
+    @MockBean
+    ReturningExpeditionPublisher publisher;
 
     @BeforeEach
     void setUp() {
@@ -231,4 +234,77 @@ class ExpeditionControllerTest {
         assertThat(expeditions, hasSize(1));
         assertThat(expeditions, hasItem(hasProperty("returning", equalTo(true))));
     }
+
+    @Test
+    void shouldRespondWith401ToReturnToCityIfNoUserIdGiven() {
+        when()
+                .post(baseUrl + "/expedition/{expeditionId}/return", 1L)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToReturnToCityIfExpeditionDoesNotExist() {
+        ActionRequest request = getActionRequest(true);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/expedition/{expeditionId}/return", 1L)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldNotReturnShipsToCityIfExpeditionNotReturning() {
+        ActionRequest request = getActionRequest(true);
+        Long expeditionId = addExpedition(userId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/expedition/{expeditionId}/return", expeditionId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldNotReturnShipsBeforeReturningTime() {
+        ActionRequest request = getActionRequest(true);
+        Long expeditionId = addReturningExpedition(userId, LocalDateTime.now().plusDays(1));
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/expedition/{expeditionId}/return", expeditionId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    private Long addReturningExpedition(long userId, LocalDateTime end) {
+        Expedition expedition = new Expedition();
+        expedition.setUserId(userId);
+        expedition.setFinished(true);
+        expedition.setReturning(true);
+        expedition.setReturnEnd(end);
+        return expeditionRepository.save(expedition).getId();
+    }
+
+    @Test
+    void shouldReturnShips() {
+        ActionRequest request = getActionRequest(true);
+        Long expeditionId = addReturningExpedition(userId, LocalDateTime.now().minusDays(1));
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/expedition/{expeditionId}/return", expeditionId)
+        .then()
+                .statusCode(OK.value());
+    }
+
 }
