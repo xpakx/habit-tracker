@@ -138,13 +138,29 @@ public class ShipServiceImpl implements ShipService {
 
     @Override
     public void unlockShips(ExpeditionEndEvent event) {
+        List<PlayerShip> ships = getShipsFromEvent(event);
+        ships.forEach(s -> s.setBlocked(false));
+        ships.stream().filter(a -> isDamaged(event, a)).forEach(s -> s.setDamaged(true));
+        shipRepository.saveAll(ships.stream().filter(a -> isNotDestroyed(event, a)).toList());
+        shipRepository.deleteAll(ships.stream().filter(a -> isDestroyed(event, a)).toList());
+    }
+
+    private boolean isDestroyed(ExpeditionEndEvent event, PlayerShip a) {
+        return event.getDestroyedShipsIds().contains(a.getId());
+    }
+
+    private boolean isNotDestroyed(ExpeditionEndEvent event, PlayerShip a) {
+        return !isDestroyed(event, a);
+    }
+
+    private boolean isDamaged(ExpeditionEndEvent event, PlayerShip a) {
+        return event.getDamagedShipsIds().contains(a.getId());
+    }
+
+    private List<PlayerShip> getShipsFromEvent(ExpeditionEndEvent event) {
         List<Long> ids = new ArrayList<>(event.getShipsIds());
         ids.addAll(event.getDamagedShipsIds());
         ids.addAll(event.getDestroyedShipsIds());
-        List<PlayerShip> ships = shipRepository.findAllById(ids);
-        ships.forEach(s -> s.setBlocked(false));
-        ships.stream().filter(a -> event.getDamagedShipsIds().contains(a.getId())).forEach(s -> s.setDamaged(true));
-        shipRepository.saveAll(ships.stream().filter(a -> !event.getDestroyedShipsIds().contains(a.getId())).toList());
-        shipRepository.deleteAll(ships.stream().filter(a -> event.getDestroyedShipsIds().contains(a.getId())).toList());
+        return shipRepository.findAllById(ids);
     }
 }
