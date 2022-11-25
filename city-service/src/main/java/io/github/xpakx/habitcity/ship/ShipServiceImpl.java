@@ -115,6 +115,9 @@ public class ShipServiceImpl implements ShipService {
             if(ship.isBlocked()) {
                 throw new WrongShipChoiceException("Some ships are already on expedition!");
             }
+            if(ship.isDamaged()) {
+                throw new WrongShipChoiceException("Some ships are damaged!");
+            }
             testShipCargo(equipmentMap, ship);
             ship.setBlocked(true);
         }
