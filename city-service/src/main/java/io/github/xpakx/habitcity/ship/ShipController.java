@@ -36,4 +36,12 @@ public class ShipController {
                 HttpStatus.OK
         );
     }
+
+    @PostMapping("/city/ship/{shipId}/repair")
+    public ResponseEntity<RepairResponse> repairShip(@RequestBody RepairRequest request, @PathVariable Long shipId, @RequestHeader String id) {
+        return new ResponseEntity<>(
+                service.repairShip(request, shipId, Long.valueOf(id)),
+                HttpStatus.OK
+        );
+    }
 }

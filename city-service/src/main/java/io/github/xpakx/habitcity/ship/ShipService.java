@@ -9,4 +9,6 @@ public interface ShipService {
     List<DeployedShip> getShipsInCity(Long cityId, Long userId);
     ExpeditionResponse sendShips(ExpeditionRequest request, Long cityId, Long userId);
     void unlockShips(ExpeditionEndEvent event);
+
+    RepairResponse repairShip(RepairRequest request, Long shipId, Long userId);
 }

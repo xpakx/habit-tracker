@@ -166,4 +166,9 @@ public class ShipServiceImpl implements ShipService {
         ids.addAll(event.getDestroyedShipsIds());
         return shipRepository.findAllById(ids);
     }
+
+    @Override
+    public RepairResponse repairShip(RepairRequest request, Long shipId, Long userId) {
+        return null;
+    }
 }
