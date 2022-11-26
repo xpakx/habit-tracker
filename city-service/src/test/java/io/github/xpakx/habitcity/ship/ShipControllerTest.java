@@ -683,4 +683,26 @@ class ShipControllerTest {
         .then()
                 .statusCode(BAD_REQUEST.value());
     }
+
+    @Test
+    void shouldNotSendExpeditionWithDamagedBlockedShip() {
+        Long cityId = createCity();
+        Long shipId = createShip("ship1");
+        ExpeditionRequest request = getExpeditionRequest(getShipList(List.of(deployDamagedShip(cityId, shipId))));
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/{cityId}/expedition", cityId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+    private Long deployDamagedShip(Long cityId, Long shipId) {
+        PlayerShip ship = new PlayerShip();
+        ship.setDamaged(true);
+        ship.setCity(cityRepository.getReferenceById(cityId));
+        ship.setShip(shipRepository.getReferenceById(shipId));
+        return playerShipRepository.save(ship).getId();
+    }
 }
