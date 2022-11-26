@@ -169,6 +169,10 @@ public class ShipServiceImpl implements ShipService {
 
     @Override
     public RepairResponse repairShip(RepairRequest request, Long shipId, Long userId) {
+        PlayerShip ship = shipRepository.findByIdAndCityUserId(shipId, userId).orElseThrow();
+        ship.setDamaged(false);
+        shipRepository.save(ship);
+        //TODO
         return null;
     }
 }
