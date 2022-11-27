@@ -12,7 +12,6 @@ import io.github.xpakx.habitcity.ship.dto.*;
 import io.github.xpakx.habitcity.ship.error.NotAShipException;
 import io.github.xpakx.habitcity.ship.error.ShipNotFoundException;
 import io.github.xpakx.habitcity.ship.error.WrongShipChoiceException;
-import io.github.xpakx.habitcity.shop.ShopEntry;
 import io.github.xpakx.habitcity.shop.error.NotEnoughMoneyException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

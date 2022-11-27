@@ -8,6 +8,8 @@ import io.github.xpakx.habitcity.equipment.EquipmentEntry;
 import io.github.xpakx.habitcity.equipment.EquipmentEntryRepository;
 import io.github.xpakx.habitcity.equipment.UserEquipment;
 import io.github.xpakx.habitcity.equipment.UserEquipmentRepository;
+import io.github.xpakx.habitcity.money.Money;
+import io.github.xpakx.habitcity.money.MoneyRepository;
 import io.github.xpakx.habitcity.resource.Resource;
 import io.github.xpakx.habitcity.resource.ResourceRepository;
 import io.github.xpakx.habitcity.ship.dto.*;
@@ -52,6 +54,8 @@ class ShipControllerTest {
     PlayerShipRepository playerShipRepository;
     @Autowired
     ResourceRepository resourceRepository;
+    @Autowired
+    MoneyRepository moneyRepository;
     @MockBean
     SchedulerConfig config;
     @MockBean
@@ -69,6 +73,7 @@ class ShipControllerTest {
         entryRepository.deleteAll();
         shipRepository.deleteAll();
         resourceRepository.deleteAll();
+        moneyRepository.deleteAll();
         equipmentRepository.deleteAll();
         cityRepository.deleteAll();
     }
@@ -726,5 +731,53 @@ class ShipControllerTest {
 
     private RepairRequest getRepairRequest() {
         return new RepairRequest();
+    }
+
+    @Test
+    void shouldNotRepairShipIfNotEnoughMoney() {
+        RepairRequest request = getRepairRequest();
+        Long shipId = deployShip(createCity(), createShipWithBaseCost("ship1", 100));
+        createEquipmentWithMoney(9L);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/ship/{shipId}/repair", shipId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    private Long createShipWithBaseCost(String name, Integer cost) {
+        Ship ship = new Ship();
+        ship.setName(name);
+        ship.setBaseCost(cost);
+        return shipRepository.save(ship).getId();
+    }
+
+    private void createEquipmentWithMoney(long moneyAmount) {
+        UserEquipment equipment = new UserEquipment();
+        equipment.setUserId(userId);
+        equipment = equipmentRepository.save(equipment);
+        Money money = new Money();
+        money.setAmount(moneyAmount);
+        money = moneyRepository.save(money);
+        equipment.setMoney(money);
+        equipmentRepository.save(equipment);
+    }
+
+    @Test
+    void shouldRepairShip() {
+        RepairRequest request = getRepairRequest();
+        Long shipId = deployShip(createCity(), createShipWithBaseCost("ship1", 100));
+        createEquipmentWithMoney(10L);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/ship/{shipId}/repair", shipId)
+        .then()
+                .statusCode(OK.value());
     }
 }
