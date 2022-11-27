@@ -10,6 +10,7 @@ import io.github.xpakx.habitcity.money.Money;
 import io.github.xpakx.habitcity.money.MoneyRepository;
 import io.github.xpakx.habitcity.ship.dto.*;
 import io.github.xpakx.habitcity.ship.error.NotAShipException;
+import io.github.xpakx.habitcity.ship.error.ShipNotFoundException;
 import io.github.xpakx.habitcity.ship.error.WrongShipChoiceException;
 import io.github.xpakx.habitcity.shop.ShopEntry;
 import io.github.xpakx.habitcity.shop.error.NotEnoughMoneyException;
@@ -175,7 +176,7 @@ public class ShipServiceImpl implements ShipService {
     @Override
     @Transactional
     public RepairResponse repairShip(RepairRequest request, Long shipId, Long userId) {
-        PlayerShip ship = shipRepository.findByIdAndCityUserId(shipId, userId).orElseThrow();
+        PlayerShip ship = shipRepository.findByIdAndCityUserId(shipId, userId).orElseThrow(ShipNotFoundException::new);
         exchangeMoney(userId, (long) (ship.getShip().getBaseCost()*0.1));
         ship.setDamaged(false);
         shipRepository.save(ship);
