@@ -10,10 +10,7 @@ import io.github.xpakx.habitcity.equipment.UserEquipment;
 import io.github.xpakx.habitcity.equipment.UserEquipmentRepository;
 import io.github.xpakx.habitcity.resource.Resource;
 import io.github.xpakx.habitcity.resource.ResourceRepository;
-import io.github.xpakx.habitcity.ship.dto.ExpeditionEquipment;
-import io.github.xpakx.habitcity.ship.dto.ExpeditionRequest;
-import io.github.xpakx.habitcity.ship.dto.ExpeditionShip;
-import io.github.xpakx.habitcity.ship.dto.ShipRequest;
+import io.github.xpakx.habitcity.ship.dto.*;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
@@ -704,5 +701,30 @@ class ShipControllerTest {
         ship.setCity(cityRepository.getReferenceById(cityId));
         ship.setShip(shipRepository.getReferenceById(shipId));
         return playerShipRepository.save(ship).getId();
+    }
+
+    @Test
+    void shouldRespondWith401ToRepairShipIfNoUserIdGiven() {
+        when()
+                .post(baseUrl + "/city/ship/{shipId}/repair", 1L)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToRepairNonexistentShip() {
+        RepairRequest request = getRepairRequest();
+        given()
+            .header(getHeaderForUserId(userId))
+            .contentType(ContentType.JSON)
+            .body(request)
+        .when()
+                .post(baseUrl + "/city/ship/{shipId}/repair", 1L)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    private RepairRequest getRepairRequest() {
+        return new RepairRequest();
     }
 }
