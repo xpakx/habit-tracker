@@ -6,9 +6,13 @@ import io.github.xpakx.habitcity.city.error.NotEnoughSpaceException;
 import io.github.xpakx.habitcity.clients.ExpeditionPublisher;
 import io.github.xpakx.habitcity.equipment.*;
 import io.github.xpakx.habitcity.equipment.error.EquipmentNotFoundException;
+import io.github.xpakx.habitcity.money.Money;
+import io.github.xpakx.habitcity.money.MoneyRepository;
 import io.github.xpakx.habitcity.ship.dto.*;
 import io.github.xpakx.habitcity.ship.error.NotAShipException;
 import io.github.xpakx.habitcity.ship.error.WrongShipChoiceException;
+import io.github.xpakx.habitcity.shop.ShopEntry;
+import io.github.xpakx.habitcity.shop.error.NotEnoughMoneyException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +32,7 @@ public class ShipServiceImpl implements ShipService {
     private final EquipmentService equipment;
     private final UserEquipmentRepository equipmentRepository;
     private final ExpeditionPublisher publisher;
+    private final MoneyRepository moneyRepository;
 
     @Override
     @Transactional
@@ -168,11 +173,21 @@ public class ShipServiceImpl implements ShipService {
     }
 
     @Override
+    @Transactional
     public RepairResponse repairShip(RepairRequest request, Long shipId, Long userId) {
         PlayerShip ship = shipRepository.findByIdAndCityUserId(shipId, userId).orElseThrow();
+        exchangeMoney(userId, (long) (ship.getShip().getBaseCost()*0.1));
         ship.setDamaged(false);
         shipRepository.save(ship);
-        //TODO
         return null;
+    }
+
+    private void exchangeMoney(Long userId, Long amount) {
+        Money money = moneyRepository.findByEquipmentUserId(userId).orElseThrow(EquipmentNotFoundException::new);
+        if(money.getAmount()-amount < 0) {
+            throw new NotEnoughMoneyException();
+        }
+        money.setAmount(money.getAmount()-amount);
+        moneyRepository.save(money);
     }
 }
