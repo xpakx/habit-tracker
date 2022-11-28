@@ -23,16 +23,26 @@ public class DiscoveryServiceImpl implements DiscoveryService {
     @Override
     public DiscoveryResponse revealIsland(Long expeditionId, Long userId) {
         ExpeditionResult result = resultRepository.findByExpeditionIdAndExpeditionUserId(expeditionId, userId).orElseThrow(ExpeditionNotFoundException::new);
+        testResult(result);
+        Island island = new Island();
+        island.setUserId(userId);
+        island.setName("Unnamed");
+        islandRepository.save(island);
+        return toDiscoveryResponse(island);
+    }
+
+    private DiscoveryResponse toDiscoveryResponse(Island island) {
+        DiscoveryResponse response = new DiscoveryResponse();
+        response.setIslandId(island.getId());
+        return response;
+    }
+
+    private void testResult(ExpeditionResult result) {
         if(result.isCompleted()) {
             throw new ExpeditionCompletedException();
         }
         if(result.getType() != ResultType.ISLAND) {
             throw new WrongExpeditionResultType("This expedition did not discover an island!");
         }
-        Island island = new Island();
-        island.setUserId(userId);
-        island.setName("Unnamed");
-        islandRepository.save(island);
-        return null;
     }
 }
