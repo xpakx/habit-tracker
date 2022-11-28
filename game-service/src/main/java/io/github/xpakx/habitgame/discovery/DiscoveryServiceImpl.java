@@ -1,14 +1,28 @@
 package io.github.xpakx.habitgame.discovery;
 
 import io.github.xpakx.habitgame.discovery.dto.DiscoveryResponse;
+import io.github.xpakx.habitgame.expedition.ExpeditionResult;
+import io.github.xpakx.habitgame.expedition.ExpeditionResultRepository;
+import io.github.xpakx.habitgame.expedition.ExpeditionService;
+import io.github.xpakx.habitgame.island.Island;
+import io.github.xpakx.habitgame.island.IslandRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class DiscoveryServiceImpl implements DiscoveryService {
+    private final ExpeditionService expeditionService;
+    private final IslandRepository islandRepository;
+    private final ExpeditionResultRepository resultRepository;
+
     @Override
     public DiscoveryResponse revealIsland(Long expeditionId, Long userId) {
+        //ExpeditionResult result = resultRepository.findByExpeditionIdAndExpeditionUserId(expeditionId, userId).orElseThrow();
+        Island island = new Island();
+        island.setUserId(userId);
+        island.setName("Unnamed");
+        islandRepository.save(island);
         return null;
     }
 }

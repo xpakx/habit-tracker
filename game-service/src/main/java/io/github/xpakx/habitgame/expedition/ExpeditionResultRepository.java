@@ -6,4 +6,5 @@ import java.util.Optional;
 
 public interface ExpeditionResultRepository extends JpaRepository<ExpeditionResult, Long> {
     Optional<ExpeditionResult> findByExpeditionId(Long id);
+    Optional<ExpeditionResult> findByExpeditionIdAndExpeditionUserId(Long id, Long userId);
 }
