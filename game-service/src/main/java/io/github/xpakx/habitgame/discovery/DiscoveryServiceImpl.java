@@ -7,7 +7,6 @@ import io.github.xpakx.habitgame.expedition.ResultType;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionCompletedException;
 import io.github.xpakx.habitgame.expedition.ExpeditionResult;
 import io.github.xpakx.habitgame.expedition.ExpeditionResultRepository;
-import io.github.xpakx.habitgame.expedition.ExpeditionService;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionNotFoundException;
 import io.github.xpakx.habitgame.expedition.error.WrongExpeditionResultType;
 import io.github.xpakx.habitgame.island.Island;
@@ -19,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class DiscoveryServiceImpl implements DiscoveryService {
-    private final ExpeditionService expeditionService;
     private final IslandRepository islandRepository;
     private final ExpeditionResultRepository resultRepository;
 
@@ -28,13 +26,22 @@ public class DiscoveryServiceImpl implements DiscoveryService {
     public DiscoveryResponse revealIsland(Long expeditionId, Long userId) {
         ExpeditionResult result = resultRepository.findByExpeditionIdAndExpeditionUserId(expeditionId, userId).orElseThrow(ExpeditionNotFoundException::new);
         testResult(result);
+        Island island = generateNewIsland(userId);
+        island = islandRepository.save(island);
+        completeResult(result);
+        return toDiscoveryResponse(island);
+    }
+
+    private void completeResult(ExpeditionResult result) {
+        result.setCompleted(true);
+        resultRepository.save(result);
+    }
+
+    private Island generateNewIsland(Long userId) {
         Island island = new Island();
         island.setUserId(userId);
         island.setName("Unnamed");
-        islandRepository.save(island);
-        result.setCompleted(true);
-        resultRepository.save(result);
-        return toDiscoveryResponse(island);
+        return island;
     }
 
     private DiscoveryResponse toDiscoveryResponse(Island island) {
