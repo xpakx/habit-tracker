@@ -13,4 +13,5 @@ public interface ExpeditionService {
     ExpeditionResultResponse getResult(Long expeditionId, Long userId);
     ActionResponse completeExpedition(ActionRequest request, Long expeditionId, Long userId);
     ActionResponse returnToCity(ActionRequest request, Long expeditionId, Long userId);
+    boolean completeExpedition(Long expeditionId);
 }

@@ -11,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -180,5 +177,16 @@ public class ExpeditionServiceImpl implements ExpeditionService {
         if(!expedition.isReturning()) {
             throw new ExpeditionNotReturnedException();
         }
+    }
+
+    @Override
+    public boolean completeExpedition(Long expeditionId) {
+        Optional<ExpeditionResult> result = resultRepository.findByExpeditionId(expeditionId);
+        if(result.isEmpty() || !result.get().isCompleted()) {
+            return false;
+        }
+        result.get().setCompleted(true);
+        resultRepository.save(result.get());
+        return true;
     }
 }
