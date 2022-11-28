@@ -1,4 +1,4 @@
-package io.github.xpakx.habitgame.discovery.dto;
+package io.github.xpakx.habitgame.island.dto;
 
 import lombok.Getter;
 import lombok.Setter;
