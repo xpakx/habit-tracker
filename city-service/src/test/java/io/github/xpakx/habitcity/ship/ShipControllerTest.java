@@ -31,6 +31,7 @@ import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.HttpStatus.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -779,5 +780,37 @@ class ShipControllerTest {
                 .post(baseUrl + "/city/ship/{shipId}/repair", shipId)
         .then()
                 .statusCode(OK.value());
+    }
+
+    @Test
+    void shipShouldBeRepaired() {
+        RepairRequest request = getRepairRequest();
+        Long shipId = deployShip(createCity(), createShipWithBaseCost("ship1", 100));
+        createEquipmentWithMoney(10L);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/ship/{shipId}/repair", shipId);
+        Optional<PlayerShip> ship = playerShipRepository.findById(shipId);
+        assertTrue(ship.isPresent());
+        assertThat(ship.get(), hasProperty("damaged", equalTo(false)));
+    }
+
+    @Test
+    void shouldSubtractMoneyWhileRepairing() {
+        RepairRequest request = getRepairRequest();
+        Long shipId = deployShip(createCity(), createShipWithBaseCost("ship1", 100));
+        createEquipmentWithMoney(10L);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/city/ship/{shipId}/repair", shipId);
+        Optional<Money> money = moneyRepository.findByEquipmentUserId(userId);
+        assertTrue(money.isPresent());
+        assertThat(money.get(), hasProperty("amount", equalTo(0L)));
     }
 }
