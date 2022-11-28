@@ -32,7 +32,8 @@ public class DiscoveryServiceImpl implements DiscoveryService {
         island.setUserId(userId);
         island.setName("Unnamed");
         islandRepository.save(island);
-        expeditionService.completeResult(expeditionId);
+        result.setCompleted(true);
+        resultRepository.save(result);
         return toDiscoveryResponse(island);
     }
 
