@@ -14,6 +14,7 @@ import io.github.xpakx.habitgame.island.Island;
 import io.github.xpakx.habitgame.island.IslandRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +24,7 @@ public class DiscoveryServiceImpl implements DiscoveryService {
     private final ExpeditionResultRepository resultRepository;
 
     @Override
+    @Transactional
     public DiscoveryResponse revealIsland(Long expeditionId, Long userId) {
         ExpeditionResult result = resultRepository.findByExpeditionIdAndExpeditionUserId(expeditionId, userId).orElseThrow(ExpeditionNotFoundException::new);
         testResult(result);
@@ -30,6 +32,7 @@ public class DiscoveryServiceImpl implements DiscoveryService {
         island.setUserId(userId);
         island.setName("Unnamed");
         islandRepository.save(island);
+        expeditionService.completeResult(expeditionId);
         return toDiscoveryResponse(island);
     }
 

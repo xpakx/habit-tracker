@@ -180,7 +180,7 @@ public class ExpeditionServiceImpl implements ExpeditionService {
     }
 
     @Override
-    public boolean completeExpedition(Long expeditionId) {
+    public boolean completeResult(Long expeditionId) {
         Optional<ExpeditionResult> result = resultRepository.findByExpeditionId(expeditionId);
         if(result.isEmpty() || !result.get().isCompleted()) {
             return false;
