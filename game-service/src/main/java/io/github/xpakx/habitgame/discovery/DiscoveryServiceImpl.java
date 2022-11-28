@@ -1,6 +1,8 @@
 package io.github.xpakx.habitgame.discovery;
 
 import io.github.xpakx.habitgame.discovery.dto.DiscoveryResponse;
+import io.github.xpakx.habitgame.discovery.dto.NamingIslandRequest;
+import io.github.xpakx.habitgame.discovery.dto.NamingIslandResponse;
 import io.github.xpakx.habitgame.expedition.ResultType;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionCompletedException;
 import io.github.xpakx.habitgame.expedition.ExpeditionResult;
@@ -44,5 +46,10 @@ public class DiscoveryServiceImpl implements DiscoveryService {
         if(result.getType() != ResultType.ISLAND) {
             throw new WrongExpeditionResultType("This expedition did not discover an island!");
         }
+    }
+
+    @Override
+    public NamingIslandResponse nameIsland(NamingIslandRequest request, Long expeditionId, Long userId) {
+        return null;
     }
 }
