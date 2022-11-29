@@ -22,9 +22,13 @@ public class IslandServiceImpl implements IslandService {
         Island island = islandRepository.findByIdAndUserId(islandId, userId).orElseThrow();
         island.setName(request.getName());
         islandRepository.save(island);
+        return toNamingResponse(request.getName(), islandId);
+    }
+
+    private NamingIslandResponse toNamingResponse(String name, Long islandId) {
         NamingIslandResponse response = new NamingIslandResponse();
         response.setIslandId(islandId);
-        response.setIslandName(request.getName());
+        response.setIslandName(name);
         return response;
     }
 }
