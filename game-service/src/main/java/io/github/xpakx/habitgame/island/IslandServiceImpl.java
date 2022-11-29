@@ -19,6 +19,12 @@ public class IslandServiceImpl implements IslandService {
 
     @Override
     public NamingIslandResponse nameIsland(NamingIslandRequest request, Long islandId, Long userId) {
-        return null;
+        Island island = islandRepository.findByIdAndUserId(islandId, userId).orElseThrow();
+        island.setName(request.getName());
+        islandRepository.save(island);
+        NamingIslandResponse response = new NamingIslandResponse();
+        response.setIslandId(islandId);
+        response.setIslandName(request.getName());
+        return response;
     }
 }
