@@ -2,6 +2,7 @@ package io.github.xpakx.habitgame.island;
 
 import io.github.xpakx.habitgame.island.dto.NamingIslandRequest;
 import io.github.xpakx.habitgame.island.dto.NamingIslandResponse;
+import io.github.xpakx.habitgame.island.error.IslandNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ public class IslandServiceImpl implements IslandService {
 
     @Override
     public NamingIslandResponse nameIsland(NamingIslandRequest request, Long islandId, Long userId) {
-        Island island = islandRepository.findByIdAndUserId(islandId, userId).orElseThrow();
+        Island island = islandRepository.findByIdAndUserId(islandId, userId).orElseThrow(IslandNotFoundException::new);
         island.setName(request.getName());
         islandRepository.save(island);
         return toNamingResponse(request.getName(), islandId);
