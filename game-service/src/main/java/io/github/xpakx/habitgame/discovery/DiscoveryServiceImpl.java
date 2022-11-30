@@ -1,8 +1,6 @@
 package io.github.xpakx.habitgame.discovery;
 
 import io.github.xpakx.habitgame.discovery.dto.DiscoveryResponse;
-import io.github.xpakx.habitgame.island.dto.NamingIslandRequest;
-import io.github.xpakx.habitgame.island.dto.NamingIslandResponse;
 import io.github.xpakx.habitgame.expedition.ResultType;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionCompletedException;
 import io.github.xpakx.habitgame.expedition.ExpeditionResult;

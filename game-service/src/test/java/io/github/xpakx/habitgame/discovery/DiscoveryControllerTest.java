@@ -1,10 +1,8 @@
 package io.github.xpakx.habitgame.discovery;
 
 import io.github.xpakx.habitgame.expedition.*;
-import io.github.xpakx.habitgame.expedition.dto.ActionRequest;
 import io.github.xpakx.habitgame.island.Island;
 import io.github.xpakx.habitgame.island.IslandRepository;
-import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
