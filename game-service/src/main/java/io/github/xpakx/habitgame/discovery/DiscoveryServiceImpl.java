@@ -3,6 +3,7 @@ package io.github.xpakx.habitgame.discovery;
 import io.github.xpakx.habitgame.discovery.dto.DiscoveryResponse;
 import io.github.xpakx.habitgame.discovery.dto.TreasureResponse;
 import io.github.xpakx.habitgame.expedition.ResultType;
+import io.github.xpakx.habitgame.expedition.Treasure;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionCompletedException;
 import io.github.xpakx.habitgame.expedition.ExpeditionResult;
 import io.github.xpakx.habitgame.expedition.ExpeditionResultRepository;
@@ -13,6 +14,8 @@ import io.github.xpakx.habitgame.island.IslandRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -68,7 +71,26 @@ public class DiscoveryServiceImpl implements DiscoveryService {
     public TreasureResponse getTreasure(Long expeditionId, Long userId) {
         ExpeditionResult result = resultRepository.findByExpeditionIdAndExpeditionUserId(expeditionId, userId).orElseThrow(ExpeditionNotFoundException::new);
         testResult(result, ResultType.TREASURE);
+        result.setTreasure(generateTreasure());
         completeResult(result);
-        return null;
+        TreasureResponse response = new TreasureResponse();
+        response.setTreasure(response.getTreasure());
+        return response;
+    }
+
+    private Treasure generateTreasure() {
+        Random random = new Random();
+        int rand = random.nextInt(100);
+        if(rand < 70) {
+            return Treasure.SMALL;
+        } else if (rand < 80) {
+            return Treasure.MEDIUM;
+        } else if (rand < 95) {
+            return Treasure.BIG;
+        } else if (rand <= 98) {
+            return Treasure.RARE;
+        } else {
+            return Treasure.LEGENDARY;
+        }
     }
 }

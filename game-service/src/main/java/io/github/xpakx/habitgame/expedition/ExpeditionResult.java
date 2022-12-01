@@ -19,5 +19,5 @@ public class ExpeditionResult {
 
     private ResultType type;
     private boolean completed;
-
+    private Treasure treasure;
 }
