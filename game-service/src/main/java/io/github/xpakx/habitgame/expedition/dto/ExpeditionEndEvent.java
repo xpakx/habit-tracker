@@ -13,4 +13,5 @@ public class ExpeditionEndEvent {
     List<Long> destroyedShipsIds;
     List<Long> damagedShipsIds;
     List<Cargo> cargo;
+    String treasure;
 }
