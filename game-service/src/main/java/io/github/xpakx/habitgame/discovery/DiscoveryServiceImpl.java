@@ -24,7 +24,7 @@ public class DiscoveryServiceImpl implements DiscoveryService {
     @Transactional
     public DiscoveryResponse revealIsland(Long expeditionId, Long userId) {
         ExpeditionResult result = resultRepository.findByExpeditionIdAndExpeditionUserId(expeditionId, userId).orElseThrow(ExpeditionNotFoundException::new);
-        testResult(result);
+        testResult(result, ResultType.ISLAND);
         Island island = generateNewIsland(userId);
         island = islandRepository.save(island);
         completeResult(result);
@@ -49,17 +49,26 @@ public class DiscoveryServiceImpl implements DiscoveryService {
         return response;
     }
 
-    private void testResult(ExpeditionResult result) {
+    private void testResult(ExpeditionResult result, ResultType type) {
         if(result.isCompleted()) {
             throw new ExpeditionCompletedException();
         }
-        if(result.getType() != ResultType.ISLAND) {
-            throw new WrongExpeditionResultType("This expedition did not discover an island!");
+        if(result.getType() != type) {
+            throw new WrongExpeditionResultType("This expedition did not discover" + typeToString(type) + "!");
         }
     }
 
+    private String typeToString(ResultType type) {
+        return (type.equals(ResultType.ISLAND) ? "an " : "a ") +
+                type.toString().toLowerCase();
+    }
+
     @Override
+    @Transactional
     public TreasureResponse getTreasure(Long expeditionId, Long userId) {
+        ExpeditionResult result = resultRepository.findByExpeditionIdAndExpeditionUserId(expeditionId, userId).orElseThrow(ExpeditionNotFoundException::new);
+        testResult(result, ResultType.TREASURE);
+        completeResult(result);
         return null;
     }
 }
