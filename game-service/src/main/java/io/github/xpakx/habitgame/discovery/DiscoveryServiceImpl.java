@@ -74,7 +74,7 @@ public class DiscoveryServiceImpl implements DiscoveryService {
         result.setTreasure(generateTreasure());
         completeResult(result);
         TreasureResponse response = new TreasureResponse();
-        response.setTreasure(response.getTreasure());
+        response.setTreasure(result.getTreasure().getName());
         return response;
     }
 

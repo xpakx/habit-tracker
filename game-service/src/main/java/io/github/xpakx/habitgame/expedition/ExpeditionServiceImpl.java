@@ -161,9 +161,13 @@ public class ExpeditionServiceImpl implements ExpeditionService {
         expedition.setFinished(true);
         expeditionRepository.save(expedition);
 
-        publisher.sendExpedition(shipRepository.findByExpeditionId(expeditionId), null, expedition.getExpeditionResult().getTreasure(), userId);
+        publisher.sendExpedition(shipRepository.findByExpeditionId(expeditionId), null, extractTreasure(expedition), userId);
 
         return getActionResponse(true, expeditionId);
+    }
+
+    private Treasure extractTreasure(Expedition expedition) {
+        return expedition.getExpeditionResult() != null ? expedition.getExpeditionResult().getTreasure() : null;
     }
 
     private ActionResponse getActionResponse(boolean completed, Long expeditionId) {
