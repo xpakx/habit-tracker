@@ -145,4 +145,86 @@ class DiscoveryControllerTest {
         List<Island> islands = islandRepository.findAll();
         assertThat(islands, hasSize(1));
     }
+
+    @Test
+    void shouldRespondWith401ToGetTreasureIfNoUserIdIsGiven() {
+        when()
+                .get(baseUrl + "/expedition/{expeditionId}/treasure", 1L)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToGetTreasureIfExpeditionDoesNotExist() {
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/expedition/{expeditionId}/treasure", 1L)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldNotGenerateTreasureForCompletedResult() {
+        Long expeditionId = addExpedition();
+        addResult(expeditionId, ResultType.TREASURE, true);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/expedition/{expeditionId}/treasure", expeditionId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldNotGenerateTreasureForNonTreasureResultType() {
+        Long expeditionId = addExpedition();
+        addResult(expeditionId, ResultType.BATTLE, false);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/expedition/{expeditionId}/treasure", expeditionId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldGenerateTreasure() {
+        Long expeditionId = addExpedition();
+        addResult(expeditionId, ResultType.TREASURE, false);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/expedition/{expeditionId}/treasure", expeditionId)
+        .then()
+                .log().all()
+                .statusCode(OK.value())
+                .body("treasure", notNullValue());
+    }
+
+    @Test
+    void shouldCompleteExpeditionResultAfterGeneratingATreasure() {
+        Long expeditionId = addExpedition();
+        addResult(expeditionId, ResultType.TREASURE, false);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/expedition/{expeditionId}/treasure", expeditionId);
+        Optional<ExpeditionResult> result = resultRepository.findByExpeditionId(expeditionId);
+        assertTrue(result.isPresent());
+        assertThat(result.get(), hasProperty("completed", equalTo(true)));
+    }
+
+    @Test
+    void shouldAddTreasureInfoToDb() {
+        Long expeditionId = addExpedition();
+        addResult(expeditionId, ResultType.TREASURE, false);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/expedition/{expeditionId}/treasure", expeditionId);
+        Optional<ExpeditionResult> result = resultRepository.findByExpeditionId(expeditionId);
+        assertTrue(result.isPresent());
+        assertThat(result.get().getTreasure().getName(), notNullValue());
+    }
 }
