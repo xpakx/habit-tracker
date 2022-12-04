@@ -3,7 +3,6 @@ package io.github.xpakx.habitgame.battle;
 import io.github.xpakx.habitgame.battle.dto.BattleResponse;
 import io.github.xpakx.habitgame.battle.dto.MoveRequest;
 import io.github.xpakx.habitgame.battle.dto.MoveResponse;
-import io.github.xpakx.habitgame.expedition.ExpeditionRepository;
 import io.github.xpakx.habitgame.expedition.ExpeditionResultRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BattleServiceImpl implements BattleService {
     private final ExpeditionResultRepository resultRepository;
-    
+
     @Override
     public BattleResponse start(Long expeditionId, Long userId) {
         return null;

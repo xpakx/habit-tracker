@@ -3,7 +3,6 @@ package io.github.xpakx.habitgame.battle;
 import io.github.xpakx.habitgame.battle.dto.BattleResponse;
 import io.github.xpakx.habitgame.battle.dto.MoveRequest;
 import io.github.xpakx.habitgame.battle.dto.MoveResponse;
-import io.github.xpakx.habitgame.expedition.dto.ActionResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
