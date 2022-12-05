@@ -9,4 +9,5 @@ public class MoveRequest {
     Integer x;
     Integer y;
     MoveAction action;
+    Long shipId;
 }
