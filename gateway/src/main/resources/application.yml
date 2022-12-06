@@ -29,7 +29,7 @@ spring:
                 - id: game
                   uri: http://localhost:8086
                   predicates:
-                    - Path=/game/**,/island/**
+                    - Path=/game/**,/island/**,/battle/**
                   filters:
                     - AuthenticationFilterFactory
             globalcors:
