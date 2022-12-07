@@ -28,4 +28,7 @@ public class Ship {
     private boolean destroyed;
     private boolean damaged;
 
+    private Integer xPosition;
+    private Integer yPosition;
+
 }
