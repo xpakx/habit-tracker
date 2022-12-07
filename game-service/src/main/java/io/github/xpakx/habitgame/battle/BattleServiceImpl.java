@@ -3,7 +3,12 @@ package io.github.xpakx.habitgame.battle;
 import io.github.xpakx.habitgame.battle.dto.BattleResponse;
 import io.github.xpakx.habitgame.battle.dto.MoveRequest;
 import io.github.xpakx.habitgame.battle.dto.MoveResponse;
+import io.github.xpakx.habitgame.expedition.ExpeditionResult;
 import io.github.xpakx.habitgame.expedition.ExpeditionResultRepository;
+import io.github.xpakx.habitgame.expedition.ResultType;
+import io.github.xpakx.habitgame.expedition.error.ExpeditionCompletedException;
+import io.github.xpakx.habitgame.expedition.error.ExpeditionNotFoundException;
+import io.github.xpakx.habitgame.expedition.error.WrongExpeditionResultType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +19,18 @@ public class BattleServiceImpl implements BattleService {
 
     @Override
     public BattleResponse start(Long expeditionId, Long userId) {
+        ExpeditionResult result = resultRepository.findByExpeditionIdAndExpeditionUserId(expeditionId, userId).orElseThrow(ExpeditionNotFoundException::new);
+        testResult(result);
         return null;
+    }
+
+    private void testResult(ExpeditionResult result) {
+        if(result.isCompleted()) {
+            throw new ExpeditionCompletedException();
+        }
+        if(result.getType() != ResultType.BATTLE && result.getType() != ResultType.MONSTER) {
+            throw new WrongExpeditionResultType("This expedition isn't battle!");
+        }
     }
 
     @Override

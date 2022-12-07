@@ -1,5 +1,6 @@
 package io.github.xpakx.habitgame.expedition;
 
+import io.github.xpakx.habitgame.battle.Position;
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,7 +29,8 @@ public class Ship {
     private boolean destroyed;
     private boolean damaged;
 
-    private Integer xPosition;
-    private Integer yPosition;
+    @OneToOne(orphanRemoval = true)
+    @JoinColumn(name = "position_id")
+    private Position position;
 
 }
