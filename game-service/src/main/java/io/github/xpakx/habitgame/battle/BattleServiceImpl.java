@@ -3,7 +3,7 @@ package io.github.xpakx.habitgame.battle;
 import io.github.xpakx.habitgame.battle.dto.BattleResponse;
 import io.github.xpakx.habitgame.battle.dto.MoveRequest;
 import io.github.xpakx.habitgame.battle.dto.MoveResponse;
-import io.github.xpakx.habitgame.battle.error.PreparationStageEndedException;
+import io.github.xpakx.habitgame.battle.error.WrongBattleStateException;
 import io.github.xpakx.habitgame.expedition.ExpeditionResult;
 import io.github.xpakx.habitgame.expedition.ExpeditionResultRepository;
 import io.github.xpakx.habitgame.expedition.ResultType;
@@ -44,6 +44,13 @@ public class BattleServiceImpl implements BattleService {
 
     @Override
     public MoveResponse move(MoveRequest request, Long battleId, Long userId) {
+        Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId).orElseThrow();
+        if(!battle.isStarted()) {
+            throw new WrongBattleStateException("Battle hasn't started yet!");
+        }
+        if(battle.isFinished()) {
+            throw new WrongBattleStateException("Battle is already finished!");
+        }
         return null;
     }
 
@@ -51,7 +58,7 @@ public class BattleServiceImpl implements BattleService {
     public MoveResponse prepare(MoveRequest request, Long battleId, Long userId) {
         Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId).orElseThrow();
         if(battle.isStarted()) {
-            throw new PreparationStageEndedException();
+            throw new WrongBattleStateException("Preparation stage ended. You cannot place ships!");
         }
         return null;
     }
