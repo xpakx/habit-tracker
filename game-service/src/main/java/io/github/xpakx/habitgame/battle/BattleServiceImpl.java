@@ -16,12 +16,20 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BattleServiceImpl implements BattleService {
     private final ExpeditionResultRepository resultRepository;
+    private final BattleRepository battleRepository;
 
     @Override
     public BattleResponse start(Long expeditionId, Long userId) {
         ExpeditionResult result = resultRepository.findByExpeditionIdAndExpeditionUserId(expeditionId, userId).orElseThrow(ExpeditionNotFoundException::new);
         testResult(result);
-        return null;
+        Battle battle = new Battle();
+        battle.setExpedition(result.getExpedition());
+        battle.setFinished(false);
+        battle.setStarted(false);
+        Long battleId = battleRepository.save(battle).getId();
+        BattleResponse response = new BattleResponse();
+        response.setBattleId(battleId);
+        return response;
     }
 
     private void testResult(ExpeditionResult result) {
