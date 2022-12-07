@@ -3,6 +3,7 @@ package io.github.xpakx.habitgame.battle;
 import io.github.xpakx.habitgame.battle.dto.BattleResponse;
 import io.github.xpakx.habitgame.battle.dto.MoveRequest;
 import io.github.xpakx.habitgame.battle.dto.MoveResponse;
+import io.github.xpakx.habitgame.battle.error.PreparationStageEndedException;
 import io.github.xpakx.habitgame.expedition.ExpeditionResult;
 import io.github.xpakx.habitgame.expedition.ExpeditionResultRepository;
 import io.github.xpakx.habitgame.expedition.ResultType;
@@ -48,6 +49,10 @@ public class BattleServiceImpl implements BattleService {
 
     @Override
     public MoveResponse prepare(MoveRequest request, Long battleId, Long userId) {
+        Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId).orElseThrow();
+        if(battle.isStarted()) {
+            throw new PreparationStageEndedException();
+        }
         return null;
     }
 }
