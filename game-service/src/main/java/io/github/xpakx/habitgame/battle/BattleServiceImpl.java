@@ -63,13 +63,16 @@ public class BattleServiceImpl implements BattleService {
         if(battle.isStarted()) {
             throw new WrongBattleStateException("Preparation stage ended. You cannot place ships!");
         }
+        if(request.getY() == null || request.getX() == null) {
+            throw new WrongPositionException("Position cannot be empty!");
+        }
         if(positionRepository.existsByXPosAndYPosAndBattleId(request.getX(), request.getY(), battleId)) {
             throw new WrongPositionException();
         }
         Ship ship = shipRepository.findByIdAndUserIdAndExpeditionId(request.getShipId(), userId, battle.getExpedition().getId()).orElseThrow();
         ship.setPrepared(true);
         ship = shipRepository.save(ship);
-        Position position = new Position();
+        Position position = ship.getPosition() == null ? new Position() : ship.getPosition();
         position.setShip(ship);
         position.setXPos(request.getX());
         position.setYPos(request.getY());
