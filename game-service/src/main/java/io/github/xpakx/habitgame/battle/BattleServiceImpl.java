@@ -4,20 +4,21 @@ import io.github.xpakx.habitgame.battle.dto.BattleResponse;
 import io.github.xpakx.habitgame.battle.dto.MoveRequest;
 import io.github.xpakx.habitgame.battle.dto.MoveResponse;
 import io.github.xpakx.habitgame.battle.error.WrongBattleStateException;
-import io.github.xpakx.habitgame.expedition.ExpeditionResult;
-import io.github.xpakx.habitgame.expedition.ExpeditionResultRepository;
-import io.github.xpakx.habitgame.expedition.ResultType;
+import io.github.xpakx.habitgame.expedition.*;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionCompletedException;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionNotFoundException;
 import io.github.xpakx.habitgame.expedition.error.WrongExpeditionResultType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class BattleServiceImpl implements BattleService {
     private final ExpeditionResultRepository resultRepository;
     private final BattleRepository battleRepository;
+    private final ShipRepository shipRepository;
+    private final PositionRepository positionRepository;
 
     @Override
     public BattleResponse start(Long expeditionId, Long userId) {
@@ -55,11 +56,20 @@ public class BattleServiceImpl implements BattleService {
     }
 
     @Override
+    @Transactional
     public MoveResponse prepare(MoveRequest request, Long battleId, Long userId) {
         Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId).orElseThrow();
         if(battle.isStarted()) {
             throw new WrongBattleStateException("Preparation stage ended. You cannot place ships!");
         }
+        Ship ship = shipRepository.findByIdAndUserIdAndExpeditionId(request.getShipId(), userId, battle.getExpedition().getId()).orElseThrow();
+        ship.setPrepared(true);
+        ship = shipRepository.save(ship);
+        Position position = new Position();
+        position.setShip(ship);
+        position.setXPos(request.getX());
+        position.setYPos(request.getY());
+        positionRepository.save(position);
         return null;
     }
 }
