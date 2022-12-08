@@ -47,15 +47,23 @@ public class BattleServiceImpl implements BattleService {
     }
 
     @Override
+    @Transactional
     public MoveResponse move(MoveRequest request, Long battleId, Long userId) {
         Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId).orElseThrow();
+        testShipMove(request, battleId, battle);
+        Ship ship = shipRepository.findByIdAndUserIdAndExpeditionId(request.getShipId(), userId, battle.getExpedition().getId()).orElseThrow();
+
+        return null;
+    }
+
+    private void testShipMove(MoveRequest request, Long battleId, Battle battle) {
         if(!battle.isStarted()) {
             throw new WrongBattleStateException("Battle hasn't started yet!");
         }
         if(battle.isFinished()) {
             throw new WrongBattleStateException("Battle is already finished!");
         }
-        return null;
+        testNewPosition(request, battleId);
     }
 
     @Override
@@ -73,6 +81,10 @@ public class BattleServiceImpl implements BattleService {
         if(battle.isStarted()) {
             throw new WrongBattleStateException("Preparation stage ended. You cannot place ships!");
         }
+        testNewPosition(request, battleId);
+    }
+
+    private void testNewPosition(MoveRequest request, Long battleId) {
         if(request.getY() == null || request.getX() == null) {
             throw new WrongPositionException("Position cannot be empty!");
         }
