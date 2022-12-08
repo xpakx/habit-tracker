@@ -61,10 +61,15 @@ public class BattleServiceImpl implements BattleService {
     @Override
     @Transactional
     public MoveResponse prepare(MoveRequest request, Long battleId, Long userId) {
-        if(request.getAction() != MoveAction.PREPARE) {
-            throw new WrongBattleStateException("Battle is not in preparation state!");
-        }
+        testActionType(request, MoveAction.PREPARE);
         Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId).orElseThrow(BattleNotFoundException::new);
+        testShipPlacement(request, battleId, battle);
+        Ship ship = saveShip(request, userId, battle);
+        savePosition(request, ship);
+        return prepareMoveResponse();
+    }
+
+    private void testShipPlacement(MoveRequest request, Long battleId, Battle battle) {
         if(battle.isStarted()) {
             throw new WrongBattleStateException("Preparation stage ended. You cannot place ships!");
         }
@@ -74,14 +79,30 @@ public class BattleServiceImpl implements BattleService {
         if(positionRepository.existsByXPosAndYPosAndBattleId(request.getX(), request.getY(), battleId)) {
             throw new WrongPositionException();
         }
+    }
+
+    private void testActionType(MoveRequest request, MoveAction action) {
+        if(request.getAction() != action) {
+            throw new WrongBattleStateException("Battle is not in preparation state!");
+        }
+    }
+
+    private Ship saveShip(MoveRequest request, Long userId, Battle battle) {
         Ship ship = shipRepository.findByIdAndUserIdAndExpeditionId(request.getShipId(), userId, battle.getExpedition().getId()).orElseThrow();
         ship.setPrepared(true);
         ship = shipRepository.save(ship);
+        return ship;
+    }
+
+    private void savePosition(MoveRequest request, Ship ship) {
         Position position = ship.getPosition() == null ? new Position() : ship.getPosition();
         position.setShip(ship);
         position.setXPos(request.getX());
         position.setYPos(request.getY());
         positionRepository.save(position);
+    }
+
+    private MoveResponse prepareMoveResponse() {
         MoveResponse response = new MoveResponse();
         response.setAction(MoveAction.PREPARE);
         response.setSuccess(true);
