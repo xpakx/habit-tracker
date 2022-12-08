@@ -4,6 +4,7 @@ import io.github.xpakx.habitgame.battle.dto.BattleResponse;
 import io.github.xpakx.habitgame.battle.dto.MoveRequest;
 import io.github.xpakx.habitgame.battle.dto.MoveResponse;
 import io.github.xpakx.habitgame.battle.error.WrongBattleStateException;
+import io.github.xpakx.habitgame.battle.error.WrongPositionException;
 import io.github.xpakx.habitgame.expedition.*;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionCompletedException;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionNotFoundException;
@@ -61,6 +62,9 @@ public class BattleServiceImpl implements BattleService {
         Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId).orElseThrow();
         if(battle.isStarted()) {
             throw new WrongBattleStateException("Preparation stage ended. You cannot place ships!");
+        }
+        if(positionRepository.existsByXPosAndYPosAndBattleId(request.getX(), request.getY(), battleId)) {
+            throw new WrongPositionException();
         }
         Ship ship = shipRepository.findByIdAndUserIdAndExpeditionId(request.getShipId(), userId, battle.getExpedition().getId()).orElseThrow();
         ship.setPrepared(true);

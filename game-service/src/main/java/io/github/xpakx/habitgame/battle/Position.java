@@ -20,4 +20,7 @@ public class Position {
     @OneToOne
     @JoinColumn(name = "ship_id")
     private Ship ship;
+
+    @ManyToOne
+    private Battle battle;
 }
