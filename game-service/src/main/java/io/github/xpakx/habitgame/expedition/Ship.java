@@ -28,9 +28,8 @@ public class Ship {
 
     private boolean destroyed;
     private boolean damaged;
+    private boolean prepared;
 
-    @OneToOne(orphanRemoval = true)
-    @JoinColumn(name = "position_id")
+    @OneToOne(mappedBy = "ship", orphanRemoval = true)
     private Position position;
-
 }

@@ -14,11 +14,10 @@ public class Position {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer x1;
-    private Integer y1;
-    private Integer x2;
-    private Integer y2;
+    private Integer xPos;
+    private Integer yPos;
 
-    @OneToOne(mappedBy = "position", orphanRemoval = true)
+    @OneToOne
+    @JoinColumn(name = "ship_id")
     private Ship ship;
 }
