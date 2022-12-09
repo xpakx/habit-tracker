@@ -52,7 +52,13 @@ public class BattleServiceImpl implements BattleService {
         Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId).orElseThrow();
         testShipMove(request, battleId, battle);
         Ship ship = shipRepository.findByIdAndUserIdAndExpeditionId(request.getShipId(), userId, battle.getExpedition().getId()).orElseThrow();
-
+        if(request.getAction() == MoveAction.MOVE) {
+            testNewPosition(request, battleId);
+            Position position = ship.getPosition();
+            position.setXPos(request.getX());
+            position.setYPos(request.getY());
+            positionRepository.save(position);
+        }
         return null;
     }
 
