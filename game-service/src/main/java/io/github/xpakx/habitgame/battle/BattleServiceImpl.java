@@ -6,6 +6,7 @@ import io.github.xpakx.habitgame.battle.dto.MoveRequest;
 import io.github.xpakx.habitgame.battle.dto.MoveResponse;
 import io.github.xpakx.habitgame.battle.error.BattleNotFoundException;
 import io.github.xpakx.habitgame.battle.error.WrongBattleStateException;
+import io.github.xpakx.habitgame.battle.error.WrongMoveException;
 import io.github.xpakx.habitgame.battle.error.WrongPositionException;
 import io.github.xpakx.habitgame.expedition.*;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionCompletedException;
@@ -14,6 +15,8 @@ import io.github.xpakx.habitgame.expedition.error.WrongExpeditionResultType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -64,10 +67,22 @@ public class BattleServiceImpl implements BattleService {
 
     private void makeMove(MoveRequest request, Long battleId, Ship ship) {
         testNewPosition(request, battleId);
+        testMove(ship, request, battleId);
         Position position = ship.getPosition();
         position.setXPos(request.getX());
         position.setYPos(request.getY());
         positionRepository.save(position);
+    }
+
+    private void testMove(Ship ship, MoveRequest request, Long battleId) {
+        // List<Position> positions = positionRepository.findByBattleId(battleId);
+        if(taxiLength(ship.getPosition().getXPos(), ship.getPosition().getYPos(), request.getX(), request.getY()) > 3) {
+            throw new WrongMoveException("Your move is too long!");
+        }
+    }
+
+    private int taxiLength(Integer x1, Integer y1, Integer x2, Integer y2) {
+        return Math.abs(x1-x2) + Math.abs(y1-y2);
     }
 
     private void attack(MoveRequest request, Long battleId, Ship ship) {
