@@ -55,11 +55,11 @@ public class BattleServiceImpl implements BattleService {
         if(request.getAction() == MoveAction.MOVE) {
             makeMove(request, battleId, ship);
         } else if(request.getAction() == MoveAction.ATTACK) {
-
+            attack(request, battleId, ship);
         } else if(request.getAction() == MoveAction.USE) {
-
+            use(request, battleId, ship);
         }
-        return null;
+        return prepareMoveResponse(request.getAction());
     }
 
     private void makeMove(MoveRequest request, Long battleId, Ship ship) {
@@ -68,6 +68,14 @@ public class BattleServiceImpl implements BattleService {
         position.setXPos(request.getX());
         position.setYPos(request.getY());
         positionRepository.save(position);
+    }
+
+    private void attack(MoveRequest request, Long battleId, Ship ship) {
+        // TODO
+    }
+
+    private void use(MoveRequest request, Long battleId, Ship ship) {
+        // TODO
     }
 
     private void testShipMove(MoveRequest request, Long battleId, Battle battle) {
@@ -88,7 +96,7 @@ public class BattleServiceImpl implements BattleService {
         testShipPlacement(request, battleId, battle);
         Ship ship = saveShip(request, userId, battle);
         savePosition(request, ship);
-        return prepareMoveResponse();
+        return prepareMoveResponse(MoveAction.PREPARE);
     }
 
     private void testShipPlacement(MoveRequest request, Long battleId, Battle battle) {
@@ -128,9 +136,9 @@ public class BattleServiceImpl implements BattleService {
         positionRepository.save(position);
     }
 
-    private MoveResponse prepareMoveResponse() {
+    private MoveResponse prepareMoveResponse(MoveAction action) {
         MoveResponse response = new MoveResponse();
-        response.setAction(MoveAction.PREPARE);
+        response.setAction(action);
         response.setSuccess(true);
         return response;
     }
