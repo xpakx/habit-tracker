@@ -53,13 +53,21 @@ public class BattleServiceImpl implements BattleService {
         testShipMove(request, battleId, battle);
         Ship ship = shipRepository.findByIdAndUserIdAndExpeditionId(request.getShipId(), userId, battle.getExpedition().getId()).orElseThrow();
         if(request.getAction() == MoveAction.MOVE) {
-            testNewPosition(request, battleId);
-            Position position = ship.getPosition();
-            position.setXPos(request.getX());
-            position.setYPos(request.getY());
-            positionRepository.save(position);
+            makeMove(request, battleId, ship);
+        } else if(request.getAction() == MoveAction.ATTACK) {
+
+        } else if(request.getAction() == MoveAction.USE) {
+
         }
         return null;
+    }
+
+    private void makeMove(MoveRequest request, Long battleId, Ship ship) {
+        testNewPosition(request, battleId);
+        Position position = ship.getPosition();
+        position.setXPos(request.getX());
+        position.setYPos(request.getY());
+        positionRepository.save(position);
     }
 
     private void testShipMove(MoveRequest request, Long battleId, Battle battle) {
