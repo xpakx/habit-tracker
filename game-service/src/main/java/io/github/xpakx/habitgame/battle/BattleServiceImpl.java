@@ -90,6 +90,9 @@ public class BattleServiceImpl implements BattleService {
         if(position.getShip() == null) {
             throw new WrongMoveException("Nothing to attack!");
         }
+        if(taxiLength(ship.getPosition().getXPos(), ship.getPosition().getYPos(), request.getX(), request.getY()) > 3) {
+            throw new WrongMoveException("Target is too far away!");
+        }
         Ship attackedShip = position.getShip();
         attackedShip.setDamaged(true);
         attackedShip.setSize(ship.getSize()-1);
