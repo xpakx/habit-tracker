@@ -86,7 +86,18 @@ public class BattleServiceImpl implements BattleService {
     }
 
     private void attack(MoveRequest request, Long battleId, Ship ship) {
-        // TODO
+        Position position = positionRepository.findByXPosAndYPosAndBattleId(request.getX(), request.getY(), battleId).orElseThrow(WrongPositionException::new);
+        if(position.getShip() == null) {
+            throw new WrongMoveException("Nothing to attack!");
+        }
+        Ship attackedShip = position.getShip();
+        attackedShip.setDamaged(true);
+        attackedShip.setSize(ship.getSize()-1);
+        if(attackedShip.getSize() <= 0) {
+            attackedShip.setDestroyed(true);
+            attackedShip.setPosition(null);
+        }
+        shipRepository.save(attackedShip);
     }
 
     private void use(MoveRequest request, Long battleId, Ship ship) {
