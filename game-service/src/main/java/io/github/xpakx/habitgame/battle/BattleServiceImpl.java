@@ -76,6 +76,9 @@ public class BattleServiceImpl implements BattleService {
     }
 
     private void testMove(Ship ship, MoveRequest request, Long battleId) {
+        if(ship.isMovement()) {
+            throw new WrongMoveException("Ship already moved!");
+        }
         // List<Position> positions = positionRepository.findByBattleId(battleId);
         if(taxiLength(ship.getPosition().getXPos(), ship.getPosition().getYPos(), request.getX(), request.getY()) > 3) {
             throw new WrongMoveException("Your move is too long!");
@@ -93,6 +96,9 @@ public class BattleServiceImpl implements BattleService {
         }
         if(taxiLength(ship.getPosition().getXPos(), ship.getPosition().getYPos(), request.getX(), request.getY()) > 3) {
             throw new WrongMoveException("Target is too far away!");
+        }
+        if(ship.isAction()) {
+            throw new WrongMoveException("Ship already made an action!");
         }
         Ship attackedShip = position.getShip();
         attackedShip.setDamaged(true);
