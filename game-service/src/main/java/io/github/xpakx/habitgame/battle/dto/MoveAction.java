@@ -9,7 +9,7 @@ public enum MoveAction {
     MOVE("Move"),
     ATTACK("Attack"),
     USE("Use"),
-    PREPARE("Prepare")
+    PREPARE("Prepare");
 
     private final String type;
 }

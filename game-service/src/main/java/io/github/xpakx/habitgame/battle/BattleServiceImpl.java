@@ -196,7 +196,7 @@ public class BattleServiceImpl implements BattleService {
             }
             shipRepository.saveAll(ships);
         }
-        
+
         return new ArrayList<>();
     }
 }
