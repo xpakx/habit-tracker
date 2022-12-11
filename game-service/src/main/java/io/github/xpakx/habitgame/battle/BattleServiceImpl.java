@@ -72,6 +72,7 @@ public class BattleServiceImpl implements BattleService {
         position.setXPos(request.getX());
         position.setYPos(request.getY());
         positionRepository.save(position);
+        shipRepository.updateMovementById(ship.getId());
     }
 
     private void testMove(Ship ship, MoveRequest request, Long battleId) {
@@ -101,6 +102,7 @@ public class BattleServiceImpl implements BattleService {
             attackedShip.setPosition(null);
         }
         shipRepository.save(attackedShip);
+        shipRepository.updateActionById(ship.getId());
     }
 
     private void use(MoveRequest request, Long battleId, Ship ship) {

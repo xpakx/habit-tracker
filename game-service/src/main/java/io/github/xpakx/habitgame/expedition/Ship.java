@@ -31,6 +31,9 @@ public class Ship {
     private boolean damaged;
     private boolean prepared;
 
+    private boolean action;
+    private boolean movement;
+
     @OneToOne(mappedBy = "ship", orphanRemoval = true)
     private Position position;
 }

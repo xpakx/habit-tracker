@@ -72,6 +72,8 @@ public class ExpeditionServiceImpl implements ExpeditionService {
         ship.setDamaged(false);
         ship.setDestroyed(false);
         ship.setPrepared(false);
+        ship.setAction(false);
+        ship.setMovement(false);
         ship.setUserId(expedition.getUserId());
         return ship;
     }
