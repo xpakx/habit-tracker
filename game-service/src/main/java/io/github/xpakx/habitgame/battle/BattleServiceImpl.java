@@ -179,4 +179,9 @@ public class BattleServiceImpl implements BattleService {
         response.setSuccess(true);
         return response;
     }
+
+    @Override
+    public List<MoveResponse> endTurn(Long battleId, Long userId) {
+        return null;
+    }
 }

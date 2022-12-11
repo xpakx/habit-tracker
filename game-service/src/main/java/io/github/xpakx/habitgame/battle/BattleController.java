@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class BattleController {
@@ -33,6 +35,14 @@ public class BattleController {
     public ResponseEntity<MoveResponse> move(@RequestBody MoveRequest request, @RequestHeader String id, @PathVariable Long expeditionId) {
         return new ResponseEntity<>(
                 service.move(request, expeditionId, Long.valueOf(id)),
+                HttpStatus.OK
+        );
+    }
+
+    @PostMapping("/battle/{battleId}/turn/end")
+    public ResponseEntity<List<MoveResponse>> endTurn(@RequestHeader String id, @PathVariable Long expeditionId) {
+        return new ResponseEntity<>(
+                service.endTurn(expeditionId, Long.valueOf(id)),
                 HttpStatus.OK
         );
     }
