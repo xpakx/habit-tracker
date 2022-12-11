@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -182,6 +183,20 @@ public class BattleServiceImpl implements BattleService {
 
     @Override
     public List<MoveResponse> endTurn(Long battleId, Long userId) {
-        return null;
+        Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId).orElseThrow();
+        if(battle.isFinished()) {
+            throw new WrongBattleStateException("Battle is already finished!");
+        }
+
+        if(battle.isStarted()) {
+            List<Ship> ships = shipRepository.findByExpeditionId(battle.getExpedition().getId());
+            for(Ship ship : ships) {
+                ship.setMovement(false);
+                ship.setAction(false);
+            }
+            shipRepository.saveAll(ships);
+        }
+        
+        return new ArrayList<>();
     }
 }
