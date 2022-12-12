@@ -53,7 +53,7 @@ public class BattleServiceImpl implements BattleService {
     @Override
     @Transactional
     public MoveResponse move(MoveRequest request, Long battleId, Long userId) {
-        Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId, userId).orElseThrow();
+        Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId, userId).orElseThrow(BattleNotFoundException::new);
         testShipMove(request, battleId, battle);
         Ship ship = shipRepository.findByIdAndUserIdAndExpeditionId(request.getShipId(), userId, battle.getExpedition().getId()).orElseThrow();
         if(request.getAction() == MoveAction.MOVE) {
