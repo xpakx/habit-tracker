@@ -1,7 +1,11 @@
 package io.github.xpakx.habitgame.battle;
 
+import io.github.xpakx.habitgame.battle.dto.MoveAction;
+import io.github.xpakx.habitgame.battle.dto.MoveRequest;
 import io.github.xpakx.habitgame.expedition.*;
+import io.github.xpakx.habitgame.expedition.dto.ActionRequest;
 import io.github.xpakx.habitgame.island.Island;
+import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -135,6 +139,36 @@ class BattleControllerTest {
                 .get(baseUrl + "/expedition/{expeditionId}/battle", expeditionId);
         List<Battle> battles = battleRepository.findAll();
         assertThat(battles, hasSize(1));
+    }
+
+    @Test
+    void shouldRespondWith401ToPreparePositionIfNoUserIdGiven() {
+        when()
+                .post(baseUrl + "/battle/{battleId}/position", 1L)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToPreparePositionIfBattleDoesNotExist() {
+        MoveRequest request = getMoveRequest(1,1, MoveAction.PREPARE, 1L);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/position", 1L)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    private MoveRequest getMoveRequest(int x, int y, MoveAction action, long ship) {
+        MoveRequest request = new MoveRequest();
+        request.setX(x);
+        request.setY(y);
+        request.setShipId(ship);
+        request.setAction(action);
+        return request;
     }
 
 }
