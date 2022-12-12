@@ -156,6 +156,7 @@ class BattleControllerTest {
                 .header(getHeaderForUserId(userId))
                 .contentType(ContentType.JSON)
                 .body(request)
+                .log().body()
         .when()
                 .post(baseUrl + "/battle/{battleId}/position", 1L)
         .then()

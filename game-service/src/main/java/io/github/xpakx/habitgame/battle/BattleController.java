@@ -24,25 +24,25 @@ public class BattleController {
     }
 
     @PostMapping("/battle/{battleId}/position")
-    public ResponseEntity<MoveResponse> prepare(@RequestBody MoveRequest request, @RequestHeader String id, @PathVariable Long expeditionId) {
+    public ResponseEntity<MoveResponse> prepare(@RequestBody MoveRequest request, @RequestHeader String id, @PathVariable Long battleId) {
         return new ResponseEntity<>(
-                service.prepare(request, expeditionId, Long.valueOf(id)),
+                service.prepare(request, battleId, Long.valueOf(id)),
                 HttpStatus.OK
         );
     }
 
     @PostMapping("/battle/{battleId}/move")
-    public ResponseEntity<MoveResponse> move(@RequestBody MoveRequest request, @RequestHeader String id, @PathVariable Long expeditionId) {
+    public ResponseEntity<MoveResponse> move(@RequestBody MoveRequest request, @RequestHeader String id, @PathVariable Long battleId) {
         return new ResponseEntity<>(
-                service.move(request, expeditionId, Long.valueOf(id)),
+                service.move(request, battleId, Long.valueOf(id)),
                 HttpStatus.OK
         );
     }
 
     @PostMapping("/battle/{battleId}/turn/end")
-    public ResponseEntity<List<MoveResponse>> endTurn(@RequestHeader String id, @PathVariable Long expeditionId) {
+    public ResponseEntity<List<MoveResponse>> endTurn(@RequestHeader String id, @PathVariable Long battleId) {
         return new ResponseEntity<>(
-                service.endTurn(expeditionId, Long.valueOf(id)),
+                service.endTurn(battleId, Long.valueOf(id)),
                 HttpStatus.OK
         );
     }
