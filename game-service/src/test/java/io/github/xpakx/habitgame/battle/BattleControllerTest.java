@@ -1,18 +1,25 @@
 package io.github.xpakx.habitgame.battle;
 
 import io.github.xpakx.habitgame.expedition.*;
+import io.github.xpakx.habitgame.island.Island;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpStatus.*;
 
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class BattleControllerTest {
     @LocalServerPort
     private int port;
@@ -117,6 +124,17 @@ class BattleControllerTest {
                 .get(baseUrl + "/expedition/{expeditionId}/battle", expeditionId)
         .then()
                 .statusCode(OK.value());
+    }
+    @Test
+    void shouldAddNewBattleToDb() {
+        Long expeditionId = addExpedition();
+        addResult(expeditionId, ResultType.BATTLE, false);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/expedition/{expeditionId}/island", expeditionId);
+        List<Battle> battles = battleRepository.findAll();
+        assertThat(battles, hasSize(1));
     }
 
 }
