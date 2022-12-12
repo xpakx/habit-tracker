@@ -14,8 +14,8 @@ public class Position {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer xPos;
-    private Integer yPos;
+    private Integer x;
+    private Integer y;
 
     @OneToOne
     @JoinColumn(name = "ship_id")

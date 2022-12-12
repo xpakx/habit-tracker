@@ -53,7 +53,7 @@ public class BattleServiceImpl implements BattleService {
     @Override
     @Transactional
     public MoveResponse move(MoveRequest request, Long battleId, Long userId) {
-        Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId).orElseThrow();
+        Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId, userId).orElseThrow();
         testShipMove(request, battleId, battle);
         Ship ship = shipRepository.findByIdAndUserIdAndExpeditionId(request.getShipId(), userId, battle.getExpedition().getId()).orElseThrow();
         if(request.getAction() == MoveAction.MOVE) {
@@ -70,8 +70,8 @@ public class BattleServiceImpl implements BattleService {
         testNewPosition(request, battleId);
         testMove(ship, request, battleId);
         Position position = ship.getPosition();
-        position.setXPos(request.getX());
-        position.setYPos(request.getY());
+        position.setX(request.getX());
+        position.setY(request.getY());
         positionRepository.save(position);
         shipRepository.updateMovementById(ship.getId());
     }
@@ -81,7 +81,7 @@ public class BattleServiceImpl implements BattleService {
             throw new WrongMoveException("Ship already moved!");
         }
         // List<Position> positions = positionRepository.findByBattleId(battleId);
-        if(taxiLength(ship.getPosition().getXPos(), ship.getPosition().getYPos(), request.getX(), request.getY()) > 3) {
+        if(taxiLength(ship.getPosition().getX(), ship.getPosition().getY(), request.getX(), request.getY()) > 3) {
             throw new WrongMoveException("Your move is too long!");
         }
     }
@@ -91,11 +91,11 @@ public class BattleServiceImpl implements BattleService {
     }
 
     private void attack(MoveRequest request, Long battleId, Ship ship) {
-        Position position = positionRepository.findByXPosAndYPosAndBattleId(request.getX(), request.getY(), battleId).orElseThrow(WrongPositionException::new);
+        Position position = positionRepository.findByXAndYAndBattleId(request.getX(), request.getY(), battleId).orElseThrow(WrongPositionException::new);
         if(position.getShip() == null) {
             throw new WrongMoveException("Nothing to attack!");
         }
-        if(taxiLength(ship.getPosition().getXPos(), ship.getPosition().getYPos(), request.getX(), request.getY()) > 3) {
+        if(taxiLength(ship.getPosition().getX(), ship.getPosition().getY(), request.getX(), request.getY()) > 3) {
             throw new WrongMoveException("Target is too far away!");
         }
         if(ship.isAction()) {
@@ -130,7 +130,7 @@ public class BattleServiceImpl implements BattleService {
     @Transactional
     public MoveResponse prepare(MoveRequest request, Long battleId, Long userId) {
         testActionType(request, MoveAction.PREPARE);
-        Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId).orElseThrow(BattleNotFoundException::new);
+        Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId, userId).orElseThrow(BattleNotFoundException::new);
         testShipPlacement(request, battleId, battle);
         Ship ship = saveShip(request, userId, battle);
         savePosition(request, ship);
@@ -148,7 +148,7 @@ public class BattleServiceImpl implements BattleService {
         if(request.getY() == null || request.getX() == null) {
             throw new WrongPositionException("Position cannot be empty!");
         }
-        if(positionRepository.existsByXPosAndYPosAndBattleId(request.getX(), request.getY(), battleId)) {
+        if(positionRepository.existsByXAndYAndBattleId(request.getX(), request.getY(), battleId)) {
             throw new WrongPositionException();
         }
     }
@@ -169,8 +169,8 @@ public class BattleServiceImpl implements BattleService {
     private void savePosition(MoveRequest request, Ship ship) {
         Position position = ship.getPosition() == null ? new Position() : ship.getPosition();
         position.setShip(ship);
-        position.setXPos(request.getX());
-        position.setYPos(request.getY());
+        position.setX(request.getX());
+        position.setY(request.getY());
         positionRepository.save(position);
     }
 
@@ -183,7 +183,7 @@ public class BattleServiceImpl implements BattleService {
 
     @Override
     public List<MoveResponse> endTurn(Long battleId, Long userId) {
-        Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId).orElseThrow();
+        Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId, userId).orElseThrow();
         if(battle.isFinished()) {
             throw new WrongBattleStateException("Battle is already finished!");
         }

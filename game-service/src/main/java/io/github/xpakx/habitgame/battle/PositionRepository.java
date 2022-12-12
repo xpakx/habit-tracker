@@ -8,8 +8,8 @@ import java.util.Optional;
 
 @Repository
 public interface PositionRepository extends JpaRepository<Position, Long> {
-    boolean existsByXPosAndYPosAndBattleId(Integer x, Integer y, Long battleId);
-    Optional<Position> findByXPosAndYPosAndBattleId(Integer x, Integer y, Long battleId);
+    boolean existsByXAndYAndBattleId(Integer x, Integer y, Long battleId);
+    Optional<Position> findByXAndYAndBattleId(Integer x, Integer y, Long battleId);
     List<Position> findByBattleId(Long id);
 
 }
