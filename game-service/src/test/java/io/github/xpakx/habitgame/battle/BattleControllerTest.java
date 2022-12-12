@@ -132,7 +132,7 @@ class BattleControllerTest {
         given()
                 .header(getHeaderForUserId(userId))
         .when()
-                .get(baseUrl + "/expedition/{expeditionId}/island", expeditionId);
+                .get(baseUrl + "/expedition/{expeditionId}/battle", expeditionId);
         List<Battle> battles = battleRepository.findAll();
         assertThat(battles, hasSize(1));
     }
