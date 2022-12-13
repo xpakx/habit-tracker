@@ -15,11 +15,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
 import java.util.List;
+import java.util.Optional;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpStatus.*;
 
@@ -222,6 +223,7 @@ class BattleControllerTest {
     private Long addShip(Long expeditionId) {
         Ship ship = new Ship();
         ship.setExpedition(expeditionRepository.getReferenceById(expeditionId));
+        ship.setUserId(userId);
         return shipRepository.save(ship).getId();
     }
 
@@ -264,7 +266,7 @@ class BattleControllerTest {
         Long placedShipId = addShip(expeditionId);
         placeShip(placedShipId, 1, 1, battleId);
         Long shipId = addShip(expeditionId);
-        MoveRequest request = getMoveRequest(null,1, MoveAction.PREPARE, shipId);
+        MoveRequest request = getMoveRequest(1,1, MoveAction.PREPARE, shipId);
         given()
                 .header(getHeaderForUserId(userId))
                 .contentType(ContentType.JSON)
@@ -283,5 +285,58 @@ class BattleControllerTest {
         position.setBattle(battleRepository.getReferenceById(battleId));
         positionRepository.save(position);
     }
+
+    @Test
+    void shouldPlaceShip() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId);
+        Long shipId = addShip(expeditionId);
+        MoveRequest request = getMoveRequest(1,1, MoveAction.PREPARE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/position", battleId)
+        .then()
+                .statusCode(OK.value())
+                .body("success", equalTo(true));
+    }
+
+    @Test
+    void shouldAddPositionToDb() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId);
+        Long shipId = addShip(expeditionId);
+        MoveRequest request = getMoveRequest(1,1, MoveAction.PREPARE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/position", battleId);
+        List<Position> positions = positionRepository.findAll();
+        assertThat(positions, hasSize(1));
+        assertThat(positions.get(0), hasProperty("x", equalTo(1)));
+        assertThat(positions.get(0), hasProperty("y", equalTo(1)));
+    }
+
+    @Test
+    void shouldUpdateShipInDb() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId);
+        Long shipId = addShip(expeditionId);
+        MoveRequest request = getMoveRequest(1,1, MoveAction.PREPARE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/position", battleId);
+        Optional<Ship> ship = shipRepository.findById(shipId);
+        assertTrue(ship.isPresent());
+        assertThat(ship.get(), hasProperty("prepared", equalTo(true)));
+    }
+
 
 }
