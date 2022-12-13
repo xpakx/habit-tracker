@@ -4,10 +4,7 @@ import io.github.xpakx.habitgame.battle.dto.BattleResponse;
 import io.github.xpakx.habitgame.battle.dto.MoveAction;
 import io.github.xpakx.habitgame.battle.dto.MoveRequest;
 import io.github.xpakx.habitgame.battle.dto.MoveResponse;
-import io.github.xpakx.habitgame.battle.error.BattleNotFoundException;
-import io.github.xpakx.habitgame.battle.error.WrongBattleStateException;
-import io.github.xpakx.habitgame.battle.error.WrongMoveException;
-import io.github.xpakx.habitgame.battle.error.WrongPositionException;
+import io.github.xpakx.habitgame.battle.error.*;
 import io.github.xpakx.habitgame.expedition.*;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionCompletedException;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionNotFoundException;
@@ -160,7 +157,7 @@ public class BattleServiceImpl implements BattleService {
     }
 
     private Ship saveShip(MoveRequest request, Long userId, Battle battle) {
-        Ship ship = shipRepository.findByIdAndUserIdAndExpeditionId(request.getShipId(), userId, battle.getExpedition().getId()).orElseThrow();
+        Ship ship = shipRepository.findByIdAndUserIdAndExpeditionId(request.getShipId(), userId, battle.getExpedition().getId()).orElseThrow(ShipNotFoundException::new);
         ship.setPrepared(true);
         ship = shipRepository.save(ship);
         return ship;

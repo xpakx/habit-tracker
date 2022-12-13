@@ -163,13 +163,125 @@ class BattleControllerTest {
                 .statusCode(NOT_FOUND.value());
     }
 
-    private MoveRequest getMoveRequest(int x, int y, MoveAction action, long ship) {
+    private MoveRequest getMoveRequest(Integer x, Integer y, MoveAction action, long ship) {
         MoveRequest request = new MoveRequest();
         request.setX(x);
         request.setY(y);
         request.setShipId(ship);
         request.setAction(action);
         return request;
+    }
+
+    @Test
+    void shouldNotPlaceShipIfShipDoesNotExist() {
+        MoveRequest request = getMoveRequest(1,1, MoveAction.PREPARE, 1L);
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/position", battleId)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    private Long addBattle(Long expeditionId) {
+        return addBattle(expeditionId, false, false);
+    }
+
+    private Long addBattle(Long expeditionId, boolean started) {
+        return addBattle(expeditionId, started, false);
+    }
+
+    private Long addBattle(Long expeditionId, boolean started, boolean finished) {
+        Battle battle = new Battle();
+        battle.setStarted(started);
+        battle.setFinished(finished);
+        battle.setExpedition(expeditionRepository.getReferenceById(expeditionId));
+        return battleRepository.save(battle).getId();
+    }
+
+    @Test
+    void shouldNotPlaceShipIfWrongActionType() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId);
+        Long shipId = addShip(expeditionId);
+        MoveRequest request = getMoveRequest(1,1, MoveAction.MOVE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/position", battleId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    private Long addShip(Long expeditionId) {
+        Ship ship = new Ship();
+        ship.setExpedition(expeditionRepository.getReferenceById(expeditionId));
+        return shipRepository.save(ship).getId();
+    }
+
+    @Test
+    void shouldNotPlaceShipIfBattleAlreadyStarted() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId);
+        MoveRequest request = getMoveRequest(1,1, MoveAction.PREPARE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/position", battleId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldNotPlaceShipIfCoordinateIsNull() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId);
+        MoveRequest request = getMoveRequest(null,1, MoveAction.PREPARE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/position", battleId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldNotPlaceShipIfFieldIsOccupied() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId);
+        Long placedShipId = addShip(expeditionId);
+        placeShip(placedShipId, 1, 1, battleId);
+        Long shipId = addShip(expeditionId);
+        MoveRequest request = getMoveRequest(null,1, MoveAction.PREPARE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/position", battleId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    private void placeShip(Long shipId, int x, int y, Long battleId) {
+        Position position = new Position();
+        position.setY(y);
+        position.setX(x);
+        position.setShip(shipRepository.getReferenceById(shipId));
+        position.setBattle(battleRepository.getReferenceById(battleId));
+        positionRepository.save(position);
     }
 
 }
