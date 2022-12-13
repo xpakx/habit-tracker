@@ -339,4 +339,22 @@ class BattleControllerTest {
     }
 
 
+    @Test
+    void shouldPlaceSecondShip() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId);
+        Long shipId = addShip(expeditionId);
+        Long placedShipId = addShip(expeditionId);
+        placeShip(placedShipId, 2, 1, battleId);
+        MoveRequest request = getMoveRequest(1,1, MoveAction.PREPARE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/position", battleId)
+        .then()
+                .statusCode(OK.value())
+                .body("success", equalTo(true));
+    }
 }
