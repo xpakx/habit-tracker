@@ -357,4 +357,26 @@ class BattleControllerTest {
                 .statusCode(OK.value())
                 .body("success", equalTo(true));
     }
+
+    @Test
+    void shouldReplaceShipPosition() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId);
+        Long shipId = addShip(expeditionId);
+        placeShip(shipId, 2, 1, battleId);
+        MoveRequest request = getMoveRequest(1,1, MoveAction.PREPARE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/position", battleId)
+        .then()
+                .statusCode(OK.value())
+                .body("success", equalTo(true));
+        List<Position> positions = positionRepository.findAll();
+        assertThat(positions, hasSize(1));
+        assertThat(positions.get(0), hasProperty("x", equalTo(1)));
+        assertThat(positions.get(0), hasProperty("y", equalTo(1)));
+    }
 }
