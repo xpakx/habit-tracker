@@ -377,4 +377,25 @@ class BattleControllerTest {
         assertThat(positions.get(0), hasProperty("x", equalTo(1)));
         assertThat(positions.get(0), hasProperty("y", equalTo(1)));
     }
+
+    @Test
+    void shouldRespondWith401ToMoveIfNoUserIdGiven() {
+        when()
+                .post(baseUrl + "/battle/{battleId}/move", 1L)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToMoveIfBattleDoesNotExist() {
+        MoveRequest request = getMoveRequest(1,1, MoveAction.MOVE, 1L);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", 1L)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
 }
