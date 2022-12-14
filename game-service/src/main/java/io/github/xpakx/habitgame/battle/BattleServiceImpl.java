@@ -193,8 +193,8 @@ public class BattleServiceImpl implements BattleService {
             }
             shipRepository.saveAll(ships);
         } else {
-            if(!ships.stream().allMatch(Ship::isPrepared)) {
-                throw  new WrongMoveException("Not all ships are placed!");
+            if(ships.stream().anyMatch((s) -> !s.isPrepared())) {
+                throw new WrongMoveException("Not all ships are placed!");
             }
             battle.setStarted(true);
             battleRepository.save(battle);
