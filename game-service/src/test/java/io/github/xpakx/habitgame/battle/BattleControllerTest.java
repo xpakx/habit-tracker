@@ -3,8 +3,6 @@ package io.github.xpakx.habitgame.battle;
 import io.github.xpakx.habitgame.battle.dto.MoveAction;
 import io.github.xpakx.habitgame.battle.dto.MoveRequest;
 import io.github.xpakx.habitgame.expedition.*;
-import io.github.xpakx.habitgame.expedition.dto.ActionRequest;
-import io.github.xpakx.habitgame.island.Island;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
