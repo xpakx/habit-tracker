@@ -193,7 +193,7 @@ public class BattleServiceImpl implements BattleService {
             }
             shipRepository.saveAll(ships);
         } else {
-            if(ships.stream().anyMatch((s) -> !s.isPrepared())) {
+            if(allPrepared(ships)) {
                 throw new WrongMoveException("Not all ships are placed!");
             }
             battle.setStarted(true);
@@ -201,5 +201,9 @@ public class BattleServiceImpl implements BattleService {
         }
 
         return new ArrayList<>();
+    }
+
+    private boolean allPrepared(List<Ship> ships) {
+        return ships.stream().anyMatch((s) -> !s.isPrepared());
     }
 }
