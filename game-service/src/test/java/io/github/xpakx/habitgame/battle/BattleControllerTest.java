@@ -398,4 +398,35 @@ class BattleControllerTest {
         .then()
                 .statusCode(NOT_FOUND.value());
     }
+
+    @Test
+    void shouldNotMoveIfShipDoesNotExist() {
+        MoveRequest request = getMoveRequest(1,1, MoveAction.MOVE, 1L);
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldNotMoveIfWrongActionType() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId);
+        Long shipId = addShip(expeditionId);
+        MoveRequest request = getMoveRequest(1,1, MoveAction.PREPARE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
 }
