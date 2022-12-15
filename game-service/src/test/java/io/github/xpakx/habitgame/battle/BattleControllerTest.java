@@ -244,7 +244,7 @@ class BattleControllerTest {
     @Test
     void shouldNotPlaceShipIfCoordinateIsNull() {
         Long expeditionId = addExpedition();
-        Long battleId = addBattle(expeditionId, true);
+        Long battleId = addBattle(expeditionId);
         Long shipId = addShip(expeditionId);
         MoveRequest request = getMoveRequest(null,1, MoveAction.PREPARE, shipId);
         given()
