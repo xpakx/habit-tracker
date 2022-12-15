@@ -403,7 +403,7 @@ class BattleControllerTest {
     void shouldNotMoveIfShipDoesNotExist() {
         MoveRequest request = getMoveRequest(1,1, MoveAction.MOVE, 1L);
         Long expeditionId = addExpedition();
-        Long battleId = addBattle(expeditionId);
+        Long battleId = addBattle(expeditionId, true);
         given()
                 .header(getHeaderForUserId(userId))
                 .contentType(ContentType.JSON)
@@ -417,7 +417,7 @@ class BattleControllerTest {
     @Test
     void shouldNotMoveIfWrongActionType() {
         Long expeditionId = addExpedition();
-        Long battleId = addBattle(expeditionId);
+        Long battleId = addBattle(expeditionId, true);
         Long shipId = addShip(expeditionId);
         MoveRequest request = getMoveRequest(1,1, MoveAction.PREPARE, shipId);
         given()
