@@ -461,4 +461,38 @@ class BattleControllerTest {
         .then()
                 .statusCode(BAD_REQUEST.value());
     }
+
+    @Test
+    void shouldNotMoveIfCoordinateIsNull() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId);
+        MoveRequest request = getMoveRequest(null,1, MoveAction.MOVE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldNotMoveIfFieldIsOccupied() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long placedShipId = addShip(expeditionId);
+        placeShip(placedShipId, 1, 1, battleId);
+        Long shipId = addShip(expeditionId);
+        MoveRequest request = getMoveRequest(1,1, MoveAction.MOVE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
 }
