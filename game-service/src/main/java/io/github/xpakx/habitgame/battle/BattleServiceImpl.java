@@ -59,6 +59,8 @@ public class BattleServiceImpl implements BattleService {
             attack(request, battleId, ship);
         } else if(request.getAction() == MoveAction.USE) {
             use(request, battleId, ship);
+        } else {
+            throw new WrongMoveException("Action type is incorrect!");
         }
         return prepareMoveResponse(request.getAction());
     }
@@ -152,7 +154,7 @@ public class BattleServiceImpl implements BattleService {
 
     private void testActionType(MoveRequest request, MoveAction action) {
         if(request.getAction() != action) {
-            throw new WrongBattleStateException("Battle is not in preparation state!");
+            throw new WrongMoveException("Action type is incorrect!");
         }
     }
 
