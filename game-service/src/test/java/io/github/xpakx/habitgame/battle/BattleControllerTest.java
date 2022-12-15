@@ -429,4 +429,36 @@ class BattleControllerTest {
         .then()
                 .statusCode(BAD_REQUEST.value());
     }
+
+    @Test
+    void shouldNotMoveIfBattleIsNotStarted() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, false);
+        Long shipId = addShip(expeditionId);
+        MoveRequest request = getMoveRequest(1,1, MoveAction.MOVE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldNotMoveIfBattleIsFinished() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true, true);
+        Long shipId = addShip(expeditionId);
+        MoveRequest request = getMoveRequest(1,1, MoveAction.MOVE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
 }
