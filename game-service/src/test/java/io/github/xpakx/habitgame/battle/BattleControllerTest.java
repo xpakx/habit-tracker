@@ -500,9 +500,8 @@ class BattleControllerTest {
     void shouldMoveShip() {
         Long expeditionId = addExpedition();
         Long battleId = addBattle(expeditionId, true);
-        Long placedShipId = addShip(expeditionId);
-        placeShip(placedShipId, 1, 1, battleId);
         Long shipId = addShip(expeditionId);
+        placeShip(shipId, 1, 1, battleId);
         MoveRequest request = getMoveRequest(2,2, MoveAction.MOVE, shipId);
         given()
                 .header(getHeaderForUserId(userId))
@@ -513,5 +512,42 @@ class BattleControllerTest {
         .then()
                 .statusCode(OK.value())
                 .body("success", equalTo(true));
+    }
+
+    @Test
+    void shouldChangePositionInDbAfterMovement() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId);
+        placeShip(shipId, 1, 1, battleId);
+        MoveRequest request = getMoveRequest(2,2, MoveAction.MOVE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId);
+        List<Position> positions = positionRepository.findAll();
+        assertThat(positions, hasSize(1));
+        assertThat(positions.get(0), hasProperty("x", equalTo(2)));
+        assertThat(positions.get(0), hasProperty("y", equalTo(2)));
+    }
+
+    @Test
+    void shouldUpdateShipInDbAfterMovement() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId);
+        placeShip(shipId, 1, 1, battleId);
+        MoveRequest request = getMoveRequest(2,2, MoveAction.MOVE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId);
+        Optional<Ship> ship = shipRepository.findById(shipId);
+        assertTrue(ship.isPresent());
+        assertThat(ship.get(), hasProperty("movement", equalTo(true)));
     }
 }
