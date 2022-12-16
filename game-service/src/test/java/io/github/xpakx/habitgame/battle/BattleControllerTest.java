@@ -219,9 +219,15 @@ class BattleControllerTest {
     }
 
     private Long addShip(Long expeditionId) {
+        return addShip(expeditionId, false, false);
+    }
+
+    private Long addShip(Long expeditionId, boolean movement, boolean action) {
         Ship ship = new Ship();
         ship.setExpedition(expeditionRepository.getReferenceById(expeditionId));
         ship.setUserId(userId);
+        ship.setMovement(movement);
+        ship.setAction(action);
         return shipRepository.save(ship).getId();
     }
 
@@ -549,5 +555,39 @@ class BattleControllerTest {
         Optional<Ship> ship = shipRepository.findById(shipId);
         assertTrue(ship.isPresent());
         assertThat(ship.get(), hasProperty("movement", equalTo(true)));
+    }
+
+    @Test
+    void shouldNotMoveIfShipIsAlreadyMoved() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId, true, false);
+        placeShip(shipId, 1, 1, battleId);
+        MoveRequest request = getMoveRequest(2,2, MoveAction.MOVE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldNotMoveIfDistanceIsLongerThan3() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId);
+        placeShip(shipId, 1, 1, battleId);
+        MoveRequest request = getMoveRequest(5,5, MoveAction.MOVE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
     }
 }
