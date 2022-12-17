@@ -590,4 +590,83 @@ class BattleControllerTest {
         .then()
                 .statusCode(BAD_REQUEST.value());
     }
+
+    @Test
+    void shouldNotAttackIfAttackedPositionIsEmpty() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId);
+        placeShip(shipId, 1, 1, battleId);
+        MoveRequest request = getMoveRequest(2,1, MoveAction.ATTACK, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldNotAttackIfAttackedPositionIsHasNoShip() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId);
+        placeShip(shipId, 1, 1, battleId);
+        makeEmptyPosition(2,1, battleId);
+        MoveRequest request = getMoveRequest(2,1, MoveAction.ATTACK, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    private void makeEmptyPosition(int x, int y, Long battleId) {
+        Position position = new Position();
+        position.setY(y);
+        position.setX(x);
+        position.setBattle(battleRepository.getReferenceById(battleId));
+        positionRepository.save(position);
+    }
+
+    @Test
+    void shouldNotAttackIfAttackedShipIsTooFarAway() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId);
+        placeShip(shipId, 1, 1, battleId);
+        placeShip(addShip(expeditionId), 5, 5, battleId);
+        MoveRequest request = getMoveRequest(5,5, MoveAction.ATTACK, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldNotAttackIfShipAlreadyAttacked() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId, true, true);
+        placeShip(shipId, 1, 1, battleId);
+        placeShip(addShip(expeditionId), 2, 1, battleId);
+        MoveRequest request = getMoveRequest(2,1, MoveAction.ATTACK, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
 }
