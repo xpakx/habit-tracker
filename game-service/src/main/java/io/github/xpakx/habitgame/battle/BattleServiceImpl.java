@@ -122,7 +122,6 @@ public class BattleServiceImpl implements BattleService {
         if(battle.isFinished()) {
             throw new WrongBattleStateException("Battle is already finished!");
         }
-        testNewPosition(request, battleId);
     }
 
     @Override
