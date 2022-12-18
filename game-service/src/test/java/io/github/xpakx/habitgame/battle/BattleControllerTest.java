@@ -669,4 +669,22 @@ class BattleControllerTest {
         .then()
                 .statusCode(BAD_REQUEST.value());
     }
+
+    @Test
+    void shouldAttackShip() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId, true, false);
+        placeShip(shipId, 1, 1, battleId);
+        placeShip(addShip(expeditionId), 2, 1, battleId);
+        MoveRequest request = getMoveRequest(2,1, MoveAction.ATTACK, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId)
+        .then()
+                .statusCode(OK.value());
+    }
 }
