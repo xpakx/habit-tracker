@@ -228,6 +228,7 @@ class BattleControllerTest {
         ship.setUserId(userId);
         ship.setMovement(movement);
         ship.setAction(action);
+        ship.setSize(3);
         return shipRepository.save(ship).getId();
     }
 
