@@ -705,6 +705,6 @@ class BattleControllerTest {
                 .post(baseUrl + "/battle/{battleId}/move", battleId);
         Optional<Ship> ship = shipRepository.findById(shipId);
         assertTrue(ship.isPresent());
-        assertThat(ship.get(), hasProperty("attack", equalTo(true)));
+        assertThat(ship.get(), hasProperty("action", equalTo(true)));
     }
 }
