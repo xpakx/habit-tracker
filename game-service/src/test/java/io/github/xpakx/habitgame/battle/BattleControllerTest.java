@@ -736,4 +736,26 @@ class BattleControllerTest {
         assertThat(ship.get(), hasProperty("damaged", equalTo(true)));
         assertThat(ship.get(), hasProperty("size", equalTo(1)));
     }
+
+    @Test
+    void shouldDestroyShip() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId, true, false);
+        placeShip(shipId, 1, 1, battleId);
+        Long attackedShipId = addShip(expeditionId, 1);
+        placeShip(attackedShipId, 2, 1, battleId);
+        MoveRequest request = getMoveRequest(2,1, MoveAction.ATTACK, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId);
+        Optional<Ship> ship = shipRepository.findById(attackedShipId);
+        assertTrue(ship.isPresent());
+        assertThat(ship.get(), hasProperty("damaged", equalTo(true)));
+        assertThat(ship.get(), hasProperty("destroyed", equalTo(true)));
+        assertThat(ship.get(), hasProperty("size", equalTo(0)));
+    }
 }
