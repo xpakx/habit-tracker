@@ -102,7 +102,7 @@ public class BattleServiceImpl implements BattleService {
         }
         Ship attackedShip = position.getShip();
         attackedShip.setDamaged(true);
-        attackedShip.setSize(ship.getSize()-1);
+        attackedShip.setSize(attackedShip.getSize()-1);
         if(attackedShip.getSize() <= 0) {
             attackedShip.setDestroyed(true);
             attackedShip.setPosition(null);
