@@ -219,16 +219,24 @@ class BattleControllerTest {
     }
 
     private Long addShip(Long expeditionId) {
-        return addShip(expeditionId, false, false);
+        return addShip(expeditionId, false, false, 3);
+    }
+
+    private Long addShip(Long expeditionId, int size) {
+        return addShip(expeditionId, false, false, size);
     }
 
     private Long addShip(Long expeditionId, boolean movement, boolean action) {
+        return addShip(expeditionId, movement, action, 3);
+    }
+
+    private Long addShip(Long expeditionId, boolean movement, boolean action, int size) {
         Ship ship = new Ship();
         ship.setExpedition(expeditionRepository.getReferenceById(expeditionId));
         ship.setUserId(userId);
         ship.setMovement(movement);
         ship.setAction(action);
-        ship.setSize(3);
+        ship.setSize(size);
         return shipRepository.save(ship).getId();
     }
 
@@ -706,5 +714,26 @@ class BattleControllerTest {
         Optional<Ship> ship = shipRepository.findById(shipId);
         assertTrue(ship.isPresent());
         assertThat(ship.get(), hasProperty("action", equalTo(true)));
+    }
+
+    @Test
+    void shouldSaveDamagesInDb() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId, true, false);
+        placeShip(shipId, 1, 1, battleId);
+        Long attackedShipId = addShip(expeditionId, 2);
+        placeShip(attackedShipId, 2, 1, battleId);
+        MoveRequest request = getMoveRequest(2,1, MoveAction.ATTACK, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId);
+        Optional<Ship> ship = shipRepository.findById(attackedShipId);
+        assertTrue(ship.isPresent());
+        assertThat(ship.get(), hasProperty("damaged", equalTo(true)));
+        assertThat(ship.get(), hasProperty("size", equalTo(1)));
     }
 }
