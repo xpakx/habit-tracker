@@ -53,6 +53,7 @@ public class BattleServiceImpl implements BattleService {
         Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId, userId).orElseThrow(BattleNotFoundException::new);
         testShipMove(request, battleId, battle);
         Ship ship = shipRepository.findByIdAndUserIdAndExpeditionId(request.getShipId(), userId, battle.getExpedition().getId()).orElseThrow(ShipNotFoundException::new);
+        testShipHealth(ship);
         if(request.getAction() == MoveAction.MOVE) {
             makeMove(request, battleId, ship);
         } else if(request.getAction() == MoveAction.ATTACK) {
@@ -63,6 +64,12 @@ public class BattleServiceImpl implements BattleService {
             throw new WrongMoveException("Action type is incorrect!");
         }
         return prepareMoveResponse(request.getAction());
+    }
+
+    private void testShipHealth(Ship ship) {
+        if(ship.isDestroyed()) {
+            throw new WrongMoveException("Selected ship is destroyed!");
+        }
     }
 
     private void makeMove(MoveRequest request, Long battleId, Ship ship) {
