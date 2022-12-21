@@ -835,4 +835,22 @@ class BattleControllerTest {
         .then()
                 .statusCode(BAD_REQUEST.value());
     }
+
+    @Test
+    void shouldChangePhaseIfBattleIsStarted() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true, false);
+        placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
+        placeShip(addShip(expeditionId, true, false), 1, 1, battleId);
+        placeShip(addShip(expeditionId, false, true), 1, 1, battleId);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/battle/{battleId}/turn/end", battleId)
+        .then()
+                .statusCode(OK.value());
+        List<Ship> ships = shipRepository.findAll();
+        assertThat(ships, everyItem(hasProperty("movement", equalTo(false))));
+        assertThat(ships, everyItem(hasProperty("action", equalTo(false))));
+    }
 }
