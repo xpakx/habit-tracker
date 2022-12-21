@@ -823,4 +823,16 @@ class BattleControllerTest {
         .then()
                 .statusCode(NOT_FOUND.value());
     }
+
+    @Test
+    void shouldNotChangePhaseIfBattleIsFinished() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true, true);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/battle/{battleId}/turn/end", battleId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
 }
