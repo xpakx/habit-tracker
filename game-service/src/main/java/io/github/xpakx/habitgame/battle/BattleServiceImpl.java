@@ -188,7 +188,7 @@ public class BattleServiceImpl implements BattleService {
 
     @Override
     public List<MoveResponse> endTurn(Long battleId, Long userId) {
-        Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId, userId).orElseThrow();
+        Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId, userId).orElseThrow(BattleNotFoundException::new);
         if(battle.isFinished()) {
             throw new WrongBattleStateException("Battle is already finished!");
         }
