@@ -805,4 +805,22 @@ class BattleControllerTest {
         .then()
                 .statusCode(BAD_REQUEST.value());
     }
+
+    @Test
+    void shouldRespondWith401ToEndTurnIfNoUserIdGiven() {
+        when()
+                .post(baseUrl + "/battle/{battleId}/turn/end", 1L)
+        .then()
+                .statusCode(UNAUTHORIZED.value());
+    }
+
+    @Test
+    void shouldRespondWith404ToEndTurnIfBattleDoesNotExist() {
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/battle/{battleId}/turn/end", 1L)
+        .then()
+                .statusCode(NOT_FOUND.value());
+    }
 }
