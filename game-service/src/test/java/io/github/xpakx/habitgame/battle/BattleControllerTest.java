@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -888,5 +889,20 @@ class BattleControllerTest {
                 .post(baseUrl + "/battle/{battleId}/turn/end", battleId)
         .then()
                 .statusCode(OK.value());
+    }
+
+    @Test
+    void shouldMakeBattleStartedInDb() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, false, false);
+        addPreparedShip(expeditionId);
+        addPreparedShip(expeditionId);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/battle/{battleId}/turn/end", battleId);
+        Optional<Battle> battle = battleRepository.findById(battleId);
+        assertTrue(battle.isPresent());
+        assertThat(battle.get(), hasProperty("started", equalTo(true)));
     }
 }
