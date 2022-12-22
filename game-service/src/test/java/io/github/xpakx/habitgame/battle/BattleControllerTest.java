@@ -222,6 +222,15 @@ class BattleControllerTest {
         return addShip(expeditionId, false, false, 3);
     }
 
+    private Long addPreparedShip(Long expeditionId) {
+        Ship ship = new Ship();
+        ship.setExpedition(expeditionRepository.getReferenceById(expeditionId));
+        ship.setUserId(userId);
+        ship.setSize(0);
+        ship.setPrepared(true);
+        return shipRepository.save(ship).getId();
+    }
+
     private Long addShip(Long expeditionId, int size) {
         return addShip(expeditionId, false, false, size);
     }
@@ -852,5 +861,32 @@ class BattleControllerTest {
         List<Ship> ships = shipRepository.findAll();
         assertThat(ships, everyItem(hasProperty("movement", equalTo(false))));
         assertThat(ships, everyItem(hasProperty("action", equalTo(false))));
+    }
+
+    @Test
+    void shouldNotChangePhaseIfThereIsShipThatIsNotPlaced() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, false, false);
+        addShip(expeditionId);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/battle/{battleId}/turn/end", battleId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldChangePhaseIfAllShipsArePlaced() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, false, false);
+        addPreparedShip(expeditionId);
+        addPreparedShip(expeditionId);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/battle/{battleId}/turn/end", battleId)
+        .then()
+                .statusCode(OK.value());
     }
 }
