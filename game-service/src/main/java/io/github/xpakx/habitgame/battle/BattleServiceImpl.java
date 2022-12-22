@@ -9,6 +9,7 @@ import io.github.xpakx.habitgame.expedition.*;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionCompletedException;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionNotFoundException;
 import io.github.xpakx.habitgame.expedition.error.WrongExpeditionResultType;
+import io.github.xpakx.habitgame.ship.ShipTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ public class BattleServiceImpl implements BattleService {
     private final BattleRepository battleRepository;
     private final ShipRepository shipRepository;
     private final PositionRepository positionRepository;
+    private final ShipTypeRepository shipTypeRepository;
 
     @Override
     public BattleResponse start(Long expeditionId, Long userId) {
@@ -34,8 +36,13 @@ public class BattleServiceImpl implements BattleService {
         battle.setStarted(false);
         Long battleId = battleRepository.save(battle).getId();
         BattleResponse response = new BattleResponse();
+        generateEnemyShips(battleId);
         response.setBattleId(battleId);
         return response;
+    }
+
+    private void generateEnemyShips(Long battleId) {
+        
     }
 
     private void testResult(ExpeditionResult result) {
