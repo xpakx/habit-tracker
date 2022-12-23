@@ -9,6 +9,7 @@ import io.github.xpakx.habitgame.expedition.*;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionCompletedException;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionNotFoundException;
 import io.github.xpakx.habitgame.expedition.error.WrongExpeditionResultType;
+import io.github.xpakx.habitgame.ship.ShipType;
 import io.github.xpakx.habitgame.ship.ShipTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,13 +39,43 @@ public class BattleServiceImpl implements BattleService {
         battle.setStarted(false);
         Long battleId = battleRepository.save(battle).getId();
         BattleResponse response = new BattleResponse();
-        generateEnemyShips(battleId);
+        generateEnemyShips(battleId, result.getExpedition());
         response.setBattleId(battleId);
         return response;
     }
 
-    private void generateEnemyShips(Long battleId) {
-        
+    private void generateEnemyShips(Long battleId, Expedition expedition) {
+        Random random = new Random();
+        List<Integer> rarities = shipRepository.findByExpeditionId(expedition.getId()).stream()
+                .map(Ship::getRarity)
+                .distinct()
+                .toList();
+        List<ShipType> shipPrototypes = new ArrayList<>();
+        for(Integer rarity : rarities) {
+            shipPrototypes.addAll(shipTypeRepository.findRandomTypes(1, rarity));
+        }
+
+        List<Ship> shipsToAdd = new ArrayList<>();
+        for(ShipType prototype : shipPrototypes) {
+            Ship ship = new Ship();
+            ship.setPrepared(true);
+            ship.setDestroyed(false);
+            ship.setCode(prototype.getCode());
+            ship.setName(prototype.getName());
+            ship.setSize(prototype.getBaseSize());
+            ship.setExpedition(expedition);
+            ship.setDamaged(false);
+            ship.setDestroyed(false);
+            ship.setPrepared(false);
+            ship.setAction(false);
+            ship.setMovement(false);
+            ship.setEnemy(true);
+            ship.setUserId(expedition.getUserId());
+            shipsToAdd.add(ship);
+        }
+        shipRepository.saveAll(shipsToAdd);
+
+
     }
 
     private void testResult(ExpeditionResult result) {

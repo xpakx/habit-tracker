@@ -20,7 +20,7 @@ public class ShipType {
 
     private String name;
     private String imgUrl;
-    private Integer size;
+    private Integer baseSize;
     private Integer rarity;
     private String code;
 }

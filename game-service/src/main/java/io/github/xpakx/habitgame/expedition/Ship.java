@@ -34,6 +34,8 @@ public class Ship {
     private boolean action;
     private boolean movement;
 
+    private boolean enemy;
+
     @OneToOne(mappedBy = "ship", orphanRemoval = true)
     private Position position;
 }
