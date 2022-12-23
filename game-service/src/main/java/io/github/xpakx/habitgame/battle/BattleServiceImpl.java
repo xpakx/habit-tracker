@@ -53,7 +53,7 @@ public class BattleServiceImpl implements BattleService {
 
         List<Ship> shipsToAdd = new ArrayList<>();
         for(ShipType prototype : shipPrototypes) {
-            shipsToAdd.add(generateShipFromPrototype(expedition, prototype, random));
+            shipsToAdd.add(generateShipFromPrototype(expedition, prototype, random.nextInt(2)-1));
         }
         shipRepository.saveAll(shipsToAdd);
     }
@@ -67,13 +67,13 @@ public class BattleServiceImpl implements BattleService {
         return shipPrototypes;
     }
 
-    private Ship generateShipFromPrototype(Expedition expedition, ShipType prototype, Random random) {
+    private Ship generateShipFromPrototype(Expedition expedition, ShipType prototype, Integer sizeBonus) {
         Ship ship = new Ship();
         ship.setPrepared(true);
         ship.setDestroyed(false);
         ship.setCode(prototype.getCode());
         ship.setName(prototype.getName());
-        ship.setSize(prototype.getBaseSize());
+        ship.setSize(prototype.getBaseSize()+sizeBonus);
         ship.setExpedition(expedition);
         ship.setDamaged(false);
         ship.setDestroyed(false);
