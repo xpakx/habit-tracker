@@ -50,9 +50,7 @@ public class BattleServiceImpl implements BattleService {
         List<Integer> rarities = shipRepository.findByExpeditionId(expedition.getId()).stream()
                 .map(Ship::getRarity)
                 .toList();
-        List<ShipType> shipPrototypes = getShipTypes(rarities);
-
-        List<Ship> shipsToAdd = generateShips(expedition, random, rarities, shipPrototypes);
+        List<Ship> shipsToAdd = generateShips(expedition, random, rarities, getShipTypes(rarities));
         shipRepository.saveAll(shipsToAdd);
     }
 
