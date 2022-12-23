@@ -57,14 +57,18 @@ public class BattleServiceImpl implements BattleService {
     private List<Ship> generateShips(Expedition expedition, Random random, List<Integer> rarities, List<ShipType> shipPrototypes) {
         List<Ship> shipsToAdd = new ArrayList<>();
         for(ShipType prototype : shipPrototypes) {
-            long rarityCount = rarities.stream().filter((a) -> Objects.equals(a, prototype.getRarity())).count();
-            long shipBonus = random.nextLong((long) (0.2*rarityCount)) - (long) (0.1*rarityCount);
-            long ships = rarityCount + shipBonus;
+            long ships = calculateShipCount(random, rarities, prototype);
             for(long i = ships; i>0; i--) {
                 shipsToAdd.add(generateShipFromPrototype(expedition, prototype, random.nextInt(2)-1));
             }
         }
         return shipsToAdd;
+    }
+
+    private long calculateShipCount(Random random, List<Integer> rarities, ShipType prototype) {
+        long rarityCount = rarities.stream().filter((a) -> Objects.equals(a, prototype.getRarity())).count();
+        long shipBonus = random.nextLong((long) (0.2*rarityCount)) - (long) (0.1*rarityCount);
+        return rarityCount + shipBonus;
     }
 
     private List<ShipType> getShipTypes(List<Integer> rarities) {
