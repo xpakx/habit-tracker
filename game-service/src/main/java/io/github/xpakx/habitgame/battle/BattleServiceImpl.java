@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -53,7 +54,12 @@ public class BattleServiceImpl implements BattleService {
 
         List<Ship> shipsToAdd = new ArrayList<>();
         for(ShipType prototype : shipPrototypes) {
-            shipsToAdd.add(generateShipFromPrototype(expedition, prototype, random.nextInt(2)-1));
+            long rarityCount = rarities.stream().filter((a) -> Objects.equals(a, prototype.getRarity())).count();
+            long shipBonus = random.nextLong((long) (0.2*rarityCount)) - (long) (0.1*rarityCount);
+            long ships = rarityCount + shipBonus;
+            for(long i = ships; i>0; i--) {
+                shipsToAdd.add(generateShipFromPrototype(expedition, prototype, random.nextInt(2)-1));
+            }
         }
         shipRepository.saveAll(shipsToAdd);
     }
