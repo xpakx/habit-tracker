@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -113,6 +112,7 @@ public class BattleServiceImpl implements BattleService {
         Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId, userId).orElseThrow(BattleNotFoundException::new);
         testShipMove(request, battleId, battle);
         Ship ship = shipRepository.findByIdAndUserIdAndExpeditionId(request.getShipId(), userId, battle.getExpedition().getId()).orElseThrow(ShipNotFoundException::new);
+        testShipOwnership(ship);
         testShipHealth(ship);
         if(request.getAction() == MoveAction.MOVE) {
             makeMove(request, battleId, ship);
@@ -129,6 +129,12 @@ public class BattleServiceImpl implements BattleService {
     private void testShipHealth(Ship ship) {
         if(ship.isDestroyed()) {
             throw new WrongMoveException("Selected ship is destroyed!");
+        }
+    }
+
+    private void testShipOwnership(Ship ship) {
+        if(ship.isEnemy()) {
+            throw new WrongMoveException("You can't move enemy ships!");
         }
     }
 
@@ -226,6 +232,7 @@ public class BattleServiceImpl implements BattleService {
 
     private Ship saveShip(MoveRequest request, Long userId, Battle battle) {
         Ship ship = shipRepository.findByIdAndUserIdAndExpeditionId(request.getShipId(), userId, battle.getExpedition().getId()).orElseThrow(ShipNotFoundException::new);
+        testShipOwnership(ship);
         ship.setPrepared(true);
         ship = shipRepository.save(ship);
         return ship;
@@ -253,7 +260,7 @@ public class BattleServiceImpl implements BattleService {
             throw new WrongBattleStateException("Battle is already finished!");
         }
 
-        List<Ship> ships = shipRepository.findByExpeditionId(battle.getExpedition().getId());
+        List<Ship> ships = shipRepository.findByExpeditionIdAndEnemyFalse(battle.getExpedition().getId());
         if(battle.isStarted()) {
             for(Ship ship : ships) {
                 ship.setMovement(false);
