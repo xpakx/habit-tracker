@@ -48,34 +48,41 @@ public class BattleServiceImpl implements BattleService {
         Random random = new Random();
         List<Integer> rarities = shipRepository.findByExpeditionId(expedition.getId()).stream()
                 .map(Ship::getRarity)
-                .distinct()
                 .toList();
-        List<ShipType> shipPrototypes = new ArrayList<>();
-        for(Integer rarity : rarities) {
-            shipPrototypes.addAll(shipTypeRepository.findRandomTypes(1, rarity));
-        }
+        List<ShipType> shipPrototypes = getShipTypes(rarities);
 
         List<Ship> shipsToAdd = new ArrayList<>();
         for(ShipType prototype : shipPrototypes) {
-            Ship ship = new Ship();
-            ship.setPrepared(true);
-            ship.setDestroyed(false);
-            ship.setCode(prototype.getCode());
-            ship.setName(prototype.getName());
-            ship.setSize(prototype.getBaseSize());
-            ship.setExpedition(expedition);
-            ship.setDamaged(false);
-            ship.setDestroyed(false);
-            ship.setPrepared(false);
-            ship.setAction(false);
-            ship.setMovement(false);
-            ship.setEnemy(true);
-            ship.setUserId(expedition.getUserId());
-            shipsToAdd.add(ship);
+            shipsToAdd.add(generateShipFromPrototype(expedition, prototype, random));
         }
         shipRepository.saveAll(shipsToAdd);
+    }
 
+    private List<ShipType> getShipTypes(List<Integer> rarities) {
+        List<Integer> distinctRarities = rarities.stream().distinct().toList();
+        List<ShipType> shipPrototypes = new ArrayList<>();
+        for(Integer rarity : distinctRarities) {
+            shipPrototypes.addAll(shipTypeRepository.findRandomTypes(1, rarity));
+        }
+        return shipPrototypes;
+    }
 
+    private Ship generateShipFromPrototype(Expedition expedition, ShipType prototype, Random random) {
+        Ship ship = new Ship();
+        ship.setPrepared(true);
+        ship.setDestroyed(false);
+        ship.setCode(prototype.getCode());
+        ship.setName(prototype.getName());
+        ship.setSize(prototype.getBaseSize());
+        ship.setExpedition(expedition);
+        ship.setDamaged(false);
+        ship.setDestroyed(false);
+        ship.setPrepared(false);
+        ship.setAction(false);
+        ship.setMovement(false);
+        ship.setEnemy(true);
+        ship.setUserId(expedition.getUserId());
+        return ship;
     }
 
     private void testResult(ExpeditionResult result) {
