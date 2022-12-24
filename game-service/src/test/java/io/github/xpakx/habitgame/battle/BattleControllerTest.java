@@ -1015,5 +1015,7 @@ class BattleControllerTest {
     private void addShipType(int rarity) {
         ShipType type = new ShipType();
         type.setRarity(rarity);
+        type.setBaseSize(1);
+        typeRepository.save(type);
     }
 }
