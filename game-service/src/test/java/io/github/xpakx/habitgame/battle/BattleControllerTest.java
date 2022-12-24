@@ -232,6 +232,22 @@ class BattleControllerTest {
         return shipRepository.save(ship).getId();
     }
 
+
+    private Long addEnemyShip(Long expeditionId) {
+        return addEnemyShip(expeditionId, false, false);
+    }
+
+    private Long addEnemyShip(Long expeditionId, boolean movement, boolean action) {
+        Ship ship = new Ship();
+        ship.setExpedition(expeditionRepository.getReferenceById(expeditionId));
+        ship.setUserId(userId);
+        ship.setSize(1);
+        ship.setEnemy(true);
+        ship.setMovement(movement);
+        ship.setAction(action);
+        return shipRepository.save(ship).getId();
+    }
+
     private Long addShip(Long expeditionId, int size) {
         return addShip(expeditionId, false, false, size);
     }
@@ -904,5 +920,39 @@ class BattleControllerTest {
         Optional<Battle> battle = battleRepository.findById(battleId);
         assertTrue(battle.isPresent());
         assertThat(battle.get(), hasProperty("started", equalTo(true)));
+    }
+
+    @Test
+    void shouldNotMoveEnemyShip() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addEnemyShip(expeditionId);
+        MoveRequest request = getMoveRequest(1,1, MoveAction.MOVE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldNotAttackWithEnemyShip() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addEnemyShip(expeditionId);
+        placeShip(shipId, 1, 1, battleId);
+        placeShip(addShip(expeditionId), 2, 2, battleId);
+        MoveRequest request = getMoveRequest(2,2, MoveAction.ATTACK, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
     }
 }
