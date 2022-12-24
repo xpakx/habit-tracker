@@ -955,4 +955,36 @@ class BattleControllerTest {
         .then()
                 .statusCode(BAD_REQUEST.value());
     }
+
+    @Test
+    void shouldChangePhaseWithEnemyShips() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, false, false);
+        addPreparedShip(expeditionId);
+        addPreparedShip(expeditionId);
+        addEnemyShip(expeditionId);
+        addEnemyShip(expeditionId);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/battle/{battleId}/turn/end", battleId)
+        .then()
+                .statusCode(OK.value());
+    }
+
+    @Test
+    void shouldChangePhaseWithEnemyShipsAndBattleStarted() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true, false);
+        placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
+        placeShip(addShip(expeditionId, true, false), 2, 2, battleId);
+        placeShip(addShip(expeditionId, false, true), 3, 3, battleId);
+        placeShip(addEnemyShip(expeditionId), 5, 5, battleId);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/battle/{battleId}/turn/end", battleId)
+        .then()
+                .statusCode(OK.value());
+    }
 }
