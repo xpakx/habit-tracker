@@ -3,6 +3,8 @@ package io.github.xpakx.habitgame.battle;
 import io.github.xpakx.habitgame.battle.dto.MoveAction;
 import io.github.xpakx.habitgame.battle.dto.MoveRequest;
 import io.github.xpakx.habitgame.expedition.*;
+import io.github.xpakx.habitgame.ship.ShipType;
+import io.github.xpakx.habitgame.ship.ShipTypeRepository;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
@@ -12,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +42,8 @@ class BattleControllerTest {
     ShipRepository shipRepository;
     @Autowired
     PositionRepository positionRepository;
+    @Autowired
+    ShipTypeRepository typeRepository;
 
     @BeforeEach
     void setUp() {
@@ -50,6 +53,7 @@ class BattleControllerTest {
 
     @AfterEach
     void tearDown() {
+        typeRepository.deleteAll();
         positionRepository.deleteAll();
         battleRepository.deleteAll();
         resultRepository.deleteAll();
@@ -129,6 +133,7 @@ class BattleControllerTest {
         .then()
                 .statusCode(OK.value());
     }
+
     @Test
     void shouldAddNewBattleToDb() {
         Long expeditionId = addExpedition();
@@ -245,6 +250,7 @@ class BattleControllerTest {
         ship.setEnemy(true);
         ship.setMovement(movement);
         ship.setAction(action);
+        ship.setRarity(2);
         return shipRepository.save(ship).getId();
     }
 
@@ -263,6 +269,7 @@ class BattleControllerTest {
         ship.setMovement(movement);
         ship.setAction(action);
         ship.setSize(size);
+        ship.setRarity(2);
         return shipRepository.save(ship).getId();
     }
 
@@ -986,5 +993,27 @@ class BattleControllerTest {
                 .post(baseUrl + "/battle/{battleId}/turn/end", battleId)
         .then()
                 .statusCode(OK.value());
+    }
+
+    @Test
+    void shouldAddEnemyShipsWhileStartingBattle() {
+        Long expeditionId = addExpedition();
+        addShip(expeditionId);
+        addShipType(2);
+        addResult(expeditionId, ResultType.BATTLE, false);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/expedition/{expeditionId}/battle", expeditionId)
+        .then()
+                .statusCode(OK.value());
+        List<Ship> ships = shipRepository.findAll();
+        assertThat(ships, hasSize(greaterThan(1)));
+        assertThat(ships, hasItem(hasProperty("enemy", equalTo(true))));
+    }
+
+    private void addShipType(int rarity) {
+        ShipType type = new ShipType();
+        type.setRarity(rarity);
     }
 }
