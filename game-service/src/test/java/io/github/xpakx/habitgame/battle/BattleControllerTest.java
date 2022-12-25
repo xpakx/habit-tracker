@@ -1018,4 +1018,22 @@ class BattleControllerTest {
         type.setBaseSize(1);
         typeRepository.save(type);
     }
+
+    @Test
+    void shouldAssignPositionToEnemySHip() {
+        Long expeditionId = addExpedition();
+        addShip(expeditionId);
+        addShipType(2);
+        addResult(expeditionId, ResultType.BATTLE, false);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/expedition/{expeditionId}/battle", expeditionId);
+        List<Ship> ships = shipRepository.findAll();
+        assertThat(ships, hasSize(greaterThan(1)));
+        assertThat(ships, hasItem(both(
+                hasProperty("enemy", equalTo(true))).and(
+                        hasProperty("position", notNullValue())
+        )));
+    }
 }
