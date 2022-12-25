@@ -15,10 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +47,31 @@ public class BattleServiceImpl implements BattleService {
                 .map(Ship::getRarity)
                 .toList();
         List<Ship> shipsToAdd = generateShips(expedition, random, rarities, getShipTypes(rarities));
-        shipRepository.saveAll(shipsToAdd);
+        positionRepository.saveAll(randomizePositions(shipRepository.saveAll(shipsToAdd), battleId, random));
+    }
+
+    private List<Position> randomizePositions(List<Ship> ships, Long battleId, Random random) {
+        int boardWidth = 20;
+        int boardHeight = 15;
+        List<Position> positions = new ArrayList<>();
+        for(int i = 0; i < boardWidth/2; i++) {
+            for(int j = 0; j < boardHeight; j++) {
+                Position pos = new Position();
+                pos.setX(i);
+                pos.setY(j);
+                positions.add(pos);
+            }
+        }
+        Collections.shuffle(positions);
+        List<Position> result = new ArrayList<>();
+        int positionIndex = 0;
+        for(Ship ship : ships) {
+            Position position = positions.get(positionIndex);
+            position.setBattle(battleRepository.getReferenceById(battleId));
+            position.setShip(ship);
+            result.add(position);
+        }
+        return result;
     }
 
     private List<Ship> generateShips(Expedition expedition, Random random, List<Integer> rarities, List<ShipType> shipPrototypes) {
