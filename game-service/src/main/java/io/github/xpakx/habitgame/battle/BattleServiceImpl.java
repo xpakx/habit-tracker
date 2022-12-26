@@ -295,6 +295,7 @@ public class BattleServiceImpl implements BattleService {
                 ship.setAction(false);
             }
             shipRepository.saveAll(ships);
+            // TODO: evaluate objective
             battle.setTurn(battle.getTurn()+1);
         } else {
             if(allPrepared(ships)) {

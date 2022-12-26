@@ -205,6 +205,8 @@ class BattleControllerTest {
         battle.setStarted(started);
         battle.setFinished(finished);
         battle.setExpedition(expeditionRepository.getReferenceById(expeditionId));
+        battle.setTurn(0);
+        battle.setObjective(BattleObjective.DEFEAT);
         return battleRepository.save(battle).getId();
     }
 
