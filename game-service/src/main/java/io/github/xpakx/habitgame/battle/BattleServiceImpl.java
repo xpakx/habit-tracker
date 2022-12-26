@@ -295,13 +295,15 @@ public class BattleServiceImpl implements BattleService {
                 ship.setAction(false);
             }
             shipRepository.saveAll(ships);
+            battle.setTurn(battle.getTurn()+1);
         } else {
             if(allPrepared(ships)) {
                 throw new WrongMoveException("Not all ships are placed!");
             }
             battle.setStarted(true);
-            battleRepository.save(battle);
+            battle.setTurn(1);
         }
+        battleRepository.save(battle);
 
         return new ArrayList<>();
     }
