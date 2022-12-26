@@ -20,4 +20,8 @@ public class Battle {
 
     private boolean finished;
     private boolean started;
+    private Integer height;
+    private Integer width;
+    private BattleObjective objective;
+    private Integer turn;
 }

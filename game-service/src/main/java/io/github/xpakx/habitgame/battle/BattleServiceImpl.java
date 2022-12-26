@@ -34,6 +34,10 @@ public class BattleServiceImpl implements BattleService {
         battle.setExpedition(result.getExpedition());
         battle.setFinished(false);
         battle.setStarted(false);
+        battle.setHeight(15);
+        battle.setWidth(20);
+        battle.setObjective(BattleObjective.DEFEAT);
+        battle.setTurn(0);
         Long battleId = battleRepository.save(battle).getId();
         BattleResponse response = new BattleResponse();
         generateEnemyShips(battleId, result.getExpedition());
