@@ -297,6 +297,7 @@ public class BattleServiceImpl implements BattleService {
                 ship.setAction(false);
             }
             shipRepository.saveAll(playerShips);
+            makeEnemyMove(battle, playerShips, enemyShips);
             // TODO: evaluate objective
             battle.setTurn(battle.getTurn()+1);
 
@@ -311,6 +312,31 @@ public class BattleServiceImpl implements BattleService {
         battleRepository.save(battle);
 
         return new ArrayList<>();
+    }
+
+    private void makeEnemyMove(Battle battle, List<Ship> playerShips, List<Ship> enemyShips) {
+        for(Ship ship : enemyShips) {
+            Ship target = chooseTarget(ship, playerShips);
+        }
+    }
+
+    private Ship chooseTarget(Ship ship, List<Ship> playerShips) {
+        Ship target = null;
+        int maxDamage = 0;
+        for(Ship potentialTarget : playerShips) {
+            int damage = calculateDamage(ship, potentialTarget);
+            boolean targetDies = damage < 0;
+            if(targetDies) {
+                return potentialTarget;
+            } else if(damage > maxDamage) {
+                target = potentialTarget;
+            }
+        }
+        return target;
+    }
+
+    private int calculateDamage(Ship ship, Ship target) {
+        return 1; // TODO: better damage system
     }
 
     private boolean allPrepared(List<Ship> ships) {
