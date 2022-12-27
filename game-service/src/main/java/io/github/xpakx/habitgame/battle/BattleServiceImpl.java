@@ -288,16 +288,20 @@ public class BattleServiceImpl implements BattleService {
             throw new WrongBattleStateException("Battle is already finished!");
         }
 
-        List<Ship> ships = shipRepository.findByExpeditionIdAndEnemyFalse(battle.getExpedition().getId());
         if(battle.isStarted()) {
-            for(Ship ship : ships) {
+            List<Ship> ships = shipRepository.findByExpeditionId(battle.getExpedition().getId());
+            List<Ship> playerShips = ships.stream().filter((a) -> !a.isEnemy()).toList();
+            List<Ship> enemyShips = ships.stream().filter(Ship::isEnemy).toList();
+            for(Ship ship : playerShips) {
                 ship.setMovement(false);
                 ship.setAction(false);
             }
-            shipRepository.saveAll(ships);
+            shipRepository.saveAll(playerShips);
             // TODO: evaluate objective
             battle.setTurn(battle.getTurn()+1);
+
         } else {
+            List<Ship> ships = shipRepository.findByExpeditionIdAndEnemyFalse(battle.getExpedition().getId());
             if(allPrepared(ships)) {
                 throw new WrongMoveException("Not all ships are placed!");
             }
