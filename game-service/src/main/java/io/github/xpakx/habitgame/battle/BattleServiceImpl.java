@@ -354,6 +354,9 @@ public class BattleServiceImpl implements BattleService {
     }
 
     private int calculateDamage(Ship ship, Ship target) {
+        if(ship.getSize() == 1) {
+            return -1;
+        }
         return 1; // TODO: better damage system
     }
 
