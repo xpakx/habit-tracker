@@ -202,12 +202,7 @@ public class BattleServiceImpl implements BattleService {
             throw new WrongMoveException("Ship already made an action!");
         }
         Ship attackedShip = position.getShip();
-        attackedShip.setDamaged(true);
-        attackedShip.setSize(attackedShip.getSize()-1);
-        if(attackedShip.getSize() <= 0) {
-            attackedShip.setDestroyed(true);
-            attackedShip.setPosition(null);
-        }
+        applyDamage(attackedShip);
         shipRepository.save(attackedShip);
         shipRepository.updateActionById(ship.getId());
     }
@@ -317,12 +312,23 @@ public class BattleServiceImpl implements BattleService {
     private void makeEnemyMove(Battle battle, List<Ship> playerShips, List<Ship> enemyShips) {
         for(Ship ship : enemyShips) {
             Ship target = chooseTarget(ship, playerShips);
+            applyDamage(target);
+        }
+    }
+
+    private void applyDamage(Ship target) {
+        target.setDamaged(true);
+        target.setSize(target.getSize()-1);
+        if(target.getSize() <= 0) {
+            target.setDestroyed(true);
+            target.setPosition(null);
         }
     }
 
     private Ship chooseTarget(Ship ship, List<Ship> playerShips) {
         List<Ship> targets = playerShips.stream()
                 .filter((a) -> taxiLength(ship.getPosition().getX(), ship.getPosition().getY(), a.getPosition().getX(), a.getPosition().getY()) < 6)
+                .filter((a) -> !a.isDestroyed())
                 .toList();
         Ship target = null;
         int maxDamage = 0;
