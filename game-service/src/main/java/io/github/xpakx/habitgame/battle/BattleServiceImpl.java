@@ -321,9 +321,12 @@ public class BattleServiceImpl implements BattleService {
     }
 
     private Ship chooseTarget(Ship ship, List<Ship> playerShips) {
+        List<Ship> targets = playerShips.stream()
+                .filter((a) -> taxiLength(ship.getPosition().getX(), ship.getPosition().getY(), a.getPosition().getX(), a.getPosition().getY()) < 6)
+                .toList();
         Ship target = null;
         int maxDamage = 0;
-        for(Ship potentialTarget : playerShips) {
+        for(Ship potentialTarget : targets) {
             int damage = calculateDamage(ship, potentialTarget);
             boolean targetDies = damage < 0;
             if(targetDies) {
