@@ -312,8 +312,13 @@ public class BattleServiceImpl implements BattleService {
     private void makeEnemyMove(Battle battle, List<Ship> playerShips, List<Ship> enemyShips) {
         for(Ship ship : enemyShips) {
             Ship target = chooseTarget(ship, playerShips);
+            moveTowards(ship, target);
             applyDamage(target);
         }
+    }
+
+    private void moveTowards(Ship ship, Ship target) {
+        // TODO
     }
 
     private void applyDamage(Ship target) {
@@ -327,7 +332,7 @@ public class BattleServiceImpl implements BattleService {
 
     private Ship chooseTarget(Ship ship, List<Ship> playerShips) {
         List<Ship> targets = playerShips.stream()
-                .filter((a) -> taxiLength(ship.getPosition().getX(), ship.getPosition().getY(), a.getPosition().getX(), a.getPosition().getY()) < 6)
+                .filter((a) -> isInRange(ship, a))
                 .filter((a) -> !a.isDestroyed())
                 .toList();
         Ship target = null;
@@ -342,6 +347,10 @@ public class BattleServiceImpl implements BattleService {
             }
         }
         return target;
+    }
+
+    private boolean isInRange(Ship ship, Ship target) {
+        return taxiLength(ship.getPosition().getX(), ship.getPosition().getY(), target.getPosition().getX(), target.getPosition().getY()) < 6;
     }
 
     private int calculateDamage(Ship ship, Ship target) {
