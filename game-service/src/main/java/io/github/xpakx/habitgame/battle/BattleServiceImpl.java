@@ -208,7 +208,7 @@ public class BattleServiceImpl implements BattleService {
     }
 
     private void use(MoveRequest request, Long battleId, Ship ship) {
-        // TODO
+        // TODO let player use skills/items
     }
 
     private void testShipMove(MoveRequest request, Long battleId, Battle battle) {
@@ -293,9 +293,10 @@ public class BattleServiceImpl implements BattleService {
             }
             makeEnemyMove(battle, playerShips, enemyShips);
             shipRepository.saveAll(playerShips);
-            // TODO: evaluate objective
+            if(evaluateObjective(battle, enemyShips)) {
+                battle.setFinished(true);
+            }
             battle.setTurn(battle.getTurn()+1);
-
         } else {
             List<Ship> ships = shipRepository.findByExpeditionIdAndEnemyFalse(battle.getExpedition().getId());
             if(allPrepared(ships)) {
@@ -309,6 +310,16 @@ public class BattleServiceImpl implements BattleService {
         return new ArrayList<>();
     }
 
+    private boolean evaluateObjective(Battle battle, List<Ship> enemyShips) {
+        if(battle.getObjective() == BattleObjective.DEFEAT && enemyShips.stream().allMatch(Ship::isDestroyed)) {
+            return true;
+        }
+        if(battle.getObjective() == BattleObjective.SURVIVE && battle.getTurn() == 10) {
+            return  true;
+        }
+        return false;
+    }
+
     private void makeEnemyMove(Battle battle, List<Ship> playerShips, List<Ship> enemyShips) {
         for(Ship ship : enemyShips) {
             Ship target = chooseTarget(ship, playerShips);
@@ -320,7 +331,7 @@ public class BattleServiceImpl implements BattleService {
     }
 
     private void moveTowards(Ship ship, Ship target) {
-        // TODO
+        // TODO move enemy ship toward target
     }
 
     private void applyDamage(Ship target) {
