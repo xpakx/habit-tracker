@@ -312,8 +312,10 @@ public class BattleServiceImpl implements BattleService {
     private void makeEnemyMove(Battle battle, List<Ship> playerShips, List<Ship> enemyShips) {
         for(Ship ship : enemyShips) {
             Ship target = chooseTarget(ship, playerShips);
-            moveTowards(ship, target);
-            applyDamage(target);
+            if(target != null) {
+                moveTowards(ship, target);
+                applyDamage(target);
+            }
         }
     }
 
