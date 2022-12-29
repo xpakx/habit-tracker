@@ -20,6 +20,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class BattleServiceImpl implements BattleService {
+    private static final int CRITICAL_MULTI = 3;
     private final ExpeditionResultRepository resultRepository;
     private final BattleRepository battleRepository;
     private final ShipRepository shipRepository;
@@ -122,6 +123,10 @@ public class BattleServiceImpl implements BattleService {
         ship.setMovement(false);
         ship.setEnemy(true);
         ship.setUserId(expedition.getUserId());
+        ship.setHp(ship.getSize()*10);
+        ship.setStrength(prototype.getStrength());
+        ship.setCriticalRate(prototype.getCriticalRate());
+        ship.setHitRate(prototype.getHitRate());
         return ship;
     }
 
@@ -202,7 +207,7 @@ public class BattleServiceImpl implements BattleService {
             throw new WrongMoveException("Ship already made an action!");
         }
         Ship attackedShip = position.getShip();
-        applyDamage(attackedShip);
+        applyDamage(ship, attackedShip);
         shipRepository.save(attackedShip);
         shipRepository.updateActionById(ship.getId());
     }
@@ -325,7 +330,7 @@ public class BattleServiceImpl implements BattleService {
             Ship target = chooseTarget(ship, playerShips);
             if(target != null) {
                 moveTowards(ship, target);
-                applyDamage(target);
+                applyDamage(ship, target);
             }
         }
     }
@@ -334,12 +339,18 @@ public class BattleServiceImpl implements BattleService {
         // TODO move enemy ship toward target
     }
 
-    private void applyDamage(Ship target) {
-        target.setDamaged(true);
-        target.setSize(target.getSize()-1);
-        if(target.getSize() <= 0) {
-            target.setDestroyed(true);
-            target.setPosition(null);
+    private void applyDamage(Ship ship, Ship target) {
+        Random random = new Random();
+        int hit = random.nextInt(100);
+        if(hit < ship.getHitRate()) {
+            int critical = random.nextInt(100);
+            int damage = critical < ship.getCriticalRate() ? ship.getStrength()*CRITICAL_MULTI : ship.getStrength();
+            target.setDamaged(true);
+            target.setHp(target.getHp() - damage);
+            if (target.getHitRate() <= 0) {
+                target.setDestroyed(true);
+                target.setPosition(null);
+            }
         }
     }
 

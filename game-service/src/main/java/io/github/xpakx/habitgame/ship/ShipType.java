@@ -23,4 +23,9 @@ public class ShipType {
     private Integer baseSize;
     private Integer rarity;
     private String code;
+
+    private Integer strength;
+    private Integer criticalRate;
+    private Integer hitRate;
+    private Integer hp;
 }
