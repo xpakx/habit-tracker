@@ -296,7 +296,7 @@ public class BattleServiceImpl implements BattleService {
                 ship.setMovement(false);
                 ship.setAction(false);
             }
-            makeEnemyMove(battle, playerShips, enemyShips);
+            makeEnemyMove(battle, playerShips, enemyShips.stream().filter((s) -> !s.isDestroyed()).toList());
             shipRepository.saveAll(playerShips);
             if(evaluateObjective(battle, enemyShips)) {
                 battle.setFinished(true);
