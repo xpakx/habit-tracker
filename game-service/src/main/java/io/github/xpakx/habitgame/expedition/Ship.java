@@ -36,6 +36,11 @@ public class Ship {
 
     private boolean enemy;
 
+    private Integer strength;
+    private Integer criticalRate;
+    private Integer hitRate;
+    private Integer hp;
+
     @OneToOne(mappedBy = "ship", orphanRemoval = true)
     private Position position;
 }
