@@ -347,7 +347,7 @@ public class BattleServiceImpl implements BattleService {
             int damage = critical < ship.getCriticalRate() ? ship.getStrength()*CRITICAL_MULTI : ship.getStrength();
             target.setDamaged(true);
             target.setHp(target.getHp() - damage);
-            if (target.getHitRate() <= 0) {
+            if (target.getHp() <= 0) {
                 target.setDestroyed(true);
                 target.setPosition(null);
             }
