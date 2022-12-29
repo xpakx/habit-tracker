@@ -786,7 +786,7 @@ class BattleControllerTest {
         Optional<Ship> ship = shipRepository.findById(attackedShipId);
         assertTrue(ship.isPresent());
         assertThat(ship.get(), hasProperty("damaged", equalTo(true)));
-        assertThat(ship.get(), hasProperty("size", equalTo(1)));
+        assertThat(ship.get(), hasProperty("hp", equalTo(1)));
     }
 
     @Test
@@ -808,7 +808,7 @@ class BattleControllerTest {
         assertTrue(ship.isPresent());
         assertThat(ship.get(), hasProperty("damaged", equalTo(true)));
         assertThat(ship.get(), hasProperty("destroyed", equalTo(true)));
-        assertThat(ship.get(), hasProperty("size", equalTo(0)));
+        assertThat(ship.get(), hasProperty("hp", equalTo(0)));
     }
 
     @Test
