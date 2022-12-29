@@ -252,7 +252,11 @@ class BattleControllerTest {
         ship.setEnemy(true);
         ship.setMovement(movement);
         ship.setAction(action);
+        ship.setHp(1);
         ship.setRarity(2);
+        ship.setStrength(1);
+        ship.setHitRate(100);
+        ship.setCriticalRate(0);
         return shipRepository.save(ship).getId();
     }
 
