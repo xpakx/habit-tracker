@@ -57,6 +57,9 @@ public class ExpeditionPublisher {
         shipForEvent.setRarity(shipFromDb.getRarity());
         shipForEvent.setSize(shipFromDb.getSize());
         shipForEvent.setCargo(prepareResources(ship, resourceMap));
+        shipForEvent.setStrength(shipFromDb.getStrength());
+        shipForEvent.setHitRate(shipFromDb.getHitRate());
+        shipForEvent.setCriticalRate(shipFromDb.getCriticalRate());
         return shipForEvent;
     }
 
