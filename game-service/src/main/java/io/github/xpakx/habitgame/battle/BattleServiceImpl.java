@@ -339,7 +339,10 @@ public class BattleServiceImpl implements BattleService {
     }
 
     private void moveTowards(Ship ship, Ship target) {
-        // TODO move enemy ship toward target
+        // TODO add better movement
+        Position position = ship.getPosition();
+        position.setX((ship.getPosition().getX()+target.getPosition().getX())/2);
+        position.setY((ship.getPosition().getY()+target.getPosition().getY())/2);
     }
 
     private void applyDamage(Ship ship, Ship target) {
