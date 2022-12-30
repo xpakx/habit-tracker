@@ -14,5 +14,8 @@ public class EventShip {
     private Integer maxCargo;
     private Integer rarity;
     private Integer size;
+    private Integer strength;
+    private Integer hitRate;
+    private Integer criticalRate;
     private List<Cargo> cargo;
 }

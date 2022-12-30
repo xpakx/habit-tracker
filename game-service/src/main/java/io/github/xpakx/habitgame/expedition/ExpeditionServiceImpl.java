@@ -76,9 +76,9 @@ public class ExpeditionServiceImpl implements ExpeditionService {
         ship.setMovement(false);
         ship.setUserId(expedition.getUserId());
         ship.setHp(eventShip.getSize()*10);
-        ship.setStrength(1); // TODO
-        ship.setCriticalRate(5);
-        ship.setHitRate(80);
+        ship.setStrength(eventShip.getStrength());
+        ship.setCriticalRate(eventShip.getCriticalRate());
+        ship.setHitRate(eventShip.getHitRate());
         return ship;
     }
 
