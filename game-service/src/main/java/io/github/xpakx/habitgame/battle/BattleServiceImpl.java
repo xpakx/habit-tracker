@@ -148,7 +148,7 @@ public class BattleServiceImpl implements BattleService {
         testShipOwnership(ship);
         testShipHealth(ship);
         if(request.getAction() == MoveAction.MOVE) {
-            makeMove(request, battleId, ship);
+            makeMove(request, battle, ship);
         } else if(request.getAction() == MoveAction.ATTACK) {
             attack(request, battleId, ship);
         } else if(request.getAction() == MoveAction.USE) {
@@ -171,9 +171,9 @@ public class BattleServiceImpl implements BattleService {
         }
     }
 
-    private void makeMove(MoveRequest request, Long battleId, Ship ship) {
-        testNewPosition(request, battleId);
-        testMove(ship, request, battleId);
+    private void makeMove(MoveRequest request, Battle battle, Ship ship) {
+        testNewPosition(request, battle.getId());
+        testMove(ship, request, battle);
         Position position = ship.getPosition();
         position.setX(request.getX());
         position.setY(request.getY());
@@ -181,9 +181,12 @@ public class BattleServiceImpl implements BattleService {
         shipRepository.updateMovementById(ship.getId());
     }
 
-    private void testMove(Ship ship, MoveRequest request, Long battleId) {
+    private void testMove(Ship ship, MoveRequest request, Battle battle) {
         if(ship.isMovement()) {
             throw new WrongMoveException("Ship already moved!");
+        }
+        if(request.getX() < 0 || request.getY() < 0 || request.getX() > battle.getWidth() || request.getY() > battle.getHeight()) {
+            throw new WrongMoveException("Position is outside the board!");
         }
         // List<Position> positions = positionRepository.findByBattleId(battleId);
         if(taxiLength(ship.getPosition().getX(), ship.getPosition().getY(), request.getX(), request.getY()) > 3) {
