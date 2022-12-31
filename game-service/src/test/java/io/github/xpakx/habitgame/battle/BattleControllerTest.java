@@ -1049,4 +1049,38 @@ class BattleControllerTest {
                         hasProperty("position", notNullValue())
         )));
     }
+
+    @Test
+    void shouldNotMoveShipOutsideTheBoardWithNegativeCoordinate() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId);
+        placeShip(shipId, 1, 1, battleId);
+        MoveRequest request = getMoveRequest(-1,1, MoveAction.MOVE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
+
+    @Test
+    void shouldNotMoveShipOutsideTheBoard() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId);
+        placeShip(shipId, 9, 9, battleId);
+        MoveRequest request = getMoveRequest(11,9, MoveAction.MOVE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+        .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId)
+        .then()
+                .statusCode(BAD_REQUEST.value());
+    }
 }
