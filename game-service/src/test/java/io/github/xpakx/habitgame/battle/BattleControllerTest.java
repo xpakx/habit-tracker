@@ -1083,4 +1083,23 @@ class BattleControllerTest {
         .then()
                 .statusCode(BAD_REQUEST.value());
     }
+
+    @Test
+    void shouldAttackPlayerShip() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true, false);
+        Long attackedShipId = addShip(expeditionId, true, true);
+        placeShip(attackedShipId, 1, 1, battleId);
+        placeShip(addEnemyShip(expeditionId), 3, 3, battleId);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/battle/{battleId}/turn/end", battleId)
+        .then()
+                .statusCode(OK.value());
+        Optional<Ship> ship = shipRepository.findById(attackedShipId);
+        assertTrue(ship.isPresent());
+        assertThat(ship.get(), hasProperty("damaged", equalTo(true)));
+        assertThat(ship.get(), hasProperty("hp", equalTo(2)));
+    }
 }
