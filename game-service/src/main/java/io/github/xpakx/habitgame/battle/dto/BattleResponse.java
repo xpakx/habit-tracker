@@ -7,4 +7,6 @@ import lombok.Setter;
 @Setter
 public class BattleResponse {
     private Long battleId;
+    private Integer width;
+    private Integer height;
 }

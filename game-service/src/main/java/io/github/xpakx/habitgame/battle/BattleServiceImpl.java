@@ -43,6 +43,8 @@ public class BattleServiceImpl implements BattleService {
         BattleResponse response = new BattleResponse();
         generateEnemyShips(battleId, result.getExpedition());
         response.setBattleId(battleId);
+        response.setWidth(battle.getWidth());
+        response.setHeight(battle.getHeight());
         return response;
     }
 
