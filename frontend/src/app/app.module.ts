@@ -31,6 +31,8 @@ import { ContextStatsComponent } from './stats/context-stats/context-stats.compo
 import { HabitStatsComponent } from './stats/habit-stats/habit-stats.component';
 import { ShopListComponent } from './shop/shop-list/shop-list.component';
 import { SendExpeditionComponent } from './city/send-expedition/send-expedition.component';
+import { BattleComponent } from './battle/battle/battle.component';
+import { BoardComponent } from './battle/board/board.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +60,9 @@ import { SendExpeditionComponent } from './city/send-expedition/send-expedition.
     ContextStatsComponent,
     HabitStatsComponent,
     ShopListComponent,
-    SendExpeditionComponent
+    SendExpeditionComponent,
+    BattleComponent,
+    BoardComponent
   ],
   imports: [
     BrowserModule,
