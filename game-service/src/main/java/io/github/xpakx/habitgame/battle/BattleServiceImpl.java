@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +44,19 @@ public class BattleServiceImpl implements BattleService {
         response.setObjective(battle.getObjective());
         response.setTurn(battle.getTurn());
 
+
+        List<Ship> ships = shipRepository.findByExpeditionId(battle.getExpedition().getId()); //TODO optimize
+        List<Ship> playerShips = filterPlayerShips(ships).toList();
+        List<Ship> enemyShips = filterEnemyShips(ships).toList();
         return response;
+    }
+
+    private Stream<Ship> filterEnemyShips(List<Ship> ships) {
+        return ships.stream().filter(Ship::isEnemy);
+    }
+
+    private Stream<Ship> filterPlayerShips(List<Ship> ships) {
+        return ships.stream().filter((a) -> !a.isEnemy());
     }
 
     private BattleResponse startBattle(Long expeditionId, Long userId) {
@@ -313,8 +326,8 @@ public class BattleServiceImpl implements BattleService {
 
         if(battle.isStarted()) {
             List<Ship> ships = shipRepository.findByExpeditionId(battle.getExpedition().getId());
-            List<Ship> playerShips = ships.stream().filter((a) -> !a.isEnemy()).toList();
-            List<Ship> enemyShips = ships.stream().filter(Ship::isEnemy).toList();
+            List<Ship> playerShips = filterPlayerShips(ships).toList();
+            List<Ship> enemyShips = filterEnemyShips(ships).toList();
             for(Ship ship : playerShips) {
                 ship.setMovement(false);
                 ship.setAction(false);
