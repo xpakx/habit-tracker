@@ -38,6 +38,11 @@ public class BattleServiceImpl implements BattleService {
         response.setBattleId(battle.getId());
         response.setWidth(battle.getWidth());
         response.setHeight(battle.getHeight());
+        response.setFinished(battle.isFinished());
+        response.setStarted(battle.isStarted());
+        response.setObjective(battle.getObjective());
+        response.setTurn(battle.getTurn());
+
         return response;
     }
 
@@ -58,6 +63,10 @@ public class BattleServiceImpl implements BattleService {
         response.setBattleId(battleId);
         response.setWidth(battle.getWidth());
         response.setHeight(battle.getHeight());
+        response.setFinished(battle.isFinished());
+        response.setStarted(battle.isStarted());
+        response.setObjective(battle.getObjective());
+        response.setTurn(battle.getTurn());
         return response;
     }
 
