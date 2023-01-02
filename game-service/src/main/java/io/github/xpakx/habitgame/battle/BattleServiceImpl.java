@@ -28,7 +28,12 @@ public class BattleServiceImpl implements BattleService {
     private final ShipTypeRepository shipTypeRepository;
 
     @Override
-    public BattleResponse start(Long expeditionId, Long userId) {
+    public BattleResponse getBattle(Long expeditionId, Long userId) {
+        BattleResponse response = startBattle(expeditionId, userId);
+        return response;
+    }
+
+    private BattleResponse startBattle(Long expeditionId, Long userId) {
         ExpeditionResult result = resultRepository.findByExpeditionIdAndExpeditionUserId(expeditionId, userId).orElseThrow(ExpeditionNotFoundException::new);
         testResult(result);
         Battle battle = new Battle();
