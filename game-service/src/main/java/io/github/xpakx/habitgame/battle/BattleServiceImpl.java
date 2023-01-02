@@ -1,9 +1,6 @@
 package io.github.xpakx.habitgame.battle;
 
-import io.github.xpakx.habitgame.battle.dto.BattleResponse;
-import io.github.xpakx.habitgame.battle.dto.MoveAction;
-import io.github.xpakx.habitgame.battle.dto.MoveRequest;
-import io.github.xpakx.habitgame.battle.dto.MoveResponse;
+import io.github.xpakx.habitgame.battle.dto.*;
 import io.github.xpakx.habitgame.battle.error.*;
 import io.github.xpakx.habitgame.expedition.*;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionCompletedException;
@@ -43,12 +40,38 @@ public class BattleServiceImpl implements BattleService {
         response.setStarted(battle.isStarted());
         response.setObjective(battle.getObjective());
         response.setTurn(battle.getTurn());
-
-
         List<Ship> ships = shipRepository.findByExpeditionId(battle.getExpedition().getId()); //TODO optimize
-        List<Ship> playerShips = filterPlayerShips(ships).toList();
-        List<Ship> enemyShips = filterEnemyShips(ships).toList();
+        response.setShips(filterPlayerShips(ships).map(this::toShipResponse).toList());
+        response.setEnemyShips(filterEnemyShips(ships).map(this::toShipResponse).toList());
         return response;
+    }
+
+    private BattleShip toShipResponse(Ship ship) {
+        BattleShip battleShip = new BattleShip();
+
+        battleShip.setId(ship.getId());
+        battleShip.setShipId(ship.getShipId());
+        battleShip.setName(ship.getName());
+        battleShip.setCode(ship.getCode());
+        battleShip.setRarity(ship.getRarity());
+        battleShip.setSize(ship.getSize());
+        battleShip.setHp(ship.getHp());
+        battleShip.setStrength(ship.getStrength());
+        battleShip.setHitRate(ship.getHitRate());
+        battleShip.setCriticalRate(ship.getCriticalRate());
+        battleShip.setDestroyed(ship.isDestroyed());
+        battleShip.setDamaged(ship.isDamaged());
+        battleShip.setPrepared(ship.isPrepared());
+        battleShip.setAction(ship.isAction());
+        battleShip.setMovement(ship.isMovement());
+        battleShip.setEnemy(ship.isEnemy());
+        if(ship.getPosition() != null) {
+            BattlePosition position = new BattlePosition();
+            position.setX(ship.getPosition().getX());
+            position.setY(ship.getPosition().getX());
+            battleShip.setPosition(position);
+        }
+        return battleShip;
     }
 
     private Stream<Ship> filterEnemyShips(List<Ship> ships) {
