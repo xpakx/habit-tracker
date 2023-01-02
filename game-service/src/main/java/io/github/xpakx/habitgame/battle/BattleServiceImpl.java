@@ -29,7 +29,15 @@ public class BattleServiceImpl implements BattleService {
 
     @Override
     public BattleResponse getBattle(Long expeditionId, Long userId) {
-        BattleResponse response = startBattle(expeditionId, userId);
+        Optional<Battle> battle = battleRepository.findByExpeditionIdAndExpeditionUserId(expeditionId, userId);
+        return battle.map(this::getBattleResponse).orElseGet(() -> startBattle(expeditionId, userId));
+    }
+
+    private BattleResponse getBattleResponse(Battle battle) {
+        BattleResponse response = new BattleResponse();
+        response.setBattleId(battle.getId());
+        response.setWidth(battle.getWidth());
+        response.setHeight(battle.getHeight());
         return response;
     }
 

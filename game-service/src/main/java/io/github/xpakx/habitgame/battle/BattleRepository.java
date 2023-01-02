@@ -8,4 +8,6 @@ import java.util.Optional;
 @Repository
 public interface BattleRepository extends JpaRepository<Battle, Long> {
     Optional<Battle> findByIdAndExpeditionUserId(Long battleId, Long userId);
+
+    Optional<Battle> findByExpeditionIdAndExpeditionUserId(Long expeditionId, Long userId);
 }
