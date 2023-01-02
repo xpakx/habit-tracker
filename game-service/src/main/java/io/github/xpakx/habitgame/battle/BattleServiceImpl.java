@@ -49,6 +49,12 @@ public class BattleServiceImpl implements BattleService {
     private BattleResponse startBattle(Long expeditionId, Long userId) {
         ExpeditionResult result = resultRepository.findByExpeditionIdAndExpeditionUserId(expeditionId, userId).orElseThrow(ExpeditionNotFoundException::new);
         testResult(result);
+        Battle battle = createBattle(result);
+        generateEnemyShips(battle.getId(), result.getExpedition());
+        return getBattleResponse(battle);
+    }
+
+    private Battle createBattle(ExpeditionResult result) {
         Battle battle = new Battle();
         battle.setExpedition(result.getExpedition());
         battle.setFinished(false);
@@ -57,17 +63,7 @@ public class BattleServiceImpl implements BattleService {
         battle.setWidth(20);
         battle.setObjective(BattleObjective.DEFEAT);
         battle.setTurn(0);
-        Long battleId = battleRepository.save(battle).getId();
-        BattleResponse response = new BattleResponse();
-        generateEnemyShips(battleId, result.getExpedition());
-        response.setBattleId(battleId);
-        response.setWidth(battle.getWidth());
-        response.setHeight(battle.getHeight());
-        response.setFinished(battle.isFinished());
-        response.setStarted(battle.isStarted());
-        response.setObjective(battle.getObjective());
-        response.setTurn(battle.getTurn());
-        return response;
+        return battleRepository.save(battle);
     }
 
     private void generateEnemyShips(Long battleId, Expedition expedition) {
