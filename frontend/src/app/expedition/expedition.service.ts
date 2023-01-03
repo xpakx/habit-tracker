@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { JwtService } from '../common/jwt-service';
-import { ExpeditionSummary } from './dto/expedition-summary';
+import { ExpeditionSummary } from '../city/dto/expedition-summary';
 
 @Injectable({
   providedIn: 'root'
