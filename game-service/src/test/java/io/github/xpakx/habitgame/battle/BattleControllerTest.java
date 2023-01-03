@@ -1102,4 +1102,31 @@ class BattleControllerTest {
         assertThat(ship.get(), hasProperty("damaged", equalTo(true)));
         assertThat(ship.get(), hasProperty("hp", equalTo(2)));
     }
+
+    @Test
+    void shouldNotAddSecondBattleToDb() {
+        Long expeditionId = addExpedition();
+        addBattle(expeditionId);
+        addResult(expeditionId, ResultType.BATTLE, false);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/expedition/{expeditionId}/battle", expeditionId);
+        List<Battle> battles = battleRepository.findAll();
+        assertThat(battles, hasSize(1));
+    }
+
+    @Test
+    void shouldReturnExistingBattle() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId);
+        addResult(expeditionId, ResultType.BATTLE, false);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .get(baseUrl + "/expedition/{expeditionId}/battle", expeditionId)
+        .then()
+                .statusCode(OK.value())
+                .body("battleId", equalTo(battleId.intValue()));
+    }
 }
