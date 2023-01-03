@@ -16,7 +16,7 @@ public class BattleController {
     private final BattleService service;
 
     @GetMapping("/expedition/{expeditionId}/battle")
-    public ResponseEntity<BattleResponse> startBattle(@RequestHeader String id, @PathVariable Long expeditionId) {
+    public ResponseEntity<BattleResponse> getBattle(@RequestHeader String id, @PathVariable Long expeditionId) {
         return new ResponseEntity<>(
                 service.getBattle(expeditionId, Long.valueOf(id)),
                 HttpStatus.OK
