@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ExpeditionSummary } from '../city/dto/expedition-summary';
+import { ExpeditionSummary } from '../expedition/dto/expedition-summary';
 import { JwtService } from '../common/jwt-service';
 import { BattleResponse } from './dto/battle-response';
 import { MoverResponse } from './dto/move-response';
