@@ -33,6 +33,8 @@ import { ShopListComponent } from './shop/shop-list/shop-list.component';
 import { SendExpeditionComponent } from './city/send-expedition/send-expedition.component';
 import { BattleComponent } from './battle/battle/battle.component';
 import { BoardComponent } from './battle/board/board.component';
+import { ExpeditionListComponent } from './expedition/expedition-list/expedition-list.component';
+import { ExpeditionComponent } from './expedition/expedition/expedition.component';
 
 @NgModule({
   declarations: [
@@ -62,7 +64,9 @@ import { BoardComponent } from './battle/board/board.component';
     ShopListComponent,
     SendExpeditionComponent,
     BattleComponent,
-    BoardComponent
+    BoardComponent,
+    ExpeditionListComponent,
+    ExpeditionComponent
   ],
   imports: [
     BrowserModule,
