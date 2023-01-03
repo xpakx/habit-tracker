@@ -5,6 +5,7 @@ import { CityComponent } from './city/city/city.component';
 import { SendExpeditionComponent } from './city/send-expedition/send-expedition.component';
 import { ContextsViewComponent } from './contexts-view/contexts-view.component';
 import { EquipmentComponent } from './equipment/equipment/equipment.component';
+import { ExpeditionListComponent } from './expedition/expedition-list/expedition-list.component';
 import { ContextViewComponent } from './habit/context-view/context-view.component';
 import { DailyContextViewComponent } from './habit/daily-context-view/daily-context-view.component';
 import { DailyViewComponent } from './habit/daily-view/daily-view.component';
@@ -32,7 +33,8 @@ const routes: Routes = [
 
   { path: 'stats/context/:id', component: ContextStatsComponent },
   { path: 'stats/habit/:id', component: HabitStatsComponent },
-  { path: 'stats', component: OverallStatsComponent }
+  { path: 'stats', component: OverallStatsComponent },
+  { path: 'expedition', component: ExpeditionListComponent }
 ];
 
 @NgModule({
