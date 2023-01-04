@@ -5,4 +5,7 @@
     <ng-container *ngIf="result">
         <!-- TODO: more info abou result -->
     </ng-container>
+
+    <button class="btn" (click)="complete()">Complete</button>
+    <button class="btn" *ngIf="expedition.finished" (click)="return()">Return</button>
 </div>

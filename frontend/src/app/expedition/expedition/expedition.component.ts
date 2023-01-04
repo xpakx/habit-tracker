@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
+import { ActionResponse } from '../dto/action-response';
 import { ExpeditionResultResponse } from '../dto/expedition-result-response';
 import { ExpeditionSummary } from '../dto/expedition-summary';
 import { ExpeditionService } from '../expedition.service';
@@ -33,6 +34,28 @@ export class ExpeditionComponent implements OnInit {
 
   showResponse(response: ExpeditionResultResponse): void {
     this.result = response;
+  }
+
+  return() {
+    if(this.expedition) {
+      this.expeditionService.return({action: true}, this.expedition.id).subscribe({
+        next: (response: ActionResponse) => this.onAction(response),
+        error: (error: HttpErrorResponse) => this.onError(error)
+      });
+    }
+  }
+
+  complete() {
+    if(this.expedition) {
+      this.expeditionService.complete({action: true}, this.expedition.id).subscribe({
+        next: (response: ActionResponse) => this.onAction(response),
+        error: (error: HttpErrorResponse) => this.onError(error)
+      });
+    }
+  }
+
+  onAction(response: ActionResponse): void {
+    throw new Error('Method not implemented.');
   }
 
 }
