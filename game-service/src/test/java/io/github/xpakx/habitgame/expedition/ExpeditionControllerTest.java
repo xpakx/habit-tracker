@@ -80,6 +80,7 @@ class ExpeditionControllerTest {
         .when()
                 .get(baseUrl + "/expedition/active")
         .then()
+                .log().body()
                 .statusCode(OK.value())
                 .body("$", hasSize(2));
     }

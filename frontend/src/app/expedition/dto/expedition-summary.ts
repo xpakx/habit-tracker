@@ -3,5 +3,8 @@ export interface ExpeditionSummary {
     userId: number;
     start: Date;
     end: Date;
+    returnEnd: Date;
     finished: boolean;
+    returning: boolean;
+    result: String;
 }

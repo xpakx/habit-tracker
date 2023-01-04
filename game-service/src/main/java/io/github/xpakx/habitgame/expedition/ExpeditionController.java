@@ -3,6 +3,7 @@ package io.github.xpakx.habitgame.expedition;
 import io.github.xpakx.habitgame.expedition.dto.ActionRequest;
 import io.github.xpakx.habitgame.expedition.dto.ActionResponse;
 import io.github.xpakx.habitgame.expedition.dto.ExpeditionResultResponse;
+import io.github.xpakx.habitgame.expedition.dto.ExpeditionSummary;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class ExpeditionController {
 
 
     @GetMapping("/expedition/active")
-    public ResponseEntity<List<Expedition>> getActiveExpeditions(@RequestHeader String id) {
+    public ResponseEntity<List<ExpeditionSummary>> getActiveExpeditions(@RequestHeader String id) {
         return new ResponseEntity<>(
                 service.getActiveExpeditions(Long.valueOf(id)),
                 HttpStatus.OK

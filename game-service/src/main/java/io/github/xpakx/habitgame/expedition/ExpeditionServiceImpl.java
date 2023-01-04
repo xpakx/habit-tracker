@@ -46,7 +46,7 @@ public class ExpeditionServiceImpl implements ExpeditionService {
     }
 
     @Override
-    public List<Expedition> getActiveExpeditions(Long userId) {
+    public List<ExpeditionSummary> getActiveExpeditions(Long userId) {
         return expeditionRepository.findByUserIdAndFinishedIsFalse(userId);
     }
 
