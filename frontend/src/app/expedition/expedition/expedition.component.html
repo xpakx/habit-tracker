@@ -1,3 +1,5 @@
 <div class="expedition" [class.finished]="expedition.finished" *ngIf="expedition">
-    
+    <span>Started: {{ expedition.start }}</span>
+    <span>Time of arrival: {{ expedition.returning ? expedition.end : expedition.returnEnd }}</span>
+    <span class="result" *ngIf="expedition.result">{{expedition.result}}</span>
 </div>
