@@ -57,5 +57,4 @@ export class ExpeditionComponent implements OnInit {
   onAction(response: ActionResponse): void {
     throw new Error('Method not implemented.');
   }
-
 }

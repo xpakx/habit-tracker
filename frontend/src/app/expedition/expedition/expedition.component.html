@@ -2,6 +2,7 @@
     <span>Started: {{ expedition.start }}</span>
     <span>Time of arrival: {{ expedition.returning ? expedition.end : expedition.returnEnd }}</span>
     <span class="result" *ngIf="expedition.result">{{expedition.result}}</span>
+    <button class="battle-btn" *ngIf="expedition.result && expedition.result == 'BATTLE'" [routerLink]="'/expedition/'+expedition.id+'/battle'">To Battle</button>
     <ng-container *ngIf="result">
         <!-- TODO: more info abou result -->
     </ng-container>
