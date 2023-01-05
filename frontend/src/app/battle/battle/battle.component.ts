@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BattleService } from '../battle.service';
 import { BattleResponse } from '../dto/battle-response';
+import { MoveResponse } from '../dto/move-response';
 
 @Component({
   selector: 'app-battle',
@@ -35,6 +36,21 @@ export class BattleComponent implements OnInit {
   }
 
   onError(error: HttpErrorResponse): void {
+    throw new Error('Method not implemented.');
+  }
+
+
+  endTurn(): void {
+    if(!this.battle) {
+      return;
+    }
+    this.battleService.endTurn(this.battle.battleId).subscribe({
+      next: (result: MoveResponse[]) => this.applyMoves(result),
+      error: (error: HttpErrorResponse) => this.onError(error)
+    })
+  }
+  
+  applyMoves(result: MoveResponse[]): void {
     throw new Error('Method not implemented.');
   }
 

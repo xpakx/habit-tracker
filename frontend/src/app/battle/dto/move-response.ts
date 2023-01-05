@@ -1,4 +1,4 @@
-export interface MoverResponse {
+export interface MoveResponse {
     action: String;
     success: boolean;
 }
