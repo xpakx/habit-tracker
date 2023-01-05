@@ -25,7 +25,7 @@ export class BattleComponent implements OnInit {
   }
 
   getBattle(id: any) {
-    this.battleService.startBattle(id).subscribe({
+    this.battleService.getBattle(id).subscribe({
       next: (result: BattleResponse) => this.saveBattle(result),
       error: (error: HttpErrorResponse) => this.onError(error)
     })
@@ -49,7 +49,7 @@ export class BattleComponent implements OnInit {
       error: (error: HttpErrorResponse) => this.onError(error)
     })
   }
-  
+
   applyMoves(result: MoveResponse[]): void {
     throw new Error('Method not implemented.');
   }

@@ -18,7 +18,7 @@ export class BattleService extends JwtService {
     super();
   }
 
-  public startBattle(expeditionId: number): Observable<BattleResponse> {
+  public getBattle(expeditionId: number): Observable<BattleResponse> {
     return this.http.get<BattleResponse>(`${this.apiServerUrl}/expedition/${expeditionId}/battle"`, { headers: this.getHeaders() });
   }
 
