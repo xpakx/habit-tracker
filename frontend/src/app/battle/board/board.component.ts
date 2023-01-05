@@ -33,4 +33,16 @@ export class BoardComponent implements OnInit {
     return 'SEA';
   }
 
+  isEnemy(x: number, y: number): boolean {
+    if(this.battle) {
+      for(let ship of this.battle.enemyShips) {
+        if(ship.position.x == x && ship.position.y == y) {
+          return true;
+        }
+      }
+
+    }
+    return false;
+  }
+
 }
