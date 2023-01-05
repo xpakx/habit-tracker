@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Battleservice } from '../battle.service';
+import { BattleService } from '../battle.service';
 
 @Component({
   selector: 'app-board',
@@ -10,7 +10,7 @@ export class BoardComponent implements OnInit {
   width?: number;
   height?: number;
 
-  constructor(battleService: Battleservice) { }
+  constructor(battleService: BattleService) { }
 
   ngOnInit(): void {
   }

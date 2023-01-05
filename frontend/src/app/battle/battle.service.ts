@@ -11,7 +11,7 @@ import { MoveRequest } from './dto/mover-request';
 @Injectable({
   providedIn: 'root'
 })
-export class Battleservice extends JwtService {
+export class BattleService extends JwtService {
   private apiServerUrl = environment.apiServerUrl;
 
   constructor(private http: HttpClient) { 
