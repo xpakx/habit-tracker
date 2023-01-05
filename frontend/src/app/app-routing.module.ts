@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { BattleComponent } from './battle/battle/battle.component';
 import { CitiesComponent } from './city/cities/cities.component';
 import { CityComponent } from './city/city/city.component';
 import { SendExpeditionComponent } from './city/send-expedition/send-expedition.component';
@@ -34,7 +35,8 @@ const routes: Routes = [
   { path: 'stats/context/:id', component: ContextStatsComponent },
   { path: 'stats/habit/:id', component: HabitStatsComponent },
   { path: 'stats', component: OverallStatsComponent },
-  { path: 'expedition', component: ExpeditionListComponent }
+  { path: 'expedition', component: ExpeditionListComponent },
+  { path: 'expedition/:id/battle', component: BattleComponent }
 ];
 
 @NgModule({
