@@ -1,5 +1,7 @@
-<div class="row" *ngFor="let _ of [].constructor(height); let i = index">
-    <div class="field" *ngFor="let _ of [].constructor(width); let j = index">
-        {{ i + 'x' + j}}
+<div class="board" *ngIf="battle">
+    <div class="row" *ngFor="let _ of [].constructor(battle.height); let i = index">
+        <button class="field" *ngFor="let _ of [].constructor(battle.width); let j = index">
+            <img [src]="'/assets/'+ getImage(i,j) +'.png'" alt="" class="icon">
+        </button>
     </div>
 </div>

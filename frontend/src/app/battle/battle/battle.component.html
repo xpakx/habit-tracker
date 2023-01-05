@@ -2,7 +2,7 @@ Battle
 
 <div class="battle-content" *ngIf="battle">
 
-    <app-board></app-board>
+    <app-board [battle]="battle"></app-board>
     <button class="turn-btn" (click)="endTurn()">{{battle.started ? 'Next turn' : 'Start!'}}</button>
     <div class="ships" *ngIf="!battle.started">
         <!-- TODO: ships to place -->
