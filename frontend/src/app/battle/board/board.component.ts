@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { BattleService } from '../battle.service';
+import { BattlePosition } from '../dto/battle-position';
 import { BattleResponse } from '../dto/battle-response';
 
 @Component({
@@ -9,6 +10,8 @@ import { BattleResponse } from '../dto/battle-response';
 })
 export class BoardComponent implements OnInit {
   @Input("battle") battle?: BattleResponse;
+  @Input("placement") shipToPlace: boolean = false;
+  @Output("place") placement = new EventEmitter<BattlePosition>();
 
   constructor(battleService: BattleService) { }
 
@@ -43,6 +46,16 @@ export class BoardComponent implements OnInit {
 
     }
     return false;
+  }
+
+  placeShip(x: number, y: number) {
+    this.placement.emit({x: x, y: y});
+  }
+
+  action(x: number, y: number) {
+    if(this.shipToPlace) {
+      this.placeShip(x, y);
+    }
   }
 
 }

@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BattleService } from '../battle.service';
+import { BattlePosition } from '../dto/battle-position';
 import { BattleResponse } from '../dto/battle-response';
 import { BattleShip } from '../dto/battle-ship';
 import { MoveResponse } from '../dto/move-response';
@@ -62,25 +63,25 @@ export class BattleComponent implements OnInit {
     this.shipForPlacementId = shipId;
   }
 
-  place(x: number, y: number): void {
+  place(position: BattlePosition): void {
     if(!this.battle || !this.shipForPlacementId) {
       return;
     }
     let shipId = this.shipForPlacementId;
     this.shipForPlacementId = undefined;
-    this.battleService.prepare({x: x, y: y, shipId: shipId, action: 'PREPARE'}, this.battle.battleId).subscribe({
-      next: (result: MoveResponse) => this.placeShip(result, shipId, x, y),
+    this.battleService.prepare({x: position.x, y: position.y, shipId: shipId, action: 'PREPARE'}, this.battle.battleId).subscribe({
+      next: (result: MoveResponse) => this.placeShip(result, shipId, position),
       error: (error: HttpErrorResponse) => this.onError(error)
     })
 
   }
 
-  placeShip(result: MoveResponse, shipId: number, x: number, y: number): void {
+  placeShip(result: MoveResponse, shipId: number, position: BattlePosition): void {
     if(result.success) {
       this.unassignedShips = this.unassignedShips.filter(a => a.id != shipId);
       let ship: BattleShip | undefined = this.battle?.ships.find(a => a.id == shipId);
       if(ship) {
-        ship.position = { x: x, y: y};
+        ship.position = { x: position.x, y: position.y};
       }
     }
   }
