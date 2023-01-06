@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { BattleService } from '../battle.service';
 import { BattlePosition } from '../dto/battle-position';
 import { BattleResponse } from '../dto/battle-response';
 
@@ -14,7 +13,7 @@ export class BoardComponent implements OnInit {
   @Output("place") placement = new EventEmitter<BattlePosition>();
   @Output("move") movement = new EventEmitter<BattlePosition>();
 
-  constructor(battleService: BattleService) { }
+  constructor() { }
 
   ngOnInit(): void {
   }
