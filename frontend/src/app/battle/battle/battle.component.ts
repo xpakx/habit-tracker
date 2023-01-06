@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BattleService } from '../battle.service';
 import { BattleResponse } from '../dto/battle-response';
+import { BattleShip } from '../dto/battle-ship';
 import { MoveResponse } from '../dto/move-response';
 
 @Component({
@@ -12,6 +13,8 @@ import { MoveResponse } from '../dto/move-response';
 })
 export class BattleComponent implements OnInit {
   battle?: BattleResponse;
+  unassignedShips: BattleShip[] = [];
+  shipForPlacementId?: number;
 
   constructor(private battleService: BattleService, private route: ActivatedRoute) { }
 
@@ -33,6 +36,7 @@ export class BattleComponent implements OnInit {
 
   saveBattle(result: BattleResponse): void {
     this.battle = result;
+    this.unassignedShips = this.battle.ships.filter(a => !a.prepared);
   }
 
   onError(error: HttpErrorResponse): void {
@@ -52,6 +56,33 @@ export class BattleComponent implements OnInit {
 
   applyMoves(result: MoveResponse[]): void {
     throw new Error('Method not implemented.');
+  }
+
+  chooseShip(shipId: number) {
+    this.shipForPlacementId = shipId;
+  }
+
+  place(x: number, y: number): void {
+    if(!this.battle || !this.shipForPlacementId) {
+      return;
+    }
+    let shipId = this.shipForPlacementId;
+    this.shipForPlacementId = undefined;
+    this.battleService.prepare({x: x, y: y, shipId: shipId, action: 'PREPARE'}, this.battle.battleId).subscribe({
+      next: (result: MoveResponse) => this.placeShip(result, shipId, x, y),
+      error: (error: HttpErrorResponse) => this.onError(error)
+    })
+
+  }
+
+  placeShip(result: MoveResponse, shipId: number, x: number, y: number): void {
+    if(result.success) {
+      this.unassignedShips = this.unassignedShips.filter(a => a.id != shipId);
+      let ship: BattleShip | undefined = this.battle?.ships.find(a => a.id == shipId);
+      if(ship) {
+        ship.position = { x: x, y: y};
+      }
+    }
   }
 
 }

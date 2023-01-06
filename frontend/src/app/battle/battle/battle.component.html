@@ -5,7 +5,7 @@ Battle
     <app-board [battle]="battle"></app-board>
     <button class="turn-btn" (click)="endTurn()">{{battle.started ? 'Next turn' : 'Start!'}}</button>
     <div class="ships" *ngIf="!battle.started">
-        <!-- TODO: ships to place -->
+        <button class="ship" *ngFor="let ship of unassignedShips" (click)="chooseShip(ship.id)">{{ ship.name }}</button>
     </div>
 
 </div>
