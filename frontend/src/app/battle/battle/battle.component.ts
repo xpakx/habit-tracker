@@ -93,7 +93,19 @@ export class BattleComponent implements OnInit {
       return;
     }
     this.shipForPlacementId = undefined;
-    this.battleService.prepare({x: event.position.x, y: event.position.y, shipId: event.shipId, action: 'MOVE'}, this.battle.battleId).subscribe({
+    this.battleService.move({x: event.position.x, y: event.position.y, shipId: event.shipId, action: 'MOVE'}, this.battle.battleId).subscribe({
+      next: (result: MoveResponse) => this.placeShip(result, event.shipId, event.position),
+      error: (error: HttpErrorResponse) => this.onError(error)
+    })
+  }
+
+
+  attack(event: MoveEvent) {
+    if(!this.battle || !this.shipForPlacementId) {
+      return;
+    }
+    this.shipForPlacementId = undefined;
+    this.battleService.move({x: event.position.x, y: event.position.y, shipId: event.shipId, action: 'ATTACK'}, this.battle.battleId).subscribe({
       next: (result: MoveResponse) => this.placeShip(result, event.shipId, event.position),
       error: (error: HttpErrorResponse) => this.onError(error)
     })

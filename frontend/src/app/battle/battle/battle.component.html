@@ -2,7 +2,7 @@ Battle
 
 <div class="battle-content" *ngIf="battle">
 
-    <app-board [battle]="battle" (place)="place($event)" (move)="move($event)" [placement]="shipForPlacementId != undefined"></app-board>
+    <app-board [battle]="battle" (place)="place($event)" (move)="move($event)" (attack)="attack($event)" [placement]="shipForPlacementId != undefined"></app-board>
     <button class="turn-btn" (click)="endTurn()">{{battle.started ? 'Next turn' : 'Start!'}}</button>
     <div class="ships" *ngIf="!battle.started">
         <button class="ship" *ngFor="let ship of unassignedShips" (click)="chooseShip(ship.id)">{{ ship.name }}</button>

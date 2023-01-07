@@ -14,6 +14,7 @@ export class BoardComponent implements OnInit {
   @Input("placement") shipToPlace: boolean = false;
   @Output("place") placement = new EventEmitter<BattlePosition>();
   @Output("move") movement = new EventEmitter<MoveEvent>();
+  @Output("attack") attack = new EventEmitter<MoveEvent>();
   shipToMoveId?: number;
 
   constructor() { }
@@ -69,7 +70,12 @@ export class BoardComponent implements OnInit {
 
   moveShip(x: number, y: number) {
     if(this.shipToMoveId) {
-      this.movement.emit({position: {x: x, y: y}, shipId: this.shipToMoveId});
+      if(this.isEnemy(x,y)) {
+        this.attack.emit({position: {x: x, y: y}, shipId: this.shipToMoveId});
+      } else {
+        this.movement.emit({position: {x: x, y: y}, shipId: this.shipToMoveId});
+      }
+      
       this.shipToMoveId = undefined;
     }
   }
