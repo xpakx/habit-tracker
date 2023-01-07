@@ -94,7 +94,7 @@ export class BattleComponent implements OnInit {
     }
     this.shipForPlacementId = undefined;
     this.battleService.move({x: event.position.x, y: event.position.y, shipId: event.shipId, action: 'MOVE'}, this.battle.battleId).subscribe({
-      next: (result: MoveResponse) => this.placeShip(result, event.shipId, event.position),
+      next: (result: MoveResponse) => this.onMove(result, event.shipId, event.position),
       error: (error: HttpErrorResponse) => this.onError(error)
     })
   }
@@ -106,9 +106,17 @@ export class BattleComponent implements OnInit {
     }
     this.shipForPlacementId = undefined;
     this.battleService.move({x: event.position.x, y: event.position.y, shipId: event.shipId, action: 'ATTACK'}, this.battle.battleId).subscribe({
-      next: (result: MoveResponse) => this.placeShip(result, event.shipId, event.position),
+      next: (result: MoveResponse) => this.onAttack(result, event.shipId, event.position),
       error: (error: HttpErrorResponse) => this.onError(error)
     })
+  }
+
+  onMove(result: MoveResponse, shipId: number, position: BattlePosition): void {
+    this.placeShip(result, shipId, position)
+  }
+
+  onAttack(result: MoveResponse, shipId: number, position: BattlePosition): void {
+    throw new Error('Method not implemented.');
   }
 
 }
