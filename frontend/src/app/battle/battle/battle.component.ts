@@ -5,6 +5,7 @@ import { BattleService } from '../battle.service';
 import { BattlePosition } from '../dto/battle-position';
 import { BattleResponse } from '../dto/battle-response';
 import { BattleShip } from '../dto/battle-ship';
+import { MoveEvent } from '../dto/move-event';
 import { MoveResponse } from '../dto/move-response';
 
 @Component({
@@ -84,6 +85,18 @@ export class BattleComponent implements OnInit {
         ship.position = { x: position.x, y: position.y};
       }
     }
+  }
+
+
+  move(event: MoveEvent) {
+    if(!this.battle || !this.shipForPlacementId) {
+      return;
+    }
+    this.shipForPlacementId = undefined;
+    this.battleService.prepare({x: event.position.x, y: event.position.y, shipId: event.shipId, action: 'MOVE'}, this.battle.battleId).subscribe({
+      next: (result: MoveResponse) => this.placeShip(result, event.shipId, event.position),
+      error: (error: HttpErrorResponse) => this.onError(error)
+    })
   }
 
 }
