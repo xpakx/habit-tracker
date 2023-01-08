@@ -203,16 +203,18 @@ public class BattleServiceImpl implements BattleService {
         Ship ship = shipRepository.findByIdAndUserIdAndExpeditionId(request.getShipId(), userId, battle.getExpedition().getId()).orElseThrow(ShipNotFoundException::new);
         testShipOwnership(ship);
         testShipHealth(ship);
+        MoveResult moveResult = null;
+        AttackResult attackResult = null;
         if(request.getAction() == MoveAction.MOVE) {
-            makeMove(request, battle, ship);
+            moveResult = makeMove(request, battle, ship);
         } else if(request.getAction() == MoveAction.ATTACK) {
-            attack(request, battleId, ship);
+            attackResult = attack(request, battleId, ship);
         } else if(request.getAction() == MoveAction.USE) {
             use(request, battleId, ship);
         } else {
             throw new WrongMoveException("Action type is incorrect!");
         }
-        return prepareMoveResponse(request.getAction());
+        return prepareMoveResponse(request.getAction(), moveResult, attackResult);
     }
 
     private void testShipHealth(Ship ship) {
@@ -227,7 +229,7 @@ public class BattleServiceImpl implements BattleService {
         }
     }
 
-    private void makeMove(MoveRequest request, Battle battle, Ship ship) {
+    private MoveResult makeMove(MoveRequest request, Battle battle, Ship ship) {
         testNewPosition(request, battle.getId());
         testMove(ship, request, battle);
         Position position = ship.getPosition();
@@ -235,6 +237,11 @@ public class BattleServiceImpl implements BattleService {
         position.setY(request.getY());
         positionRepository.save(position);
         shipRepository.updateMovementById(ship.getId());
+        MoveResult result = new MoveResult();
+        result.setShipId(ship.getShipId());
+        result.setX(result.getX());
+        result.setY(result.getY());
+        return result;
     }
 
     private void testMove(Ship ship, MoveRequest request, Battle battle) {
@@ -254,7 +261,7 @@ public class BattleServiceImpl implements BattleService {
         return Math.abs(x1-x2) + Math.abs(y1-y2);
     }
 
-    private void attack(MoveRequest request, Long battleId, Ship ship) {
+    private AttackResult attack(MoveRequest request, Long battleId, Ship ship) {
         Position position = positionRepository.findByXAndYAndBattleId(request.getX(), request.getY(), battleId).orElseThrow(WrongPositionException::new);
         if(position.getShip() == null) {
             throw new WrongMoveException("Nothing to attack!");
@@ -266,9 +273,15 @@ public class BattleServiceImpl implements BattleService {
             throw new WrongMoveException("Ship already made an action!");
         }
         Ship attackedShip = position.getShip();
-        applyDamage(ship, attackedShip);
+        int damage = applyDamage(ship, attackedShip);
         shipRepository.save(attackedShip);
         shipRepository.updateActionById(ship.getId());
+        AttackResult result = new AttackResult();
+        result.setShipId(ship.getShipId());
+        result.setX(request.getX());
+        result.setY(request.getY());
+        result.setDamage(damage);
+        return result;
     }
 
     private void use(MoveRequest request, Long battleId, Ship ship) {
@@ -334,9 +347,15 @@ public class BattleServiceImpl implements BattleService {
     }
 
     private MoveResponse prepareMoveResponse(MoveAction action) {
+        return prepareMoveResponse(action, null, null);
+    }
+
+    private MoveResponse prepareMoveResponse(MoveAction action, MoveResult move, AttackResult attack) {
         MoveResponse response = new MoveResponse();
         response.setAction(action);
         response.setSuccess(true);
+        response.setMove(move);
+        response.setAttack(attack);
         return response;
     }
 
@@ -401,7 +420,7 @@ public class BattleServiceImpl implements BattleService {
         position.setY((ship.getPosition().getY()+target.getPosition().getY())/2);
     }
 
-    private void applyDamage(Ship ship, Ship target) {
+    private int applyDamage(Ship ship, Ship target) {
         Random random = new Random();
         int hit = random.nextInt(100);
         if(hit < ship.getHitRate()) {
@@ -413,7 +432,9 @@ public class BattleServiceImpl implements BattleService {
                 target.setDestroyed(true);
                 target.setPosition(null);
             }
+            return damage;
         }
+        return 0;
     }
 
     private Ship chooseTarget(Ship ship, List<Ship> playerShips) {
