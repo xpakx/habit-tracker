@@ -57,7 +57,24 @@ export class BattleComponent implements OnInit {
   }
 
   applyMoves(result: MoveResponse[]): void {
-    throw new Error('Method not implemented.');
+    if(!this.battle) {
+      return;
+    }
+    for(let ship of this.battle?.ships) {
+      ship.action = false;
+      ship.movement = false;
+    }
+    for(let move of result) {
+      this.applyEnemyMove(move);
+    }
+  }
+
+  applyEnemyMove(move: MoveResponse): void {
+    if(move.move) {
+      this.onEnemyMove(move);
+    } else if(move.attack) {
+      this.onEnemyAttack(move);
+    }
   }
 
   chooseShip(shipId: number) {
@@ -99,7 +116,6 @@ export class BattleComponent implements OnInit {
     })
   }
 
-
   attack(event: MoveEvent) {
     if(!this.battle || !this.shipForPlacementId) {
       return;
@@ -128,6 +144,34 @@ export class BattleComponent implements OnInit {
       let position: BattlePosition = {x: result.attack.x, y: result.attack.y}
       let ship: BattleShip | undefined = this.battle?.ships.find(a => a.id == shipId);
       let target: BattleShip | undefined = this.battle?.enemyShips.find(a => a.position.x == position.x && a.position.y == position.y);
+      if(ship && target) {
+        ship.action = true;
+        target.hp = target.hp = result.attack.damage;
+        target.damaged = true;
+        if(target.hp <= 0) {
+          target.destroyed = true;
+        }
+      }
+    }
+  }
+
+  onEnemyMove(result: MoveResponse): void {
+    if(result.move) {
+      let shipId =  result.move.shipId
+      let ship: BattleShip | undefined = this.battle?.enemyShips.find(a => a.id == shipId);
+      if(ship) {
+        ship.position = { x: result.move.x, y: result.move.y};
+        ship.movement = true;
+      }
+    }
+  }
+
+  onEnemyAttack(result: MoveResponse): void {
+    if(result.attack) {
+      let shipId =  result.attack.shipId
+      let position: BattlePosition = {x: result.attack.x, y: result.attack.y}
+      let ship: BattleShip | undefined = this.battle?.enemyShips.find(a => a.id == shipId);
+      let target: BattleShip | undefined = this.battle?.ships.find(a => a.position.x == position.x && a.position.y == position.y);
       if(ship && target) {
         ship.action = true;
         target.hp = target.hp = result.attack.damage;
