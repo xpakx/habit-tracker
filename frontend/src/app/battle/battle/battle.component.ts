@@ -94,7 +94,7 @@ export class BattleComponent implements OnInit {
     }
     this.shipForPlacementId = undefined;
     this.battleService.move({x: event.position.x, y: event.position.y, shipId: event.shipId, action: 'MOVE'}, this.battle.battleId).subscribe({
-      next: (result: MoveResponse) => this.onMove(result, event.shipId, event.position),
+      next: (result: MoveResponse) => this.onMove(result),
       error: (error: HttpErrorResponse) => this.onError(error)
     })
   }
@@ -106,17 +106,37 @@ export class BattleComponent implements OnInit {
     }
     this.shipForPlacementId = undefined;
     this.battleService.move({x: event.position.x, y: event.position.y, shipId: event.shipId, action: 'ATTACK'}, this.battle.battleId).subscribe({
-      next: (result: MoveResponse) => this.onAttack(result, event.shipId, event.position),
+      next: (result: MoveResponse) => this.onAttack(result),
       error: (error: HttpErrorResponse) => this.onError(error)
     })
   }
 
-  onMove(result: MoveResponse, shipId: number, position: BattlePosition): void {
-    this.placeShip(result, shipId, position)
+  onMove(result: MoveResponse): void {
+    if(result.move) {
+      let shipId =  result.move.shipId
+      let ship: BattleShip | undefined = this.battle?.ships.find(a => a.id == shipId);
+      if(ship) {
+        ship.position = { x: result.move.x, y: result.move.y};
+        ship.movement = true;
+      }
+    }
   }
 
-  onAttack(result: MoveResponse, shipId: number, position: BattlePosition): void {
-    throw new Error('Method not implemented.');
+  onAttack(result: MoveResponse): void {
+    if(result.attack) {
+      let shipId =  result.attack.shipId
+      let position: BattlePosition = {x: result.attack.x, y: result.attack.y}
+      let ship: BattleShip | undefined = this.battle?.ships.find(a => a.id == shipId);
+      let target: BattleShip | undefined = this.battle?.enemyShips.find(a => a.position.x == position.x && a.position.y == position.y);
+      if(ship && target) {
+        ship.action = true;
+        target.hp = target.hp = result.attack.damage;
+        target.damaged = true;
+        if(target.hp <= 0) {
+          target.destroyed = true;
+        }
+      }
+    }
   }
 
 }
