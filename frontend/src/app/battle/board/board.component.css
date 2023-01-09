@@ -1,0 +1,48 @@
+
+
+.field {
+    display: inline-block;
+    margin: 0;
+    text-decoration: none;
+    background: #0069ed;
+    width: 40px;
+    height: 40px;
+    border: none;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 250ms ease-in-out, transform 150ms ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    position: relative;
+}
+
+.field:hover,
+.field:focus {
+    background: #0053ba;
+}
+
+.field:focus {
+    outline: 1px solid #fff;
+    outline-offset: -4px;
+}
+
+.field:active {
+    transform: scale(0.99);
+}
+
+.enemy {
+    background: #ed0069;
+}
+
+.enemy:hover,
+.enemy:focus {
+    background: #ba0053;
+}
+
+.icon {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    top: 0;
+    left: 0;
+}

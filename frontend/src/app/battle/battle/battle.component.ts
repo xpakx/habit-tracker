@@ -14,7 +14,11 @@ import { MoveResponse } from '../dto/move-response';
   styleUrls: ['./battle.component.css']
 })
 export class BattleComponent implements OnInit {
-  battle?: BattleResponse;
+  battle?: BattleResponse = {
+    battleId: 1, width: 15, height: 10, finished: false, started: true, objective: 'DEFEAT', turn: 5, 
+    ships: [{id: 1, shipId: 1, name: "ship", code: "SHIP", rarity: 1, size: 1, hp: 10, strength: 5, hitRate: 50, criticalRate: 70, destroyed: false, damaged: false, prepared: true, action: false, movement: false, enemy: false, position:{x: 2, y: 3}}], 
+    enemyShips: [{id: 1, shipId: 1, name: "ship", code: "SHIP", rarity: 1, size: 1, hp: 10, strength: 5, hitRate: 50, criticalRate: 70, destroyed: false, damaged: false, prepared: true, action: false, movement: false, enemy: true, position:{x: 5, y: 3}}]
+  };
   unassignedShips: BattleShip[] = [];
   shipForPlacementId?: number;
 

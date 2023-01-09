@@ -1,7 +1,7 @@
 <div class="board" *ngIf="battle">
     <div class="row" *ngFor="let _ of [].constructor(battle.height); let i = index">
         <button class="field" *ngFor="let _ of [].constructor(battle.width); let j = index" [class.enemy]="isEnemy(i,j)" (click)="action(i,j)">
-            <img [src]="'/assets/'+ getImage(i,j) +'.png'" alt="" class="icon">
+            <img [src]="'/assets/'+ getImage(i,j) +'.png'" alt="" class="icon" *ngIf="getImage(i,j)!='SEA'">
         </button>
     </div>
 </div>
