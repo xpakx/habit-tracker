@@ -110,7 +110,7 @@ export class BattleComponent implements OnInit {
 
 
   move(event: MoveEvent) {
-    if(!this.battle || !this.shipForPlacementId) {
+    if(!this.battle) {
       return;
     }
     this.shipForPlacementId = undefined;
@@ -121,7 +121,7 @@ export class BattleComponent implements OnInit {
   }
 
   attack(event: MoveEvent) {
-    if(!this.battle || !this.shipForPlacementId) {
+    if(!this.battle) {
       return;
     }
     this.shipForPlacementId = undefined;
