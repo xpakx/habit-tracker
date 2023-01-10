@@ -1096,7 +1096,8 @@ class BattleControllerTest {
         .when()
                 .post(baseUrl + "/battle/{battleId}/turn/end", battleId)
         .then()
-                .statusCode(OK.value());
+                .statusCode(OK.value())
+                .body("$", hasSize(2));
         Optional<Ship> ship = shipRepository.findById(attackedShipId);
         assertTrue(ship.isPresent());
         assertThat(ship.get(), hasProperty("damaged", equalTo(true)));
