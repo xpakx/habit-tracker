@@ -1,5 +1,3 @@
-
-
 .field {
     display: inline-block;
     margin: 0;
@@ -11,8 +9,6 @@
     line-height: 1;
     cursor: pointer;
     transition: background 250ms ease-in-out, transform 150ms ease;
-    -webkit-appearance: none;
-    -moz-appearance: none;
     position: relative;
 }
 
@@ -31,12 +27,8 @@
 }
 
 .enemy {
-    background: #ed0069;
-}
-
-.enemy:hover,
-.enemy:focus {
-    background: #ba0053;
+    outline: 1px solid #ed0069;
+    outline-offset: -4px;
 }
 
 .icon {

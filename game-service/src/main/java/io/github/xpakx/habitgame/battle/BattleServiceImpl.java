@@ -366,6 +366,8 @@ public class BattleServiceImpl implements BattleService {
             throw new WrongBattleStateException("Battle is already finished!");
         }
 
+        List<MoveResponse> moves = new ArrayList<>();
+
         if(battle.isStarted()) {
             List<Ship> ships = shipRepository.findByExpeditionId(battle.getExpedition().getId());
             List<Ship> playerShips = filterPlayerShips(ships).toList();
@@ -374,7 +376,7 @@ public class BattleServiceImpl implements BattleService {
                 ship.setMovement(false);
                 ship.setAction(false);
             }
-            makeEnemyMove(battle, playerShips, enemyShips.stream().filter((s) -> !s.isDestroyed()).toList());
+            moves = makeEnemyMove(battle, playerShips, enemyShips.stream().filter((s) -> !s.isDestroyed()).toList());
             shipRepository.saveAll(playerShips);
             if(evaluateObjective(battle, enemyShips)) {
                 battle.setFinished(true);
@@ -390,7 +392,7 @@ public class BattleServiceImpl implements BattleService {
         }
         battleRepository.save(battle);
 
-        return new ArrayList<>();
+        return moves;
     }
 
     private boolean evaluateObjective(Battle battle, List<Ship> enemyShips) {
@@ -403,14 +405,43 @@ public class BattleServiceImpl implements BattleService {
         return false;
     }
 
-    private void makeEnemyMove(Battle battle, List<Ship> playerShips, List<Ship> enemyShips) {
+    private List<MoveResponse> makeEnemyMove(Battle battle, List<Ship> playerShips, List<Ship> enemyShips) {
+        List<MoveResponse> moves = new ArrayList<>();
         for(Ship ship : enemyShips) {
             Ship target = chooseTarget(ship, playerShips);
             if(target != null) {
                 moveTowards(ship, target);
-                applyDamage(ship, target);
+                int damage = applyDamage(ship, target);
+                moves.add(responseForMove(ship));
+                moves.add(responseForAttack(ship, target, damage));
             }
         }
+        return moves;
+    }
+
+    private MoveResponse responseForMove(Ship ship) {
+        MoveResponse response = new MoveResponse();
+        response.setSuccess(true);
+        response.setAction(MoveAction.MOVE);
+        MoveResult result = new MoveResult();
+        result.setX(ship.getPosition().getX());
+        result.setY(ship.getPosition().getY());
+        result.setShipId(ship.getId());
+        response.setMove(result);
+        return response;
+    }
+
+    private MoveResponse responseForAttack(Ship ship, Ship target, int damage) {
+        MoveResponse response = new MoveResponse();
+        response.setSuccess(damage > 0);
+        response.setAction(MoveAction.ATTACK);
+        AttackResult result = new AttackResult();
+        result.setX(target.getPosition().getX());
+        result.setY(target.getPosition().getY());
+        result.setShipId(ship.getId());
+        result.setDamage(damage);
+        response.setAttack(result);
+        return response;
     }
 
     private void moveTowards(Ship ship, Ship target) {
