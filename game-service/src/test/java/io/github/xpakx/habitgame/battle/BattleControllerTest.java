@@ -1129,4 +1129,23 @@ class BattleControllerTest {
                 .statusCode(OK.value())
                 .body("battleId", equalTo(battleId.intValue()));
     }
+
+    @Test
+    void shouldNotAttackPlayerShipIfNoneInRange() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true, false);
+        Long attackedShipId = addShip(expeditionId, true, true);
+        placeShip(attackedShipId, 1, 1, battleId);
+        placeShip(addEnemyShip(expeditionId), 10, 10, battleId);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/battle/{battleId}/turn/end", battleId)
+        .then()
+                .statusCode(OK.value())
+                .body("$", hasSize(0));
+        Optional<Ship> ship = shipRepository.findById(attackedShipId);
+        assertTrue(ship.isPresent());
+        assertThat(ship.get(), hasProperty("damaged", equalTo(false)));
+    }
 }
