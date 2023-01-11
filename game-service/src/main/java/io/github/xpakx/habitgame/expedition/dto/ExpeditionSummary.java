@@ -16,4 +16,6 @@ public interface ExpeditionSummary {
 
     @Value("#{target.expeditionResult != null ? target.expeditionResult.type : null}")
     ResultType getResult();
+    @Value("#{target.expeditionResult != null ? target.expeditionResult.completed : false}")
+    boolean isCompleted();
 }
