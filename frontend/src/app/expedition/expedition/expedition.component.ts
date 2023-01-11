@@ -1,8 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
+import { DiscoveryService } from '../discovery.service';
 import { ActionResponse } from '../dto/action-response';
+import { DiscoveryResponse } from '../dto/discovery-response';
 import { ExpeditionResultResponse } from '../dto/expedition-result-response';
 import { ExpeditionSummary } from '../dto/expedition-summary';
+import { TreasureResponse } from '../dto/treasure-response';
 import { ExpeditionService } from '../expedition.service';
 
 @Component({
@@ -14,7 +17,7 @@ export class ExpeditionComponent implements OnInit {
   @Input("expedition") expedition?: ExpeditionSummary;
   result?: ExpeditionResultResponse;
 
-  constructor(private expeditionService: ExpeditionService) { }
+  constructor(private expeditionService: ExpeditionService, private discoveryService: DiscoveryService) { }
 
   ngOnInit(): void {
   }
@@ -55,6 +58,32 @@ export class ExpeditionComponent implements OnInit {
   }
 
   onAction(response: ActionResponse): void {
+    throw new Error('Method not implemented.');
+  }
+
+  revealTreasure() {
+    if(this.expedition) {
+      this.discoveryService.getTreasure(this.expedition.id).subscribe({
+        next: (response: TreasureResponse) => this.onTreasure(response),
+        error: (error: HttpErrorResponse) => this.onError(error)
+      });
+    }
+  }
+  
+  onTreasure(response: TreasureResponse): void {
+    throw new Error('Method not implemented.');
+  }
+
+  revealIsland() {
+    if(this.expedition) {
+      this.discoveryService.getIsland(this.expedition.id).subscribe({
+        next: (response: DiscoveryResponse) => this.onIsland(response),
+        error: (error: HttpErrorResponse) => this.onError(error)
+      });
+    }
+  }
+
+  onIsland(response: DiscoveryResponse): void {
     throw new Error('Method not implemented.');
   }
 }

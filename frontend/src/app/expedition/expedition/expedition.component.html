@@ -2,9 +2,13 @@
     <span>Started: {{ expedition.start }}</span>
     <span>Time of arrival: {{ expedition.returning ? expedition.end : expedition.returnEnd }}</span>
     <span class="result" *ngIf="expedition.result">{{expedition.result}}</span>
-    <button class="battle-btn" *ngIf="expedition.result && expedition.result == 'BATTLE'" [routerLink]="'/expedition/'+expedition.id+'/battle'">To Battle</button>
     <ng-container *ngIf="result">
-        <!-- TODO: more info abou result -->
+        <!-- TODO: more info about result -->
+        <button class="battle-btn" *ngIf="expedition.result == 'BATTLE' || expedition.result == 'MONSTER'" [routerLink]="'/expedition/'+expedition.id+'/battle'">To Battle</button>
+        <ng-container *ngIf="expedition.completed">
+            <button class="battle-btn" *ngIf="expedition.result == 'TREASURE'" (click)="revealIsland()">Island</button>
+            <button class="battle-btn" *ngIf="expedition.result == 'ISLAND'" (click)="revealTreasure()">Treasure</button>
+        </ng-container>
     </ng-container>
 
     <button class="btn" (click)="complete()">Complete</button>

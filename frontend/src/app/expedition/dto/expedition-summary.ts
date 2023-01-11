@@ -6,5 +6,6 @@ export interface ExpeditionSummary {
     returnEnd: Date;
     finished: boolean;
     returning: boolean;
+    completed: boolean;
     result: String;
 }
