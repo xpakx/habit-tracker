@@ -23,4 +23,23 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    width: 100%;
+}
+
+.battle-info {
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.battle-info .text {
+    color: white;
+}
+
+.battle-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }

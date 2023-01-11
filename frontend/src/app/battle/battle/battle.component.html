@@ -4,7 +4,7 @@ Battle
     <div class="battle-info">
         <div class="turn-count">Turn {{ battle.turn }}</div>
         <div class="battle-obj">{{ battle.objective }}</div>
-        <div class="enemy-count">Enemies: {{ battle.enemyShips.length }}</div>
+        <div class="enemy-count">Enemies: <span class="text">{{ battle.enemyShips.length }}</span></div>
     </div>
 
     <app-board [battle]="battle" (place)="place($event)" (move)="move($event)" (attack)="attack($event)" [placement]="shipForPlacementId != undefined"></app-board>
