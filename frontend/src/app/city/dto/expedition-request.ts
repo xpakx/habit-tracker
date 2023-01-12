@@ -1,6 +1,6 @@
 import { ExpeditionShip } from "./expedition-ship";
 
 export interface ExpeditionRequest {
-    islandId: number;
+    islandId?: number;
     ships: ExpeditionShip[];
 }

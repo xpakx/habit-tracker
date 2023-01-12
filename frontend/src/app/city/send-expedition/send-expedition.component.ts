@@ -4,6 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { EquipmentEntry } from 'src/app/equipment/dto/equipment-entry';
 import { EquipmentResponse } from 'src/app/equipment/dto/equipment-response';
 import { EquipmentService } from 'src/app/equipment/equipment.service';
+import { IslandResponse } from 'src/app/expedition/dto/island-reponse';
+import { IslandService } from 'src/app/expedition/island.service';
 import { CityService } from '../city.service';
 import { DeployedShip } from '../dto/deployed-ship';
 import { ExpeditionEquipment } from '../dto/expedition-equipment';
@@ -23,8 +25,11 @@ export class SendExpeditionComponent implements OnInit {
   cargo: Map<number, ExpeditionEquipment[]> = new Map();
   equipment: EquipmentEntry[] = [];
   eqView: number|undefined;
+  islandId: number | undefined;
+  islands: IslandResponse[] = [];
+  islandsLoaded: boolean = false;
 
-  constructor(private cityService: CityService, private eqService: EquipmentService, private route: ActivatedRoute) { }
+  constructor(private cityService: CityService, private eqService: EquipmentService, private route: ActivatedRoute, private islandService: IslandService) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(routeParams => {
@@ -71,7 +76,7 @@ export class SendExpeditionComponent implements OnInit {
 
   sendExpedition() {
     if(this.cityId) {
-      let request: ExpeditionRequest = {islandId: 1, ships: []};
+      let request: ExpeditionRequest = {islandId: this.islandId, ships: []};
       for(let ship of this.shipsToSend) {
         let cargoForShip: ExpeditionEquipment[] | undefined = this.cargo.get(ship.id);
         request.ships.push({shipId: ship.id, equipment: cargoForShip ? cargoForShip : []});
@@ -127,5 +132,21 @@ export class SendExpeditionComponent implements OnInit {
   saveEquipment(response: EquipmentResponse, shipId: number): void {
     this.equipment = response.items;
     this.eqView = shipId;
+  }
+
+  getIslands() {
+    this.islandService.getAllIslands().subscribe({
+      next: (response: IslandResponse[]) => this.updateIslands(response),
+      error: (error: HttpErrorResponse) => this.onError(error)
+    })
+  }
+
+  updateIslands(response: IslandResponse[]): void {
+    this.islands = response;
+    this.islandsLoaded = true;
+  }
+
+  chooseIsland(id: number | undefined) {
+    this.islandId = id;
   }
 }

@@ -17,8 +17,8 @@ export class IslandService extends JwtService {
     super();
   }
 
-  public getAllIslands(): Observable<IslandResponse> {
-    return this.http.get<IslandResponse>(`${this.apiServerUrl}/island/all`, { headers: this.getHeaders() });
+  public getAllIslands(): Observable<IslandResponse[]> {
+    return this.http.get<IslandResponse[]>(`${this.apiServerUrl}/island/all`, { headers: this.getHeaders() });
   }
 
   public renameIsland(islandId: number, request: IslandNameRequest): Observable<IslandNameResponse> {

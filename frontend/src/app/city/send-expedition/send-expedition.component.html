@@ -8,6 +8,15 @@
     </div>
 </div>
 
+<div class="islands" *ngIf="islandsLoaded">
+    <div class="island" *ngFor="let island of islands" [class.island-choice]="island.id==islandId">
+        {{island.name}}
+        <button class="island-btn" (click)="chooseIsland(island.id)">Choose</button>
+    </div>
+    <button class="island-btn" (click)="chooseIsland(undefined)">None</button>
+</div>
+<button class="islands-btn" *ngIf="!islandsLoaded" (click)="getIslands()">Load islands</button>
+
 <div class="ships ships-to-send">
     <div class="ship" *ngFor="let ship of shipsToSend">
         <div class="name">{{ ship. name}}</div>
