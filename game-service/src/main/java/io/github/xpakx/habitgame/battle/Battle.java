@@ -24,4 +24,5 @@ public class Battle {
     private Integer width;
     private BattleObjective objective;
     private Integer turn;
+    private Integer turnsToSurvive;
 }

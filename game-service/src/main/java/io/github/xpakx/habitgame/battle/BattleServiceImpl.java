@@ -101,6 +101,7 @@ public class BattleServiceImpl implements BattleService {
         battle.setWidth(20);
         battle.setObjective(BattleObjective.DEFEAT);
         battle.setTurn(0);
+        battle.setTurnsToSurvive(0);
         return battleRepository.save(battle);
     }
 
