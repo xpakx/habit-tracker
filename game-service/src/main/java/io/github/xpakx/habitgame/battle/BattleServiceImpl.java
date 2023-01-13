@@ -402,6 +402,9 @@ public class BattleServiceImpl implements BattleService {
         if(battle.getObjective() == BattleObjective.SURVIVE && battle.getTurn() == 10) {
             return  true;
         }
+        if(battle.getObjective() == BattleObjective.BOSS && enemyShips.stream().filter(Ship::isBoss).allMatch(Ship::isDestroyed)) {
+            return true;
+        }
         return false;
     }
 

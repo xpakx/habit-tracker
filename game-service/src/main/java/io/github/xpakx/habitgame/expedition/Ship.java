@@ -35,6 +35,7 @@ public class Ship {
     private boolean movement;
 
     private boolean enemy;
+    private boolean boss;
 
     private Integer strength;
     private Integer criticalRate;
