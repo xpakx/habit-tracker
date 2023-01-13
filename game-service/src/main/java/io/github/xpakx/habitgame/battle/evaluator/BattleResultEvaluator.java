@@ -1,5 +1,6 @@
-package io.github.xpakx.habitgame.battle;
+package io.github.xpakx.habitgame.battle.evaluator;
 
+import io.github.xpakx.habitgame.battle.Battle;
 import io.github.xpakx.habitgame.expedition.Ship;
 
 import java.util.List;

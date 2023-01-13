@@ -2,6 +2,7 @@ package io.github.xpakx.habitgame.battle;
 
 import io.github.xpakx.habitgame.battle.dto.*;
 import io.github.xpakx.habitgame.battle.error.*;
+import io.github.xpakx.habitgame.battle.evaluator.BattleResultEvaluator;
 import io.github.xpakx.habitgame.expedition.*;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionCompletedException;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionNotFoundException;
