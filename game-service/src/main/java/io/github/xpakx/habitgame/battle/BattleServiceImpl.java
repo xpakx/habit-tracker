@@ -88,7 +88,7 @@ public class BattleServiceImpl implements BattleService {
         ExpeditionResult result = resultRepository.findByExpeditionIdAndExpeditionUserId(expeditionId, userId).orElseThrow(ExpeditionNotFoundException::new);
         testResult(result);
         Battle battle = createBattle(result);
-        generateEnemyShips(battle.getId(), result.getExpedition());
+        generateEnemyShips(battle.getId(), result.getExpedition(), battle.getObjective());
         return getBattleResponse(battle);
     }
 
@@ -105,13 +105,26 @@ public class BattleServiceImpl implements BattleService {
         return battleRepository.save(battle);
     }
 
-    private void generateEnemyShips(Long battleId, Expedition expedition) {
+    private void generateEnemyShips(Long battleId, Expedition expedition, BattleObjective objective) {
         Random random = new Random();
         List<Integer> rarities = shipRepository.findByExpeditionId(expedition.getId()).stream()
                 .map(Ship::getRarity)
                 .toList();
-        List<Ship> shipsToAdd = generateShips(expedition, random, rarities, getShipTypes(rarities));
+        List<ShipType> prototypes = getShipTypes(rarities);
+        List<Ship> shipsToAdd = generateShips(expedition, random, rarities, prototypes);
+        if(objective.equals(BattleObjective.BOSS)) {
+            shipsToAdd.add(generateBossShip(expedition, prototypes));
+        }
         positionRepository.saveAll(randomizePositions(shipRepository.saveAll(shipsToAdd), battleId, random));
+    }
+
+    private Ship generateBossShip(Expedition expedition, List<ShipType> prototypes) {
+        int maxRarity = prototypes.stream().map(ShipType::getRarity).max(Comparator.naturalOrder()).orElse(0);
+        ShipType prototype = prototypes.stream().filter(a -> a.getRarity() == maxRarity).findFirst().orElse(null);
+        Random random = new Random();
+        Ship ship = generateShipFromPrototype(expedition, prototype, random.nextInt(5)-1);
+        ship.setBoss(true);
+        return ship;
     }
 
     private List<Position> randomizePositions(List<Ship> ships, Long battleId, Random random) {
@@ -140,10 +153,8 @@ public class BattleServiceImpl implements BattleService {
 
     private List<Ship> generateShips(Expedition expedition, Random random, List<Integer> rarities, List<ShipType> shipPrototypes) {
         List<Ship> shipsToAdd = new ArrayList<>();
-        System.out.println("Prototypes: " + shipPrototypes.size());
         for(ShipType prototype : shipPrototypes) {
             long ships = calculateShipCount(random, rarities, prototype);
-            System.out.println("Rarity: " +  prototype.getRarity() + ", Ships: " + ships);
             for(long i = ships; i>0; i--) {
                 shipsToAdd.add(generateShipFromPrototype(expedition, prototype, random.nextInt(2)-1));
             }
@@ -161,7 +172,6 @@ public class BattleServiceImpl implements BattleService {
         List<Integer> distinctRarities = rarities.stream().distinct().toList();
         List<ShipType> shipPrototypes = new ArrayList<>();
         for(Integer rarity : distinctRarities) {
-            System.out.println("Current rarity: " + rarity);
             shipPrototypes.addAll(shipTypeRepository.findRandomTypes(1, rarity));
         }
         return shipPrototypes;
