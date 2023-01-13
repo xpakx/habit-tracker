@@ -24,6 +24,7 @@ public class BattleServiceImpl implements BattleService {
     private final ShipRepository shipRepository;
     private final PositionRepository positionRepository;
     private final ShipTypeRepository shipTypeRepository;
+    private final List<BattleResultEvaluator> resultEvaluators;
 
     @Override
     public BattleResponse getBattle(Long expeditionId, Long userId) {
@@ -396,16 +397,11 @@ public class BattleServiceImpl implements BattleService {
     }
 
     private boolean evaluateObjective(Battle battle, List<Ship> enemyShips) {
-        if(battle.getObjective() == BattleObjective.DEFEAT && enemyShips.stream().allMatch(Ship::isDestroyed)) {
-            return true;
-        }
-        if(battle.getObjective() == BattleObjective.SURVIVE && battle.getTurn() == 10) {
-            return  true;
-        }
-        if(battle.getObjective() == BattleObjective.BOSS && enemyShips.stream().filter(Ship::isBoss).allMatch(Ship::isDestroyed)) {
-            return true;
-        }
-        return false;
+        return resultEvaluators.stream()
+                .filter((a) -> a.ofType(battle))
+                .map((a) -> a.evaluate(battle, enemyShips))
+                .filter((a) -> a)
+                .findFirst().orElse(false);
     }
 
     private List<MoveResponse> makeEnemyMove(Battle battle, List<Ship> playerShips, List<Ship> enemyShips) {
