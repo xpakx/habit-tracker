@@ -25,4 +25,5 @@ public class Battle {
     private BattleObjective objective;
     private Integer turn;
     private Integer turnsToSurvive;
+    private boolean seized;
 }
