@@ -262,6 +262,23 @@ class BattleControllerTest {
         return shipRepository.save(ship).getId();
     }
 
+    private Long addDestroyedEnemyShip(Long expeditionId) {
+        Ship ship = new Ship();
+        ship.setExpedition(expeditionRepository.getReferenceById(expeditionId));
+        ship.setUserId(userId);
+        ship.setSize(1);
+        ship.setEnemy(true);
+        ship.setMovement(true);
+        ship.setAction(true);
+        ship.setDestroyed(true);
+        ship.setHp(1);
+        ship.setRarity(2);
+        ship.setStrength(1);
+        ship.setHitRate(100);
+        ship.setCriticalRate(0);
+        return shipRepository.save(ship).getId();
+    }
+
     private Long addShip(Long expeditionId, int size) {
         return addShip(expeditionId, false, false, size);
     }
@@ -1148,5 +1165,41 @@ class BattleControllerTest {
         Optional<Ship> ship = shipRepository.findById(attackedShipId);
         assertTrue(ship.isPresent());
         assertThat(ship.get(), hasProperty("damaged", equalTo(false)));
+    }
+
+    @Test
+    void shouldNotFinishBattleIfNotAllEnemyShipsAreDestroyed() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true, false);
+        placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
+        placeShip(addShip(expeditionId, true, false), 1, 2, battleId);
+        placeShip(addShip(expeditionId, false, true), 1, 3, battleId);
+        placeShip(addEnemyShip(expeditionId), 15, 15, battleId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .when()
+                .post(baseUrl + "/battle/{battleId}/turn/end", battleId)
+        .then()
+                .statusCode(OK.value());
+        Battle battle = battleRepository.findById(battleId).get();
+        assertFalse(battle.isFinished());
+    }
+
+    @Test
+    void shouldFinishBattleIfAllEnemyShipsAreDestroyed() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true, false);
+        placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
+        placeShip(addShip(expeditionId, true, false), 1, 2, battleId);
+        placeShip(addShip(expeditionId, false, true), 1, 3, battleId);
+        placeShip(addDestroyedEnemyShip(expeditionId), 15, 15, battleId);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/battle/{battleId}/turn/end", battleId)
+        .then()
+                .statusCode(OK.value());
+        Battle battle = battleRepository.findById(battleId).get();
+        assertTrue(battle.isFinished());
     }
 }
