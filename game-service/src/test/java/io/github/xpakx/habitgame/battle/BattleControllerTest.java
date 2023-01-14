@@ -1186,6 +1186,25 @@ class BattleControllerTest {
     }
 
     @Test
+    void shouldNotFinishBattleIfOneOfTwoEnemyShipsAreDestroyed() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true, false);
+        placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
+        placeShip(addShip(expeditionId, true, false), 1, 2, battleId);
+        placeShip(addShip(expeditionId, false, true), 1, 3, battleId);
+        placeShip(addEnemyShip(expeditionId), 15, 15, battleId);
+        placeShip(addDestroyedEnemyShip(expeditionId), 15, 14, battleId);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/battle/{battleId}/turn/end", battleId)
+        .then()
+                .statusCode(OK.value());
+        Battle battle = battleRepository.findById(battleId).get();
+        assertFalse(battle.isFinished());
+    }
+
+    @Test
     void shouldFinishBattleIfAllEnemyShipsAreDestroyed() {
         Long expeditionId = addExpedition();
         Long battleId = addBattle(expeditionId, true, false);
@@ -1193,6 +1212,41 @@ class BattleControllerTest {
         placeShip(addShip(expeditionId, true, false), 1, 2, battleId);
         placeShip(addShip(expeditionId, false, true), 1, 3, battleId);
         placeShip(addDestroyedEnemyShip(expeditionId), 15, 15, battleId);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/battle/{battleId}/turn/end", battleId)
+        .then()
+                .statusCode(OK.value());
+        Battle battle = battleRepository.findById(battleId).get();
+        assertTrue(battle.isFinished());
+    }
+
+    @Test
+    void shouldFinishBattleIfAllEnemyShipsAreDestroyedForMultipleShips() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true, false);
+        placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
+        placeShip(addShip(expeditionId, true, false), 1, 2, battleId);
+        placeShip(addShip(expeditionId, false, true), 1, 3, battleId);
+        placeShip(addDestroyedEnemyShip(expeditionId), 15, 15, battleId);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/battle/{battleId}/turn/end", battleId)
+        .then()
+                .statusCode(OK.value());
+        Battle battle = battleRepository.findById(battleId).get();
+        assertTrue(battle.isFinished());
+    }
+
+    @Test
+    void shouldFinishBattleInDefeatModeWithoutEnemyShips() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true, false);
+        placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
+        placeShip(addShip(expeditionId, true, false), 1, 2, battleId);
+        placeShip(addShip(expeditionId, false, true), 1, 3, battleId);
         given()
                 .header(getHeaderForUserId(userId))
         .when()
