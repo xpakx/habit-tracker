@@ -229,6 +229,19 @@ class BattleControllerTest {
         return battleRepository.save(battle).getId();
     }
 
+    private Long addSurvivalBattle(Long expeditionId, int turns, int turn) {
+        Battle battle = new Battle();
+        battle.setStarted(true);
+        battle.setFinished(false);
+        battle.setExpedition(expeditionRepository.getReferenceById(expeditionId));
+        battle.setTurn(turn);
+        battle.setTurnsToSurvive(turns);
+        battle.setWidth(10);
+        battle.setHeight(10);
+        battle.setObjective(BattleObjective.SURVIVE);
+        return battleRepository.save(battle).getId();
+    }
+
     @Test
     void shouldNotPlaceShipIfWrongActionType() {
         Long expeditionId = addExpedition();
@@ -1370,6 +1383,42 @@ class BattleControllerTest {
     void shouldFinishBattleIfBattleHaveSeizedFlag() {
         Long expeditionId = addExpedition();
         Long battleId = addSeizedBattle(expeditionId);
+        placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
+        placeShip(addShip(expeditionId, true, false), 1, 2, battleId);
+        placeShip(addShip(expeditionId, false, true), 1, 3, battleId);
+        placeShip(addEnemyShip(expeditionId), 15, 15, battleId);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/battle/{battleId}/turn/end", battleId)
+        .then()
+                .statusCode(OK.value());
+        Battle battle = battleRepository.findById(battleId).get();
+        assertTrue(battle.isFinished());
+    }
+
+    @Test
+    void shouldNotFinishBattleIfThereAreMoreTurnsToSurvive() {
+        Long expeditionId = addExpedition();
+        Long battleId = addSurvivalBattle(expeditionId, 5, 1);
+        placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
+        placeShip(addShip(expeditionId, true, false), 1, 2, battleId);
+        placeShip(addShip(expeditionId, false, true), 1, 3, battleId);
+        placeShip(addEnemyShip(expeditionId), 15, 15, battleId);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/battle/{battleId}/turn/end", battleId)
+        .then()
+                .statusCode(OK.value());
+        Battle battle = battleRepository.findById(battleId).get();
+        assertFalse(battle.isFinished());
+    }
+
+    @Test
+    void shouldFinishBattleAfterSurvival() {
+        Long expeditionId = addExpedition();
+        Long battleId = addSurvivalBattle(expeditionId, 5, 5);
         placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
         placeShip(addShip(expeditionId, true, false), 1, 2, battleId);
         placeShip(addShip(expeditionId, false, true), 1, 3, battleId);
