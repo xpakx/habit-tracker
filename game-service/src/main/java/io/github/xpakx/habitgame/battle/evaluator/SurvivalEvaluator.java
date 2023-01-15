@@ -16,6 +16,10 @@ public class SurvivalEvaluator implements BattleResultEvaluator {
 
     @Override
     public boolean evaluate(Battle battle, List<Ship> enemyShips) {
-        return battle.getTurn() >= battle.getTurnsToSurvive();
+        return battle.getTurn() >= battle.getTurnsToSurvive() || areAllEnemyShipsDestroyed(battle, enemyShips);
+    }
+
+    private boolean areAllEnemyShipsDestroyed(Battle battle, List<Ship> enemyShips) {
+        return enemyShips.stream().allMatch(Ship::isDestroyed);
     }
 }
