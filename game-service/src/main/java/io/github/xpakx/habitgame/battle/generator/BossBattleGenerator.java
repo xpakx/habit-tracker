@@ -17,7 +17,7 @@ import java.util.*;
 
 @Service
 @AllArgsConstructor
-public class BossBattleGenerator implements BattleGenerator {
+public class BossBattleGenerator extends AbstractBattleGenerator {
     private final BattleRepository battleRepository;
     private final ShipRepository shipRepository;
     private final ShipTypeRepository shipTypeRepository;
@@ -30,7 +30,7 @@ public class BossBattleGenerator implements BattleGenerator {
         battle.setStarted(false);
         battle.setHeight(15);
         battle.setWidth(20);
-        battle.setObjective(BattleObjective.DEFEAT);
+        battle.setObjective(BattleObjective.BOSS);
         battle.setTurn(0);
         battle.setTurnsToSurvive(0);
         return battle;
@@ -63,75 +63,11 @@ public class BossBattleGenerator implements BattleGenerator {
         return ship;
     }
 
-    @Override
-    public List<Position> randomizePositions(List<Ship> ships, Long battleId, Random random) {
-        int boardWidth = 20;
-        int boardHeight = 15;
-        List<Position> positions = new ArrayList<>();
-        for(int i = 0; i < boardWidth/2; i++) {
-            for(int j = 0; j < boardHeight; j++) {
-                Position pos = new Position();
-                pos.setX(i);
-                pos.setY(j);
-                positions.add(pos);
-            }
-        }
-        Collections.shuffle(positions);
-        List<Position> result = new ArrayList<>();
-        int positionIndex = 0;
-        for(Ship ship : ships) {
-            Position position = positions.get(positionIndex);
-            position.setBattle(battleRepository.getReferenceById(battleId));
-            position.setShip(ship);
-            result.add(position);
-        }
-        return result;
+    protected List<ShipType> getRandomTypes(Integer rarity) {
+        return shipTypeRepository.findRandomTypes(1, rarity);
     }
 
-    private List<Ship> generateShips(Expedition expedition, Random random, List<Integer> rarities, List<ShipType> shipPrototypes) {
-        List<Ship> shipsToAdd = new ArrayList<>();
-        for(ShipType prototype : shipPrototypes) {
-            long ships = calculateShipCount(random, rarities, prototype);
-            for(long i = ships; i>0; i--) {
-                shipsToAdd.add(generateShipFromPrototype(expedition, prototype, random.nextInt(2)-1));
-            }
-        }
-        return shipsToAdd;
-    }
-    private long calculateShipCount(Random random, List<Integer> rarities, ShipType prototype) {
-        long rarityCount = rarities.stream().filter((a) -> Objects.equals(a, prototype.getRarity())).count();
-        long shipBonus = rarityCount > 1 ? random.nextLong((long) (0.2*rarityCount)) - (long) (0.1*rarityCount) : 0;
-        return rarityCount + shipBonus;
-    }
-
-    private List<ShipType> getShipTypes(List<Integer> rarities) {
-        List<Integer> distinctRarities = rarities.stream().distinct().toList();
-        List<ShipType> shipPrototypes = new ArrayList<>();
-        for(Integer rarity : distinctRarities) {
-            shipPrototypes.addAll(shipTypeRepository.findRandomTypes(1, rarity));
-        }
-        return shipPrototypes;
-    }
-
-    private Ship generateShipFromPrototype(Expedition expedition, ShipType prototype, Integer sizeBonus) {
-        Ship ship = new Ship();
-        ship.setPrepared(true);
-        ship.setDestroyed(false);
-        ship.setCode(prototype.getCode());
-        ship.setName(prototype.getName());
-        ship.setSize(prototype.getBaseSize()+sizeBonus);
-        ship.setExpedition(expedition);
-        ship.setDamaged(false);
-        ship.setDestroyed(false);
-        ship.setPrepared(false);
-        ship.setAction(false);
-        ship.setMovement(false);
-        ship.setEnemy(true);
-        ship.setUserId(expedition.getUserId());
-        ship.setHp(ship.getSize()*10);
-        ship.setStrength(prototype.getStrength());
-        ship.setCriticalRate(prototype.getCriticalRate());
-        ship.setHitRate(prototype.getHitRate());
-        return ship;
+    protected Battle getReferenceToBattle(Long battleId) {
+        return battleRepository.getReferenceById(battleId);
     }
 }
