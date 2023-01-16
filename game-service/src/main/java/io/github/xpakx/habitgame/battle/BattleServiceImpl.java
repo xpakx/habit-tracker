@@ -99,10 +99,15 @@ public class BattleServiceImpl implements BattleService {
         battle.setStarted(false);
         battle.setHeight(15);
         battle.setWidth(20);
-        battle.setObjective(BattleObjective.DEFEAT);
+        battle.setObjective(randomizeObjective());
         battle.setTurn(0);
         battle.setTurnsToSurvive(0);
         return battleRepository.save(battle);
+    }
+
+    private BattleObjective randomizeObjective() {
+        Random random = new Random();
+        return random.nextInt(2) > 0 ? BattleObjective.DEFEAT : BattleObjective.BOSS;
     }
 
     private void generateEnemyShips(Long battleId, Expedition expedition, BattleObjective objective) {
