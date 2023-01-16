@@ -1,6 +1,7 @@
 package io.github.xpakx.habitgame.battle.generator;
 
 import io.github.xpakx.habitgame.battle.Battle;
+import io.github.xpakx.habitgame.battle.BattleObjective;
 import io.github.xpakx.habitgame.battle.Position;
 import io.github.xpakx.habitgame.expedition.Expedition;
 import io.github.xpakx.habitgame.expedition.ExpeditionResult;
@@ -12,15 +13,29 @@ import java.util.*;
 public abstract class AbstractBattleGenerator implements BattleGenerator {
     @Override
     public Battle createBattle(ExpeditionResult result) {
-        return null;
+        Battle battle = new Battle();
+        battle.setExpedition(result.getExpedition());
+        battle.setFinished(false);
+        battle.setStarted(false);
+        battle.setHeight(15);
+        battle.setWidth(20);
+        battle.setTurn(0);
+        battle.setTurnsToSurvive(0);
+        return battle;
     }
 
     @Override
     public List<Ship> generateShips(Long battleId, Expedition expedition) {
-        return null;
+        Random random = new Random();
+        List<Integer> rarities = getRarities(expedition);
+        List<ShipType> prototypes = getShipTypes(rarities);
+        return generateShips(expedition, random, rarities, prototypes);
     }
 
-
+    protected List<Integer> getRarities(Expedition expedition) {
+        return new ArrayList<>();
+    }
+    
     @Override
     public List<Position> randomizePositions(List<Ship> ships, Long battleId, Random random) {
         int boardWidth = 20;

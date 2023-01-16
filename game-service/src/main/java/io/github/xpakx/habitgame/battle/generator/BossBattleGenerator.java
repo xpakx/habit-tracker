@@ -3,7 +3,6 @@ package io.github.xpakx.habitgame.battle.generator;
 import io.github.xpakx.habitgame.battle.Battle;
 import io.github.xpakx.habitgame.battle.BattleObjective;
 import io.github.xpakx.habitgame.battle.BattleRepository;
-import io.github.xpakx.habitgame.battle.Position;
 import io.github.xpakx.habitgame.expedition.Expedition;
 import io.github.xpakx.habitgame.expedition.ExpeditionResult;
 import io.github.xpakx.habitgame.expedition.Ship;
@@ -24,15 +23,8 @@ public class BossBattleGenerator extends AbstractBattleGenerator {
 
     @Override
     public Battle createBattle(ExpeditionResult result) {
-        Battle battle = new Battle();
-        battle.setExpedition(result.getExpedition());
-        battle.setFinished(false);
-        battle.setStarted(false);
-        battle.setHeight(15);
-        battle.setWidth(20);
+        Battle battle = super.createBattle(result);
         battle.setObjective(BattleObjective.BOSS);
-        battle.setTurn(0);
-        battle.setTurnsToSurvive(0);
         return battle;
     }
 
@@ -69,5 +61,11 @@ public class BossBattleGenerator extends AbstractBattleGenerator {
 
     protected Battle getReferenceToBattle(Long battleId) {
         return battleRepository.getReferenceById(battleId);
+    }
+
+    protected List<Integer> getRarities(Expedition expedition) {
+        return shipRepository.findByExpeditionId(expedition.getId()).stream()
+                .map(Ship::getRarity)
+                .toList();
     }
 }

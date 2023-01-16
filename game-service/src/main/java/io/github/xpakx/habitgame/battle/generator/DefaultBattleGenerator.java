@@ -21,26 +21,9 @@ public class DefaultBattleGenerator extends AbstractBattleGenerator {
 
     @Override
     public Battle createBattle(ExpeditionResult result) {
-        Battle battle = new Battle();
-        battle.setExpedition(result.getExpedition());
-        battle.setFinished(false);
-        battle.setStarted(false);
-        battle.setHeight(15);
-        battle.setWidth(20);
+        Battle battle = super.createBattle(result);
         battle.setObjective(BattleObjective.DEFEAT);
-        battle.setTurn(0);
-        battle.setTurnsToSurvive(0);
         return battle;
-    }
-
-    @Override
-    public List<Ship> generateShips(Long battleId, Expedition expedition) {
-        Random random = new Random();
-        List<Integer> rarities = shipRepository.findByExpeditionId(expedition.getId()).stream()
-                .map(Ship::getRarity)
-                .toList();
-        List<ShipType> prototypes = getShipTypes(rarities);
-        return generateShips(expedition, random, rarities, prototypes);
     }
 
     protected List<ShipType> getRandomTypes(Integer rarity) {
@@ -49,5 +32,11 @@ public class DefaultBattleGenerator extends AbstractBattleGenerator {
 
     protected Battle getReferenceToBattle(Long battleId) {
         return battleRepository.getReferenceById(battleId);
+    }
+
+    protected List<Integer> getRarities(Expedition expedition) {
+        return shipRepository.findByExpeditionId(expedition.getId()).stream()
+                .map(Ship::getRarity)
+                .toList();
     }
 }
