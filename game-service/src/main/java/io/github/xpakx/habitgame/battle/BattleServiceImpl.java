@@ -4,8 +4,6 @@ import io.github.xpakx.habitgame.battle.dto.*;
 import io.github.xpakx.habitgame.battle.error.*;
 import io.github.xpakx.habitgame.battle.evaluator.BattleResultEvaluator;
 import io.github.xpakx.habitgame.battle.generator.BattleGenerator;
-import io.github.xpakx.habitgame.battle.generator.BossBattleGenerator;
-import io.github.xpakx.habitgame.battle.generator.DefaultBattleGenerator;
 import io.github.xpakx.habitgame.expedition.*;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionCompletedException;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionNotFoundException;
@@ -26,8 +24,7 @@ public class BattleServiceImpl implements BattleService {
     private final ShipRepository shipRepository;
     private final PositionRepository positionRepository;
     private final List<BattleResultEvaluator> resultEvaluators;
-    private final DefaultBattleGenerator battleGenerator;
-    private final BossBattleGenerator bossBattleGenerator;
+    private final List<BattleGenerator> battleGenerators;
 
     @Override
     public BattleResponse getBattle(Long expeditionId, Long userId) {
@@ -98,7 +95,7 @@ public class BattleServiceImpl implements BattleService {
 
     private BattleGenerator randomizeObjective() {
         Random random = new Random();
-        return random.nextInt(2) > 0 ? battleGenerator : bossBattleGenerator;
+        return battleGenerators.get(random.nextInt(battleGenerators.size()));
     }
 
     private void testResult(ExpeditionResult result) {
