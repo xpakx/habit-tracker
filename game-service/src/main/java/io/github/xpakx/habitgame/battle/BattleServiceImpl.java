@@ -118,17 +118,17 @@ public class BattleServiceImpl implements BattleService {
         List<ShipType> prototypes = getShipTypes(rarities);
         List<Ship> shipsToAdd = generateShips(expedition, random, rarities, prototypes);
         if(objective.equals(BattleObjective.BOSS)) {
-            shipsToAdd.add(generateBossShip(expedition, prototypes));
+            generateBossShip(expedition, prototypes)
+                    .ifPresent(shipsToAdd::add);
         }
         positionRepository.saveAll(randomizePositions(shipRepository.saveAll(shipsToAdd), battleId, random));
     }
 
-    private Ship generateBossShip(Expedition expedition, List<ShipType> prototypes) {
+    private Optional<Ship> generateBossShip(Expedition expedition, List<ShipType> prototypes) {
         int maxRarity = prototypes.stream().map(ShipType::getRarity).max(Comparator.naturalOrder()).orElse(0);
         return prototypes.stream()
                 .filter(a -> a.getRarity() == maxRarity).map((a) -> generateBossFromPrototype(a, expedition))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
     private Ship generateBossFromPrototype(ShipType prototype, Expedition expedition) {
