@@ -10,8 +10,6 @@ import io.github.xpakx.habitgame.expedition.*;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionCompletedException;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionNotFoundException;
 import io.github.xpakx.habitgame.expedition.error.WrongExpeditionResultType;
-import io.github.xpakx.habitgame.ship.ShipType;
-import io.github.xpakx.habitgame.ship.ShipTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +25,6 @@ public class BattleServiceImpl implements BattleService {
     private final BattleRepository battleRepository;
     private final ShipRepository shipRepository;
     private final PositionRepository positionRepository;
-    private final ShipTypeRepository shipTypeRepository;
     private final List<BattleResultEvaluator> resultEvaluators;
     private final DefaultBattleGenerator battleGenerator;
     private final BossBattleGenerator bossBattleGenerator;
@@ -117,7 +114,7 @@ public class BattleServiceImpl implements BattleService {
     @Transactional
     public MoveResponse move(MoveRequest request, Long battleId, Long userId) {
         Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId, userId).orElseThrow(BattleNotFoundException::new);
-        testShipMove(request, battleId, battle);
+        testShipMove(battle);
         Ship ship = shipRepository.findByIdAndUserIdAndExpeditionId(request.getShipId(), userId, battle.getExpedition().getId()).orElseThrow(ShipNotFoundException::new);
         testShipOwnership(ship);
         testShipHealth(ship);
@@ -206,7 +203,7 @@ public class BattleServiceImpl implements BattleService {
         // TODO let player use skills/items
     }
 
-    private void testShipMove(MoveRequest request, Long battleId, Battle battle) {
+    private void testShipMove(Battle battle) {
         if(!battle.isStarted()) {
             throw new WrongBattleStateException("Battle hasn't started yet!");
         }
@@ -294,7 +291,7 @@ public class BattleServiceImpl implements BattleService {
                 ship.setMovement(false);
                 ship.setAction(false);
             }
-            moves = makeEnemyMove(battle, playerShips, enemyShips.stream().filter((s) -> !s.isDestroyed()).toList());
+            moves = makeEnemyMove(playerShips, enemyShips.stream().filter((s) -> !s.isDestroyed()).toList());
             shipRepository.saveAll(playerShips);
             if(evaluateObjective(battle, enemyShips)) {
                 battle.setFinished(true);
@@ -321,7 +318,7 @@ public class BattleServiceImpl implements BattleService {
                 .findFirst().orElse(false);
     }
 
-    private List<MoveResponse> makeEnemyMove(Battle battle, List<Ship> playerShips, List<Ship> enemyShips) {
+    private List<MoveResponse> makeEnemyMove(List<Ship> playerShips, List<Ship> enemyShips) {
         List<MoveResponse> moves = new ArrayList<>();
         for(Ship ship : enemyShips) {
             Ship target = chooseTarget(ship, playerShips);
