@@ -3,6 +3,9 @@ package io.github.xpakx.habitgame.battle;
 import io.github.xpakx.habitgame.battle.dto.*;
 import io.github.xpakx.habitgame.battle.error.*;
 import io.github.xpakx.habitgame.battle.evaluator.BattleResultEvaluator;
+import io.github.xpakx.habitgame.battle.generator.BattleGenerator;
+import io.github.xpakx.habitgame.battle.generator.BossBattleGenerator;
+import io.github.xpakx.habitgame.battle.generator.DefaultBattleGenerator;
 import io.github.xpakx.habitgame.expedition.*;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionCompletedException;
 import io.github.xpakx.habitgame.expedition.error.ExpeditionNotFoundException;
@@ -26,6 +29,8 @@ public class BattleServiceImpl implements BattleService {
     private final PositionRepository positionRepository;
     private final ShipTypeRepository shipTypeRepository;
     private final List<BattleResultEvaluator> resultEvaluators;
+    private final DefaultBattleGenerator battleGenerator;
+    private final BossBattleGenerator bossBattleGenerator;
 
     @Override
     public BattleResponse getBattle(Long expeditionId, Long userId) {
@@ -87,127 +92,16 @@ public class BattleServiceImpl implements BattleService {
     private BattleResponse startBattle(Long expeditionId, Long userId) {
         ExpeditionResult result = resultRepository.findByExpeditionIdAndExpeditionUserId(expeditionId, userId).orElseThrow(ExpeditionNotFoundException::new);
         testResult(result);
-        Battle battle = createBattle(result);
-        generateEnemyShips(battle.getId(), result.getExpedition(), battle.getObjective());
+        BattleGenerator generator  = randomizeObjective();
+        Battle battle = battleRepository.save(generator.createBattle(result));
+        List<Ship> ships = shipRepository.saveAll(generator.generateShips(battle.getId(), result.getExpedition()));
+        positionRepository.saveAll(generator.randomizePositions(ships, battle.getId(), new Random()));
         return getBattleResponse(battle);
     }
 
-    private Battle createBattle(ExpeditionResult result) {
-        Battle battle = new Battle();
-        battle.setExpedition(result.getExpedition());
-        battle.setFinished(false);
-        battle.setStarted(false);
-        battle.setHeight(15);
-        battle.setWidth(20);
-        battle.setObjective(randomizeObjective());
-        battle.setTurn(0);
-        battle.setTurnsToSurvive(0);
-        return battleRepository.save(battle);
-    }
-
-    private BattleObjective randomizeObjective() {
+    private BattleGenerator randomizeObjective() {
         Random random = new Random();
-        return random.nextInt(2) > 0 ? BattleObjective.DEFEAT : BattleObjective.BOSS;
-    }
-
-    private void generateEnemyShips(Long battleId, Expedition expedition, BattleObjective objective) {
-        Random random = new Random();
-        List<Integer> rarities = shipRepository.findByExpeditionId(expedition.getId()).stream()
-                .map(Ship::getRarity)
-                .toList();
-        List<ShipType> prototypes = getShipTypes(rarities);
-        List<Ship> shipsToAdd = generateShips(expedition, random, rarities, prototypes);
-        if(objective.equals(BattleObjective.BOSS)) {
-            generateBossShip(expedition, prototypes)
-                    .ifPresent(shipsToAdd::add);
-        }
-        positionRepository.saveAll(randomizePositions(shipRepository.saveAll(shipsToAdd), battleId, random));
-    }
-
-    private Optional<Ship> generateBossShip(Expedition expedition, List<ShipType> prototypes) {
-        int maxRarity = prototypes.stream().map(ShipType::getRarity).max(Comparator.naturalOrder()).orElse(0);
-        return prototypes.stream()
-                .filter(a -> a.getRarity() == maxRarity).map((a) -> generateBossFromPrototype(a, expedition))
-                .findFirst();
-    }
-
-    private Ship generateBossFromPrototype(ShipType prototype, Expedition expedition) {
-        Random random = new Random();
-        Ship ship = generateShipFromPrototype(expedition, prototype, random.nextInt(5)-1);
-        ship.setBoss(true);
-        return ship;
-    }
-
-    private List<Position> randomizePositions(List<Ship> ships, Long battleId, Random random) {
-        int boardWidth = 20;
-        int boardHeight = 15;
-        List<Position> positions = new ArrayList<>();
-        for(int i = 0; i < boardWidth/2; i++) {
-            for(int j = 0; j < boardHeight; j++) {
-                Position pos = new Position();
-                pos.setX(i);
-                pos.setY(j);
-                positions.add(pos);
-            }
-        }
-        Collections.shuffle(positions);
-        List<Position> result = new ArrayList<>();
-        int positionIndex = 0;
-        for(Ship ship : ships) {
-            Position position = positions.get(positionIndex);
-            position.setBattle(battleRepository.getReferenceById(battleId));
-            position.setShip(ship);
-            result.add(position);
-        }
-        return result;
-    }
-
-    private List<Ship> generateShips(Expedition expedition, Random random, List<Integer> rarities, List<ShipType> shipPrototypes) {
-        List<Ship> shipsToAdd = new ArrayList<>();
-        for(ShipType prototype : shipPrototypes) {
-            long ships = calculateShipCount(random, rarities, prototype);
-            for(long i = ships; i>0; i--) {
-                shipsToAdd.add(generateShipFromPrototype(expedition, prototype, random.nextInt(2)-1));
-            }
-        }
-        return shipsToAdd;
-    }
-
-    private long calculateShipCount(Random random, List<Integer> rarities, ShipType prototype) {
-        long rarityCount = rarities.stream().filter((a) -> Objects.equals(a, prototype.getRarity())).count();
-        long shipBonus = rarityCount > 1 ? random.nextLong((long) (0.2*rarityCount)) - (long) (0.1*rarityCount) : 0;
-        return rarityCount + shipBonus;
-    }
-
-    private List<ShipType> getShipTypes(List<Integer> rarities) {
-        List<Integer> distinctRarities = rarities.stream().distinct().toList();
-        List<ShipType> shipPrototypes = new ArrayList<>();
-        for(Integer rarity : distinctRarities) {
-            shipPrototypes.addAll(shipTypeRepository.findRandomTypes(1, rarity));
-        }
-        return shipPrototypes;
-    }
-
-    private Ship generateShipFromPrototype(Expedition expedition, ShipType prototype, Integer sizeBonus) {
-        Ship ship = new Ship();
-        ship.setPrepared(true);
-        ship.setDestroyed(false);
-        ship.setCode(prototype.getCode());
-        ship.setName(prototype.getName());
-        ship.setSize(prototype.getBaseSize()+sizeBonus);
-        ship.setExpedition(expedition);
-        ship.setDamaged(false);
-        ship.setDestroyed(false);
-        ship.setPrepared(false);
-        ship.setAction(false);
-        ship.setMovement(false);
-        ship.setEnemy(true);
-        ship.setUserId(expedition.getUserId());
-        ship.setHp(ship.getSize()*10);
-        ship.setStrength(prototype.getStrength());
-        ship.setCriticalRate(prototype.getCriticalRate());
-        ship.setHitRate(prototype.getHitRate());
-        return ship;
+        return random.nextInt(2) > 0 ? battleGenerator : bossBattleGenerator;
     }
 
     private void testResult(ExpeditionResult result) {
