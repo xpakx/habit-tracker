@@ -16,7 +16,6 @@ import java.util.List;
 public class ExpeditionController {
     private final ExpeditionService service;
 
-
     @GetMapping("/expedition/active")
     public ResponseEntity<List<ExpeditionSummary>> getActiveExpeditions(@RequestHeader String id) {
         return new ResponseEntity<>(

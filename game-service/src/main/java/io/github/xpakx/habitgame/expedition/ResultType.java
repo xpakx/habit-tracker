@@ -10,7 +10,6 @@ public enum ResultType {
     NONE("None"),
     TREASURE("Treasure"),
     BATTLE("Battle"),
-    MONSTER("Monster"),
     ISLAND("Island");
 
     private final String name;

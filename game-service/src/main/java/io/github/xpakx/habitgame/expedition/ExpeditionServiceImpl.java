@@ -120,10 +120,8 @@ public class ExpeditionServiceImpl implements ExpeditionService {
             return ResultType.NONE;
         } else if (rand < 8) {
             return ResultType.BATTLE;
-        } else if (rand == 8) {
-            return ResultType.TREASURE;
         } else {
-            return ResultType.MONSTER;
+            return ResultType.TREASURE;
         }
     }
 

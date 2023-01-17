@@ -49,7 +49,6 @@ public class BattleServiceImpl implements BattleService {
 
     private BattleShip toShipResponse(Ship ship) {
         BattleShip battleShip = new BattleShip();
-
         battleShip.setId(ship.getId());
         battleShip.setShipId(ship.getShipId());
         battleShip.setName(ship.getName());
@@ -102,7 +101,7 @@ public class BattleServiceImpl implements BattleService {
         if(result.isCompleted()) {
             throw new ExpeditionCompletedException();
         }
-        if(result.getType() != ResultType.BATTLE && result.getType() != ResultType.MONSTER) {
+        if(result.getType() != ResultType.BATTLE) {
             throw new WrongExpeditionResultType("This expedition isn't battle!");
         }
     }
