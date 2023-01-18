@@ -15,12 +15,12 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DefeatEvaluatorTest {
+class BossEvaluatorTest {
     private BattleResultEvaluator evaluator;
 
     public static Stream<Arguments> provideObjectives() {
         return Stream.of(
-                Arguments.of(BattleObjective.BOSS),
+                Arguments.of(BattleObjective.DEFEAT),
                 Arguments.of(BattleObjective.SEIZE),
                 Arguments.of(BattleObjective.SURVIVE),
                 Arguments.of(BattleObjective.ESCAPE)
@@ -29,25 +29,26 @@ class DefeatEvaluatorTest {
 
     public static Stream<Arguments> provideWinningShipLists() {
         return Stream.of(
-                Arguments.of(getShipList(1, 0)),
-                Arguments.of(getShipList(2, 0)),
-                Arguments.of(getShipList(3, 0)),
-                Arguments.of(getShipList(10, 0))
+                Arguments.of(getShipList(5, true, true, true)),
+                Arguments.of(getShipList(5, true, true, false)),
+                Arguments.of(getShipList(5, false, true, false)),
+                Arguments.of(getShipList(0, true, true, true))
         );
     }
 
-    private static List<Ship> getShipList(int destroyed, int healthy) {
+    private static List<Ship> getShipList(int ships, boolean boss, boolean bossDestroyed, boolean shipsDestroyed) {
         List<Ship> result = new ArrayList<>();
-        for(int i = 0; i < destroyed; i++) {
+        for(int i = 0; i < ships; i++) {
             Ship ship = new Ship();
             ship.setEnemy(true);
-            ship.setDestroyed(true);
+            ship.setDestroyed(shipsDestroyed);
             result.add(ship);
         }
-        for(int i = 0; i < healthy; i++) {
+        if(boss) {
             Ship ship = new Ship();
             ship.setEnemy(true);
-            ship.setDestroyed(false);
+            ship.setBoss(true);
+            ship.setDestroyed(bossDestroyed);
             result.add(ship);
         }
         return result;
@@ -55,21 +56,20 @@ class DefeatEvaluatorTest {
 
     public static Stream<Arguments> provideNotWinningShipLists() {
         return Stream.of(
-                Arguments.of(getShipList(1, 1)),
-                Arguments.of(getShipList(2, 1)),
-                Arguments.of(getShipList(3, 5)),
-                Arguments.of(getShipList(10, 1))
+                Arguments.of(getShipList(5, true, false, true)),
+                Arguments.of(getShipList(5, true, false, false)),
+                Arguments.of(getShipList(0, true, false, true))
         );
     }
 
     @BeforeEach
     void setUp() {
-        evaluator = new DefeatEvaluator();
+        evaluator = new BossEvaluator();
     }
 
     @Test
     void shouldAcceptType() {
-        boolean result = evaluator.ofType(generateBattleOfType(BattleObjective.DEFEAT));
+        boolean result = evaluator.ofType(generateBattleOfType(BattleObjective.BOSS));
         assertTrue(result);
     }
 
