@@ -24,8 +24,7 @@ public abstract class AbstractBattleGenerator implements BattleGenerator {
     }
 
     @Override
-    public List<Ship> generateShips(Long battleId, Expedition expedition) {
-        Random random = new Random();
+    public List<Ship> generateShips(Long battleId, Expedition expedition, Random random) {
         List<Integer> rarities = getRarities(expedition);
         List<ShipType> prototypes = getShipTypes(rarities);
         return generateShips(expedition, random, rarities, prototypes);

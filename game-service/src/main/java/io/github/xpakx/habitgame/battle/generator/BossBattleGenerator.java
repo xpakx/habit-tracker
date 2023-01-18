@@ -29,8 +29,7 @@ public class BossBattleGenerator extends AbstractBattleGenerator {
     }
 
     @Override
-    public List<Ship> generateShips(Long battleId, Expedition expedition) {
-        Random random = new Random();
+    public List<Ship> generateShips(Long battleId, Expedition expedition, Random random) {
         List<Integer> rarities = shipRepository.findByExpeditionId(expedition.getId()).stream()
                 .map(Ship::getRarity)
                 .toList();

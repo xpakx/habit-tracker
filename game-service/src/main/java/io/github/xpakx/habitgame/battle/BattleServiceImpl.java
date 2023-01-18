@@ -87,8 +87,9 @@ public class BattleServiceImpl implements BattleService {
         testResult(result);
         BattleGenerator generator  = randomizeObjective();
         Battle battle = battleRepository.save(generator.createBattle(result));
-        List<Ship> ships = shipRepository.saveAll(generator.generateShips(battle.getId(), result.getExpedition()));
-        positionRepository.saveAll(generator.randomizePositions(ships, battle.getId(), new Random()));
+        Random random = new Random();
+        List<Ship> ships = shipRepository.saveAll(generator.generateShips(battle.getId(), result.getExpedition(), random));
+        positionRepository.saveAll(generator.randomizePositions(ships, battle.getId(), random));
         return getBattleResponse(battle);
     }
 
