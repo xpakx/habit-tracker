@@ -98,7 +98,8 @@ public abstract class AbstractBattleGenerator implements BattleGenerator {
 
     protected long calculateShipCount(Random random, List<Integer> rarities, ShipType prototype) {
         long rarityCount = rarities.stream().filter((a) -> Objects.equals(a, prototype.getRarity())).count();
-        long shipBonus = rarityCount > 1 ? random.nextLong((long) (0.2*rarityCount)) - (long) (0.1*rarityCount) : 0;
+        long randomBound = (long) (0.2*rarityCount);
+        long shipBonus = randomBound > 0 ? random.nextLong(randomBound) - (long) (0.1*rarityCount) : 0;
         return rarityCount + shipBonus;
     }
 

@@ -149,7 +149,6 @@ class DefaultBattleGeneratorTest {
 
     @Test
     void shouldGenerateEmptyPositionListForEmptyShipList() {
-        Mockito.when(battleRepository.getReferenceById(Mockito.anyLong())).thenReturn(getBattle());
         initMocks();
         List<Position> result = generator.randomizePositions(new ArrayList<>(), 1L, rnd);
         assertThat(result, hasSize(0));
