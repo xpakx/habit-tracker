@@ -51,7 +51,7 @@ public abstract class AbstractBattleGenerator implements BattleGenerator {
         List<Position> result = new ArrayList<>();
         int positionIndex = 0;
         for(Ship ship : ships) {
-            Position position = positions.get(positionIndex);
+            Position position = positions.get(positionIndex++);
             position.setBattle(getReferenceToBattle(battleId));
             position.setShip(ship);
             result.add(position);
