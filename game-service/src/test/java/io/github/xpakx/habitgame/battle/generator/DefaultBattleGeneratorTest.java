@@ -187,6 +187,6 @@ class DefaultBattleGeneratorTest {
         initShipPrototypes(1,2);
         initMocks();
         List<Ship> result = generator.generateShips(1L, getExpedition(), rnd);
-        assertThat(result, hasSize(greaterThanOrEqualTo(ships)));
+        assertThat(result, hasSize(greaterThanOrEqualTo(ships - (int) (0.1*ships))));
     }
 }

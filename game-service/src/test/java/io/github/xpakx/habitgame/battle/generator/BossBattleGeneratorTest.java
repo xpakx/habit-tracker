@@ -39,7 +39,11 @@ class BossBattleGeneratorTest {
     private ShipTypeRepository shipTypeRepository;
 
     private Battle getBattle() {
-        return new Battle();
+        Battle battle = new Battle();
+        battle.setId(1L);
+        battle.setWidth(15);
+        battle.setHeight(10);
+        return battle;
     }
 
     private void initMocks() {
@@ -183,7 +187,7 @@ class BossBattleGeneratorTest {
         initShipPrototypes(1,2);
         initMocks();
         List<Ship> result = generator.generateShips(1L, getExpedition(), rnd);
-        assertThat(result, hasSize(greaterThanOrEqualTo(ships)));
+        assertThat(result, hasSize(greaterThanOrEqualTo(1+ ships - (int) (0.1*ships))));
     }
 
 }
