@@ -35,9 +35,9 @@ public abstract class AbstractBattleGenerator implements BattleGenerator {
     }
 
     @Override
-    public List<Position> randomizePositions(List<Ship> ships, Long battleId, Random random) {
-        int boardWidth = 20;
-        int boardHeight = 15;
+    public List<Position> randomizePositions(List<Ship> ships, Battle battle, Random random) {
+        int boardWidth = battle.getWidth();
+        int boardHeight = battle.getHeight();
         List<Position> positions = new ArrayList<>();
         for(int i = 0; i < boardWidth/2; i++) {
             for(int j = 0; j < boardHeight; j++) {
@@ -52,15 +52,11 @@ public abstract class AbstractBattleGenerator implements BattleGenerator {
         int positionIndex = 0;
         for(Ship ship : ships) {
             Position position = positions.get(positionIndex++);
-            position.setBattle(getReferenceToBattle(battleId));
+            position.setBattle(battle);
             position.setShip(ship);
             result.add(position);
         }
         return result;
-    }
-
-    protected Battle getReferenceToBattle(Long battleId) {
-        return null;
     }
 
     protected Ship generateShipFromPrototype(Expedition expedition, ShipType prototype, Integer sizeBonus) {

@@ -34,8 +34,6 @@ class BossBattleGeneratorTest {
     private BattleGenerator generator;
     private final static Random rnd = new Random(210832879274L);
     @Mock
-    private BattleRepository battleRepository;
-    @Mock
     private ShipRepository shipRepository;
     @Mock
     private ShipTypeRepository shipTypeRepository;
@@ -45,7 +43,7 @@ class BossBattleGeneratorTest {
     }
 
     private void initMocks() {
-        generator = new BossBattleGenerator(battleRepository, shipRepository, shipTypeRepository);
+        generator = new BossBattleGenerator(shipRepository, shipTypeRepository);
     }
 
     @Test
@@ -160,16 +158,15 @@ class BossBattleGeneratorTest {
     @Test
     void shouldGenerateEmptyPositionListForEmptyShipList() {
         initMocks();
-        List<Position> result = generator.randomizePositions(new ArrayList<>(), 1L, rnd);
+        List<Position> result = generator.randomizePositions(new ArrayList<>(), getBattle(), rnd);
         assertThat(result, hasSize(0));
     }
 
     @Test
     void shouldGeneratePositionListForEveryShip() {
-        Mockito.when(battleRepository.getReferenceById(Mockito.anyLong())).thenReturn(getBattle());
         initMocks();
         List<Ship> ships = generateShips(1,1,1,2,3);
-        List<Position> result = generator.randomizePositions(ships, 1L, rnd);
+        List<Position> result = generator.randomizePositions(ships, getBattle(), rnd);
         assertThat(result, hasSize(equalTo(ships.size())));
         assertThat(result, hasItem(hasProperty("ship", sameInstance(ships.get(0)))));
         assertThat(result, hasItem(hasProperty("ship", sameInstance(ships.get(1)))));

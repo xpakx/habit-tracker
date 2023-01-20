@@ -12,5 +12,5 @@ import java.util.Random;
 public interface BattleGenerator {
     Battle createBattle(ExpeditionResult result);
     List<Ship> generateShips(Long battleId, Expedition expedition, Random random);
-    List<Position> randomizePositions(List<Ship> ships, Long battleId, Random random);
+    List<Position> randomizePositions(List<Ship> ships, Battle battle, Random random);
 }

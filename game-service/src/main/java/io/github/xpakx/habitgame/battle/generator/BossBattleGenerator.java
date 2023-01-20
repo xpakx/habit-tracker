@@ -17,7 +17,6 @@ import java.util.*;
 @Service
 @AllArgsConstructor
 public class BossBattleGenerator extends AbstractBattleGenerator {
-    private final BattleRepository battleRepository;
     private final ShipRepository shipRepository;
     private final ShipTypeRepository shipTypeRepository;
 
@@ -56,10 +55,6 @@ public class BossBattleGenerator extends AbstractBattleGenerator {
 
     protected List<ShipType> getRandomTypes(Integer rarity) {
         return shipTypeRepository.findRandomTypes(1, rarity);
-    }
-
-    protected Battle getReferenceToBattle(Long battleId) {
-        return battleRepository.getReferenceById(battleId);
     }
 
     protected List<Integer> getRarities(Expedition expedition) {
