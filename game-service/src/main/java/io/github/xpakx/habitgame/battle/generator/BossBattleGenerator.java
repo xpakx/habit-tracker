@@ -2,23 +2,22 @@ package io.github.xpakx.habitgame.battle.generator;
 
 import io.github.xpakx.habitgame.battle.Battle;
 import io.github.xpakx.habitgame.battle.BattleObjective;
-import io.github.xpakx.habitgame.battle.BattleRepository;
 import io.github.xpakx.habitgame.expedition.Expedition;
 import io.github.xpakx.habitgame.expedition.ExpeditionResult;
 import io.github.xpakx.habitgame.expedition.Ship;
 import io.github.xpakx.habitgame.expedition.ShipRepository;
 import io.github.xpakx.habitgame.ship.ShipType;
 import io.github.xpakx.habitgame.ship.ShipTypeRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
-@AllArgsConstructor
-public class BossBattleGenerator extends AbstractBattleGenerator {
-    private final ShipRepository shipRepository;
-    private final ShipTypeRepository shipTypeRepository;
+public class BossBattleGenerator extends DefaultBattleGenerator {
+
+    public BossBattleGenerator(ShipRepository shipRepository, ShipTypeRepository shipTypeRepository) {
+        super(shipRepository, shipTypeRepository);
+    }
 
     @Override
     public Battle createBattle(ExpeditionResult result) {
@@ -51,15 +50,5 @@ public class BossBattleGenerator extends AbstractBattleGenerator {
         Ship ship = generateShipFromPrototype(expedition, prototype, random.nextInt(5)-1);
         ship.setBoss(true);
         return ship;
-    }
-
-    protected List<ShipType> getRandomTypes(Integer rarity) {
-        return shipTypeRepository.findRandomTypes(1, rarity);
-    }
-
-    protected List<Integer> getRarities(Expedition expedition) {
-        return shipRepository.findByExpeditionId(expedition.getId()).stream()
-                .map(Ship::getRarity)
-                .toList();
     }
 }
