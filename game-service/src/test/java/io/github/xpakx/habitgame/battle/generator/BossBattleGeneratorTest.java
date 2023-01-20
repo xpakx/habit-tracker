@@ -10,8 +10,6 @@ import io.github.xpakx.habitgame.expedition.Ship;
 import io.github.xpakx.habitgame.expedition.ShipRepository;
 import io.github.xpakx.habitgame.ship.ShipType;
 import io.github.xpakx.habitgame.ship.ShipTypeRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,9 +26,11 @@ import java.util.stream.IntStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-class DefaultBattleGeneratorTest {
+class BossBattleGeneratorTest {
     private BattleGenerator generator;
     private final static Random rnd = new Random(210832879274L);
     @Mock
@@ -45,7 +45,7 @@ class DefaultBattleGeneratorTest {
     }
 
     private void initMocks() {
-        generator = new DefaultBattleGenerator(battleRepository, shipRepository, shipTypeRepository);
+        generator = new BossBattleGenerator(battleRepository, shipRepository, shipTypeRepository);
     }
 
     @Test
@@ -53,7 +53,7 @@ class DefaultBattleGeneratorTest {
         initMocks();
         Battle result = generator.createBattle(getExpeditionResult());
         assertThat(result, is(notNullValue()));
-        assertThat(result, hasProperty("objective", equalTo(BattleObjective.DEFEAT)));
+        assertThat(result, hasProperty("objective", equalTo(BattleObjective.BOSS)));
     }
 
     private ExpeditionResult getExpeditionResult() {
@@ -131,6 +131,16 @@ class DefaultBattleGeneratorTest {
         assertThat(result, hasSize(greaterThan(0)));
     }
 
+    @Test
+    void thereShouldBeBossInGeneratedShips() {
+        Mockito.when(shipRepository.findByExpeditionId(Mockito.anyLong())).thenReturn(generateShips(1,2));
+        initShipPrototypes(1,2);
+        initMocks();
+        List<Ship> result = generator.generateShips(1L, getExpedition(), rnd);
+        assertThat(result, hasSize(greaterThan(0)));
+        assertThat(result, hasItem(hasProperty("boss", is(true))));
+    }
+
     private List<Ship> generateShips(int... rarities) {
         List<Ship> ships = new ArrayList<>();
         int id = 0;
@@ -168,16 +178,6 @@ class DefaultBattleGeneratorTest {
         assertThat(result, hasItem(hasProperty("ship", sameInstance(ships.get(4)))));
     }
 
-    @Test
-    void thereShouldBeNoBossInGeneratedShips() {
-        Mockito.when(shipRepository.findByExpeditionId(Mockito.anyLong())).thenReturn(generateShips(1,2));
-        initShipPrototypes(1,2);
-        initMocks();
-        List<Ship> result = generator.generateShips(1L, getExpedition(), rnd);
-        assertThat(result, hasSize(greaterThan(0)));
-        assertThat(result, everyItem(not(hasProperty("boss", equalTo(true)))));
-    }
-
     @ParameterizedTest
     @ValueSource(ints = {2, 5, 10, 100, 15000})
     void shouldGenerateMultipleShipsWithSameRarity(int ships) {
@@ -188,4 +188,5 @@ class DefaultBattleGeneratorTest {
         List<Ship> result = generator.generateShips(1L, getExpedition(), rnd);
         assertThat(result, hasSize(greaterThanOrEqualTo(ships)));
     }
+
 }
