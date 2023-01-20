@@ -14,13 +14,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.IntStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -163,5 +167,27 @@ class DefaultBattleGeneratorTest {
         assertThat(result, hasItem(hasProperty("ship", sameInstance(ships.get(2)))));
         assertThat(result, hasItem(hasProperty("ship", sameInstance(ships.get(3)))));
         assertThat(result, hasItem(hasProperty("ship", sameInstance(ships.get(4)))));
+    }
+
+    @Test
+    void thereShouldBeNoBossInGeneratedShips() {
+        Mockito.when(shipRepository.findByExpeditionId(Mockito.anyLong())).thenReturn(generateShips(1,2));
+        initShipPrototypes(1,2);
+        initMocks();
+        List<Ship> result = generator.generateShips(1L, getExpedition(), rnd);
+        assertThat(result, hasSize(greaterThan(0)));
+        assertThat(result, everyItem(not(hasProperty("boss", equalTo(true)))));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {2, 5, 10, 100, 15000})
+    void shouldGenerateMultipleShipsWithSameRarity(int ships) {
+        int[] list = Collections.nCopies(ships, 1).stream().flatMapToInt(IntStream::of).toArray();
+        Mockito.when(shipRepository.findByExpeditionId(Mockito.anyLong())).thenReturn(generateShips(list));
+        initShipPrototypes(1,2);
+        initMocks();
+        List<Ship> result = generator.generateShips(1L, getExpedition(), rnd);
+        assertThat(result, hasSize(greaterThan(0)));
+        assertThat(result, everyItem(not(hasProperty("boss", equalTo(true)))));
     }
 }
