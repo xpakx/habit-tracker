@@ -3,6 +3,7 @@ package io.github.xpakx.habitgame.battle.generator;
 import io.github.xpakx.habitgame.battle.Battle;
 import io.github.xpakx.habitgame.battle.BattleObjective;
 import io.github.xpakx.habitgame.battle.BattleRepository;
+import io.github.xpakx.habitgame.battle.Position;
 import io.github.xpakx.habitgame.expedition.Expedition;
 import io.github.xpakx.habitgame.expedition.ExpeditionResult;
 import io.github.xpakx.habitgame.expedition.Ship;
@@ -82,7 +83,6 @@ class DefaultBattleGeneratorTest {
     @Test
     void shouldGenerateEmptyShipListForEmptyExpedition() {
         Mockito.when(shipRepository.findByExpeditionId(Mockito.anyLong())).thenReturn(new ArrayList<>());
-        //initShipPrototypes(1,2,3);
         initMocks();
         List<Ship> result = generator.generateShips(1L, getExpedition(), rnd);
         assertThat(result, hasSize(0));
@@ -141,5 +141,27 @@ class DefaultBattleGeneratorTest {
         ship.setName(name);
         ship.setRarity(rarity);
         return ship;
+    }
+
+    @Test
+    void shouldGenerateEmptyPositionListForEmptyShipList() {
+        Mockito.when(battleRepository.getReferenceById(Mockito.anyLong())).thenReturn(getBattle());
+        initMocks();
+        List<Position> result = generator.randomizePositions(new ArrayList<>(), 1L, rnd);
+        assertThat(result, hasSize(0));
+    }
+
+    @Test
+    void shouldGeneratePositionListForEveryShip() {
+        Mockito.when(battleRepository.getReferenceById(Mockito.anyLong())).thenReturn(getBattle());
+        initMocks();
+        List<Ship> ships = generateShips(1,1,1,2,3);
+        List<Position> result = generator.randomizePositions(ships, 1L, rnd);
+        assertThat(result, hasSize(equalTo(ships.size())));
+        assertThat(result, hasItem(hasProperty("ship", sameInstance(ships.get(0)))));
+        assertThat(result, hasItem(hasProperty("ship", sameInstance(ships.get(1)))));
+        assertThat(result, hasItem(hasProperty("ship", sameInstance(ships.get(2)))));
+        assertThat(result, hasItem(hasProperty("ship", sameInstance(ships.get(3)))));
+        assertThat(result, hasItem(hasProperty("ship", sameInstance(ships.get(4)))));
     }
 }
