@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -142,12 +143,14 @@ public class BattleServiceImpl implements BattleService {
     }
 
     private MoveResult makeMove(MoveRequest request, Battle battle, Ship ship) {
-        testNewPosition(request, battle.getId());
+        Optional<Position> newPosition = testNewPosition(request, battle.getId());
         testMove(ship, request, battle);
         Position position = ship.getPosition();
         position.setX(request.getX());
         position.setY(request.getY());
+        newPosition.ifPresent((pos) -> position.setTerrain(pos.getTerrain()));
         positionRepository.save(position);
+        newPosition.ifPresent(positionRepository::delete);
         shipRepository.updateMovementById(ship.getId());
         MoveResult result = new MoveResult();
         result.setShipId(ship.getShipId());
@@ -214,26 +217,29 @@ public class BattleServiceImpl implements BattleService {
     public MoveResponse prepare(MoveRequest request, Long battleId, Long userId) {
         testActionType(request, MoveAction.PREPARE);
         Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId, userId).orElseThrow(BattleNotFoundException::new);
-        testShipPlacement(request, battleId, battle);
+        Optional<Position> newPosition = testShipPlacement(request, battleId, battle);
         Ship ship = saveShip(request, userId, battle);
-        savePosition(request, ship);
+        savePosition(request, ship, newPosition);
+        newPosition.ifPresent(positionRepository::delete);
         return prepareMoveResponse(MoveAction.PREPARE);
     }
 
-    private void testShipPlacement(MoveRequest request, Long battleId, Battle battle) {
+    private Optional<Position> testShipPlacement(MoveRequest request, Long battleId, Battle battle) {
         if(battle.isStarted()) {
             throw new WrongBattleStateException("Preparation stage ended. You cannot place ships!");
         }
-        testNewPosition(request, battleId);
+        return testNewPosition(request, battleId);
     }
 
-    private void testNewPosition(MoveRequest request, Long battleId) {
+    private Optional<Position> testNewPosition(MoveRequest request, Long battleId) {
         if(request.getY() == null || request.getX() == null) {
             throw new WrongPositionException("Position cannot be empty!");
         }
-        if(positionRepository.existsByXAndYAndBattleId(request.getX(), request.getY(), battleId)) {
+        Optional<Position> position = positionRepository.findByXAndYAndBattleId(request.getX(), request.getY(), battleId);
+        if(position.isPresent() && (position.get().getShip() != null || (position.get().getTerrain() != null && position.get().getTerrain().isBlocked()))) {
             throw new WrongPositionException();
         }
+        return position;
     }
 
     private void testActionType(MoveRequest request, MoveAction action) {
@@ -250,11 +256,12 @@ public class BattleServiceImpl implements BattleService {
         return ship;
     }
 
-    private void savePosition(MoveRequest request, Ship ship) {
+    private void savePosition(MoveRequest request, Ship ship, Optional<Position> newPosition) {
         Position position = ship.getPosition() == null ? new Position() : ship.getPosition();
         position.setShip(ship);
         position.setX(request.getX());
         position.setY(request.getY());
+        newPosition.ifPresent((a) -> position.setTerrain(a.getTerrain()));
         positionRepository.save(position);
     }
 
