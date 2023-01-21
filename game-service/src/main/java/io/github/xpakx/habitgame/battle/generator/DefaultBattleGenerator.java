@@ -7,13 +7,12 @@ import io.github.xpakx.habitgame.expedition.Ship;
 import io.github.xpakx.habitgame.expedition.ShipRepository;
 import io.github.xpakx.habitgame.ship.ShipType;
 import io.github.xpakx.habitgame.ship.ShipTypeRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
-public class DefaultBattleGenerator implements  BattleGenerator{
+public class DefaultBattleGenerator implements BattleGenerator{
     protected final ShipRepository shipRepository;
     protected final ShipTypeRepository shipTypeRepository;
 

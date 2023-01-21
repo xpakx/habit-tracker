@@ -21,6 +21,10 @@ public class Position {
     @JoinColumn(name = "ship_id")
     private Ship ship;
 
+    @OneToOne
+    @JoinColumn(name = "terrain_type_id")
+    private TerrainType terrain;
+
     @ManyToOne
     private Battle battle;
 }
