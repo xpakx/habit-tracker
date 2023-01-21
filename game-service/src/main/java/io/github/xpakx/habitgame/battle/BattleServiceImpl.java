@@ -145,12 +145,7 @@ public class BattleServiceImpl implements BattleService {
     private MoveResult makeMove(MoveRequest request, Battle battle, Ship ship) {
         Optional<Position> newPosition = testNewPosition(request, battle.getId());
         testMove(ship, request, battle);
-        Position position = ship.getPosition();
-        position.setX(request.getX());
-        position.setY(request.getY());
-        newPosition.ifPresent((pos) -> position.setTerrain(pos.getTerrain()));
-        positionRepository.save(position);
-        newPosition.ifPresent(positionRepository::delete);
+        savePosition(request, ship, newPosition);
         shipRepository.updateMovementById(ship.getId());
         MoveResult result = new MoveResult();
         result.setShipId(ship.getShipId());
@@ -220,7 +215,6 @@ public class BattleServiceImpl implements BattleService {
         Optional<Position> newPosition = testShipPlacement(request, battleId, battle);
         Ship ship = saveShip(request, userId, battle);
         savePosition(request, ship, newPosition);
-        newPosition.ifPresent(positionRepository::delete);
         return prepareMoveResponse(MoveAction.PREPARE);
     }
 
@@ -263,6 +257,7 @@ public class BattleServiceImpl implements BattleService {
         position.setY(request.getY());
         newPosition.ifPresent((a) -> position.setTerrain(a.getTerrain()));
         positionRepository.save(position);
+        newPosition.ifPresent(positionRepository::delete);
     }
 
     private MoveResponse prepareMoveResponse(MoveAction action) {
