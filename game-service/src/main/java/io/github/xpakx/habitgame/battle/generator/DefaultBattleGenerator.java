@@ -98,7 +98,9 @@ public class DefaultBattleGenerator implements BattleGenerator{
         for(int i = 0; i<elementCount; i++) {
             TerrainType type = terrainTypes.get(random.nextInt(terrainTypes.size()));
             Position position = positions.get(i);
-            position.setTerrain(type);
+            if(!type.isBlocked() || position.getShip() != null) {
+                position.setTerrain(type);
+            }
             if(position.getShip() == null) {
                 positionsToAdd.add(position);
             }
