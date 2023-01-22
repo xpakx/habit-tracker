@@ -1,9 +1,6 @@
 package io.github.xpakx.habitgame.battle.generator;
 
-import io.github.xpakx.habitgame.battle.Battle;
-import io.github.xpakx.habitgame.battle.BattleObjective;
-import io.github.xpakx.habitgame.battle.BattleRepository;
-import io.github.xpakx.habitgame.battle.Position;
+import io.github.xpakx.habitgame.battle.*;
 import io.github.xpakx.habitgame.expedition.Expedition;
 import io.github.xpakx.habitgame.expedition.ExpeditionResult;
 import io.github.xpakx.habitgame.expedition.Ship;
@@ -37,6 +34,8 @@ class BossBattleGeneratorTest {
     private ShipRepository shipRepository;
     @Mock
     private ShipTypeRepository shipTypeRepository;
+    @Mock
+    private TerrainTypeRepository terrainRepository;
 
     private Battle getBattle() {
         Battle battle = new Battle();
@@ -47,7 +46,7 @@ class BossBattleGeneratorTest {
     }
 
     private void initMocks() {
-        generator = new BossBattleGenerator(shipRepository, shipTypeRepository);
+        generator = new BossBattleGenerator(shipRepository, shipTypeRepository, terrainRepository);
     }
 
     @Test

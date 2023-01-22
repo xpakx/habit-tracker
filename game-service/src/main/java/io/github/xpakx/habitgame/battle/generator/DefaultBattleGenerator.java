@@ -7,19 +7,17 @@ import io.github.xpakx.habitgame.expedition.Ship;
 import io.github.xpakx.habitgame.expedition.ShipRepository;
 import io.github.xpakx.habitgame.ship.ShipType;
 import io.github.xpakx.habitgame.ship.ShipTypeRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
+@AllArgsConstructor
 public class DefaultBattleGenerator implements BattleGenerator{
     protected final ShipRepository shipRepository;
     protected final ShipTypeRepository shipTypeRepository;
-
-    public DefaultBattleGenerator(ShipRepository shipRepository, ShipTypeRepository shipTypeRepository) {
-        this.shipRepository = shipRepository;
-        this.shipTypeRepository = shipTypeRepository;
-    }
+    protected final TerrainTypeRepository terrainRepository;
 
     @Override
     public Battle createBattle(ExpeditionResult result) {
@@ -62,6 +60,7 @@ public class DefaultBattleGenerator implements BattleGenerator{
                 Position pos = new Position();
                 pos.setX(i);
                 pos.setY(j);
+                pos.setBattle(battle);
                 positions.add(pos);
             }
         }
@@ -70,11 +69,29 @@ public class DefaultBattleGenerator implements BattleGenerator{
         int positionIndex = 0;
         for(Ship ship : ships) {
             Position position = positions.get(positionIndex++);
-            position.setBattle(battle);
             position.setShip(ship);
             result.add(position);
         }
+        randomizeTerrain(positions, result, battle);
         return result;
+    }
+
+    private void randomizeTerrain(List<Position> positions, List<Position> positionsToAdd, Battle battle) {
+        List<TerrainType> terrainTypes = terrainRepository.findAll();
+        if(terrainTypes.size() <= 0) {
+            return;
+        }
+        Random random = new Random();
+        int elementCount = random.nextInt((int) (battle.getWidth() * battle.getHeight()*0.1)+1);
+        elementCount = elementCount >= positions.size() ? positions.size()-1 : elementCount;
+        for(int i = 0; i<elementCount; i++) {
+            TerrainType type = terrainTypes.get(random.nextInt(terrainTypes.size()));
+            Position position = positions.get(i);
+            position.setTerrain(type);
+            if(position.getShip() == null) {
+                positionsToAdd.add(position);
+            }
+        }
     }
 
     protected Ship generateShipFromPrototype(Expedition expedition, ShipType prototype, Integer sizeBonus) {

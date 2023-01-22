@@ -2,6 +2,7 @@ package io.github.xpakx.habitgame.battle.generator;
 
 import io.github.xpakx.habitgame.battle.Battle;
 import io.github.xpakx.habitgame.battle.BattleObjective;
+import io.github.xpakx.habitgame.battle.TerrainTypeRepository;
 import io.github.xpakx.habitgame.expedition.Expedition;
 import io.github.xpakx.habitgame.expedition.ExpeditionResult;
 import io.github.xpakx.habitgame.expedition.Ship;
@@ -15,8 +16,8 @@ import java.util.*;
 @Service
 public class BossBattleGenerator extends DefaultBattleGenerator {
 
-    public BossBattleGenerator(ShipRepository shipRepository, ShipTypeRepository shipTypeRepository) {
-        super(shipRepository, shipTypeRepository);
+    public BossBattleGenerator(ShipRepository shipRepository, ShipTypeRepository shipTypeRepository, TerrainTypeRepository terrainRepository) {
+        super(shipRepository, shipTypeRepository, terrainRepository);
     }
 
     @Override
