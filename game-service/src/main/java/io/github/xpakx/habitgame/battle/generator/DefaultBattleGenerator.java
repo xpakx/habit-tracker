@@ -52,10 +52,17 @@ public class DefaultBattleGenerator implements BattleGenerator{
 
     @Override
     public List<Position> randomizePositions(List<Ship> ships, Battle battle, Random random) {
+        List<Position> positions = generateAllPositionsInBattle(battle);
+        List<Position> result = randomizeShipPosition(ships, positions, random);
+        randomizeTerrain(positions, result, battle, random);
+        return result;
+    }
+
+    private List<Position> generateAllPositionsInBattle(Battle battle) {
         int boardWidth = battle.getWidth();
         int boardHeight = battle.getHeight();
         List<Position> positions = new ArrayList<>();
-        for(int i = 0; i < boardWidth/2; i++) {
+        for(int i = 0; i < boardWidth /2; i++) {
             for(int j = 0; j < boardHeight; j++) {
                 Position pos = new Position();
                 pos.setX(i);
@@ -64,7 +71,11 @@ public class DefaultBattleGenerator implements BattleGenerator{
                 positions.add(pos);
             }
         }
-        Collections.shuffle(positions);
+        return positions;
+    }
+
+    private List<Position> randomizeShipPosition(List<Ship> ships, List<Position> positions, Random random) {
+        Collections.shuffle(positions, random);
         List<Position> result = new ArrayList<>();
         int positionIndex = 0;
         for(Ship ship : ships) {
@@ -72,16 +83,15 @@ public class DefaultBattleGenerator implements BattleGenerator{
             position.setShip(ship);
             result.add(position);
         }
-        randomizeTerrain(positions, result, battle);
         return result;
     }
 
-    private void randomizeTerrain(List<Position> positions, List<Position> positionsToAdd, Battle battle) {
+    private void randomizeTerrain(List<Position> positions, List<Position> positionsToAdd, Battle battle, Random random) {
         List<TerrainType> terrainTypes = terrainRepository.findAll();
         if(terrainTypes.size() <= 0) {
             return;
         }
-        Random random = new Random();
+        Collections.shuffle(positions, random);
         int elementCount = random.nextInt((int) (battle.getWidth() * battle.getHeight()*0.1)+1);
         elementCount = elementCount >= positions.size() ? positions.size()-1 : elementCount;
         for(int i = 0; i<elementCount; i++) {
