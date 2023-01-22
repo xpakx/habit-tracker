@@ -53,7 +53,7 @@ public class DefaultBattleGenerator implements BattleGenerator{
     @Override
     public List<Position> randomizePositions(List<Ship> ships, Battle battle, Random random) {
         List<Position> positions = generateAllPositionsInBattle(battle);
-        List<Position> result = randomizeShipPosition(ships, positions, random);
+        List<Position> result = randomizeShipPosition(battle, ships, positions, random);
         randomizeTerrain(positions, result, battle, random);
         return result;
     }
@@ -62,7 +62,7 @@ public class DefaultBattleGenerator implements BattleGenerator{
         int boardWidth = battle.getWidth();
         int boardHeight = battle.getHeight();
         List<Position> positions = new ArrayList<>();
-        for(int i = 0; i < boardWidth /2; i++) {
+        for(int i = 0; i < boardWidth; i++) {
             for(int j = 0; j < boardHeight; j++) {
                 Position pos = new Position();
                 pos.setX(i);
@@ -74,12 +74,13 @@ public class DefaultBattleGenerator implements BattleGenerator{
         return positions;
     }
 
-    private List<Position> randomizeShipPosition(List<Ship> ships, List<Position> positions, Random random) {
+    private List<Position> randomizeShipPosition(Battle battle, List<Ship> ships, List<Position> positions, Random random) {
         Collections.shuffle(positions, random);
+        List<Position> positionsForEnemyShips = positions.stream().filter((a) -> a.getX() < battle.getWidth() / 2).toList();
         List<Position> result = new ArrayList<>();
         int positionIndex = 0;
         for(Ship ship : ships) {
-            Position position = positions.get(positionIndex++);
+            Position position = positionsForEnemyShips.get(positionIndex++);
             position.setShip(ship);
             result.add(position);
         }
