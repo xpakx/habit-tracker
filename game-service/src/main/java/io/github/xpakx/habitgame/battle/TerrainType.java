@@ -17,4 +17,5 @@ public class TerrainType {
     private Integer move;
     private Integer defenceBonus;
     private Integer attackBonus;
+    private boolean seizable;
 }

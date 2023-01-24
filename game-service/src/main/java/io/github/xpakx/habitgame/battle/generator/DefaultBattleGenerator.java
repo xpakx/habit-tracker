@@ -88,7 +88,7 @@ public class DefaultBattleGenerator implements BattleGenerator{
     }
 
     private void randomizeTerrain(List<Position> positions, List<Position> positionsToAdd, Battle battle, Random random) {
-        List<TerrainType> terrainTypes = terrainRepository.findAll();
+        List<TerrainType> terrainTypes = terrainRepository.findBySeizableFalse();
         if(terrainTypes.size() <= 0) {
             return;
         }

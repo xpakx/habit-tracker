@@ -41,7 +41,7 @@ public class BattleServiceImpl implements BattleService {
         response.setStarted(battle.isStarted());
         response.setObjective(battle.getObjective());
         response.setTurn(battle.getTurn());
-        List<Ship> ships = shipRepository.findByExpeditionId(battle.getExpedition().getId()); //TODO optimize
+        List<Ship> ships = shipRepository.findByExpeditionId(battle.getExpedition().getId());
         response.setShips(filterPlayerShips(ships).map(this::toShipResponse).toList());
         response.setEnemyShips(filterEnemyShips(ships).map(this::toShipResponse).toList());
         return response;
@@ -160,10 +160,10 @@ public class BattleServiceImpl implements BattleService {
         if(request.getX() < 0 || request.getY() < 0 || request.getX() > battle.getWidth() || request.getY() > battle.getHeight()) {
             throw new WrongMoveException("Position is outside the board!");
         }
-        // List<Position> positions = positionRepository.findByBattleId(battleId);
         if(taxiLength(ship.getPosition().getX(), ship.getPosition().getY(), request.getX(), request.getY()) > 3) {
             throw new WrongMoveException("Your move is too long!");
         }
+        // List<Position> positions = positionRepository.findByBattleId(battleId);
     }
 
     private int taxiLength(Integer x1, Integer y1, Integer x2, Integer y2) {
