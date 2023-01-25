@@ -50,7 +50,7 @@ class AStarDistanceEvaluatorTest {
         position.setY(y);
         if(weight>1 || blocked) {
             position.setTerrain(getTerrain(weight));
-            position.getTerrain().setBlocked(true);
+            position.getTerrain().setBlocked(blocked);
         }
         return position;
     }

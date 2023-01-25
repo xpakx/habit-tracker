@@ -32,17 +32,17 @@ public class AStarDistanceEvaluator implements DistanceEvaluator {
             if(next.samePosition(targetPosition)) {
                 return next.dist;
             }
-            addNeighboursToQueue(targetPosition, board, queue, next);
+            addNeighboursToQueue(targetPosition, board, queue, next, battle);
         }
         return -1;
     }
 
-    private void addNeighboursToQueue(Position targetPosition, Board board, PriorityQueue<Node> queue, Node next) {
+    private void addNeighboursToQueue(Position targetPosition, Board board, PriorityQueue<Node> queue, Node next, Battle battle) {
         if(next.getX()-1>=0) {
             Position position = next.step(-1, 0);
             queue.add(new Node(position, targetPosition, next.dist + board.getCost(position)));
         }
-        if(next.getX()+1 <= targetPosition.getX()) {
+        if(next.getX()+1 < battle.getWidth()) {
             Position position = next.step(1, 0);
             queue.add(new Node(position, targetPosition, next.dist + board.getCost(position)));
         }
@@ -50,7 +50,7 @@ public class AStarDistanceEvaluator implements DistanceEvaluator {
             Position position = next.step(0, -1);
             queue.add(new Node(position, targetPosition, next.dist + board.getCost(position)));
         }
-        if(next.getY()+1 <= targetPosition.getY()) {
+        if(next.getY()+1 < battle.getHeight()) {
             Position position = next.step(0, 1);
             queue.add(new Node(position, targetPosition, next.dist + board.getCost(position)));
         }
