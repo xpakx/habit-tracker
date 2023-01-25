@@ -117,5 +117,24 @@ class AStarDistanceEvaluatorTest {
         assertThat(result, equalTo(4));
     }
 
+    @Test
+    void shouldNotReachFieldSurroundedByObstacles() {
+        List<Position> positions = new ArrayList<>();
+        positions.add(getObstacle(2,1));
+        positions.add(getObstacle(4,1));
+        positions.add(getObstacle(3,0));
+        positions.add(getObstacle(3,2));
+        int result = evaluator.shortestPath(positions, getPosition(1,1), getPosition(3,1), getBattle(5,5));
+        assertThat(result, equalTo(-1));
+    }
+
+    @Test
+    void shouldNotTakeShortcutOutsideTheMap() {
+        List<Position> positions = new ArrayList<>();
+        positions.add(getPosition(1,0, 50));
+        positions.add(getPosition(1,1, 50));
+        int result = evaluator.shortestPath(positions, getPosition(0,0), getPosition(2,0), getBattle(5,5));
+        assertThat(result, equalTo(6));
+    }
 
 }
