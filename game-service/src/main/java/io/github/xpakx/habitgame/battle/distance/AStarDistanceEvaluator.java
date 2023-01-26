@@ -102,16 +102,28 @@ public class AStarDistanceEvaluator implements DistanceEvaluator {
                 }
             }
             for(Position pos : positions) {
-                if((pos.getShip() != null && pos.getX() != startPosition.getX() && pos.getY() != startPosition.getY())) {
+                if(isNonMovingShipOnPosition(startPosition, pos)) {
                     blocked[pos.getX()][pos.getY()] = true;
                 }
-                if(pos.getTerrain()!= null && pos.getTerrain().isBlocked()) {
+                if(isBlockingTerrainOnPosition(pos)) {
                     blocked[pos.getX()][pos.getY()] = true;
                 }
-                if(pos.getTerrain() != null) {
+                if(isTerrainOnPosition(pos)) {
                     cost[pos.getX()][pos.getY()] = pos.getTerrain().getMove();
                 }
             }
+        }
+
+        private boolean isNonMovingShipOnPosition(Position startPosition, Position pos) {
+            return isShipOnPosition(pos) && isNotStartingPosition(startPosition, pos);
+        }
+
+        private boolean isNotStartingPosition(Position startPosition, Position pos) {
+            return !Objects.equals(pos.getX(), startPosition.getX()) && !Objects.equals(pos.getY(), startPosition.getY());
+        }
+
+        private boolean isBlockingTerrainOnPosition(Position pos) {
+            return isTerrainOnPosition(pos) && pos.getTerrain().isBlocked();
         }
 
         private boolean isBlocked(Position position) {
@@ -120,6 +132,14 @@ public class AStarDistanceEvaluator implements DistanceEvaluator {
 
         private int getCost(Position position) {
             return cost[position.getX()][position.getY()];
+        }
+
+        private boolean isShipOnPosition(Position pos) {
+            return pos.getShip() != null;
+        }
+
+        private boolean isTerrainOnPosition(Position pos) {
+            return pos.getTerrain() != null;
         }
 
     }
