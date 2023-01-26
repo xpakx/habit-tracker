@@ -26,7 +26,7 @@ public class AStarDistanceEvaluator implements DistanceEvaluator {
                 continue;
             }
             check[next.getX()][next.getY()] = true;
-            if(board.isBlocked(next.position)) {
+            if(board.isBlocked(next.position) && !next.samePosition(startPosition)) {
                 continue;
             }
             if(next.samePosition(targetPosition)) {
