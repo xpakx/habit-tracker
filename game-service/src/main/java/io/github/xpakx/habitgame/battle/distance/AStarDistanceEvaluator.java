@@ -102,12 +102,7 @@ public class AStarDistanceEvaluator implements DistanceEvaluator {
                 }
             }
             for(Position pos : positions) {
-                if(isNonMovingShipOnPosition(startPosition, pos)) {
-                    blocked[pos.getX()][pos.getY()] = true;
-                }
-                if(isBlockingTerrainOnPosition(pos)) {
-                    blocked[pos.getX()][pos.getY()] = true;
-                }
+                blocked[pos.getX()][pos.getY()] = isNonMovingShipOnPosition(startPosition, pos) || isBlockingTerrainOnPosition(pos);
                 if(isTerrainOnPosition(pos)) {
                     cost[pos.getX()][pos.getY()] = pos.getTerrain().getMove();
                 }
