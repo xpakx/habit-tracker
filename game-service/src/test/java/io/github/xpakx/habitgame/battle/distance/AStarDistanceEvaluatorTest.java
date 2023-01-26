@@ -1,10 +1,8 @@
 package io.github.xpakx.habitgame.battle.distance;
 
 import io.github.xpakx.habitgame.battle.Battle;
-import io.github.xpakx.habitgame.battle.BattleObjective;
 import io.github.xpakx.habitgame.battle.Position;
 import io.github.xpakx.habitgame.battle.TerrainType;
-import io.github.xpakx.habitgame.battle.evaluator.BossEvaluator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -135,6 +133,20 @@ class AStarDistanceEvaluatorTest {
         positions.add(getPosition(1,1, 50));
         int result = evaluator.shortestPath(positions, getPosition(0,0), getPosition(2,0), getBattle(5,5));
         assertThat(result, equalTo(6));
+    }
+
+    @Test
+    void shouldNotReachBlockedField() {
+        List<Position> positions = new ArrayList<>();
+        positions.add(getObstacle(3,1));
+        int result = evaluator.shortestPath(positions, getPosition(1,1), getPosition(3,1), getBattle(5,5));
+        assertThat(result, equalTo(-1));
+    }
+
+    @Test
+    void shouldNotReachFieldOutsideTheBoard() {
+        int result = evaluator.shortestPath(new ArrayList<>(), getPosition(1,1), getPosition(5,5), getBattle(5,5));
+        assertThat(result, equalTo(-1));
     }
 
 }
