@@ -3,6 +3,7 @@ package io.github.xpakx.habitgame.battle.distance;
 import io.github.xpakx.habitgame.battle.Battle;
 import io.github.xpakx.habitgame.battle.Position;
 import io.github.xpakx.habitgame.battle.TerrainType;
+import io.github.xpakx.habitgame.expedition.Ship;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -60,6 +61,15 @@ class AStarDistanceEvaluatorTest {
         TerrainType type = new TerrainType();
         type.setMove(weight);
         return type;
+    }
+
+    private Position getShip(int x, int y) {
+        Ship ship = new Ship();
+        Position position = new Position();
+        position.setX(x);
+        position.setY(y);
+        position.setShip(ship);
+        return position;
     }
 
     @Test
@@ -147,6 +157,14 @@ class AStarDistanceEvaluatorTest {
     void shouldNotReachFieldOutsideTheBoard() {
         int result = evaluator.shortestPath(new ArrayList<>(), getPosition(1,1), getPosition(5,5), getBattle(5,5));
         assertThat(result, equalTo(-1));
+    }
+
+    @Test
+    void shouldCalculateDistanceIfThereIsAShipAtStartPosition() {
+        List<Position> positions = new ArrayList<>();
+        positions.add(getShip(1,1));
+        int result = evaluator.shortestPath(positions, getPosition(1,1), getPosition(2,2), getBattle(5,5));
+        assertThat(result, equalTo(2));
     }
 
 }
