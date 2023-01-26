@@ -17,7 +17,7 @@ public class AStarDistanceEvaluator implements DistanceEvaluator {
             return 0;
         }
         boolean[][] check = new boolean[battle.getWidth()][battle.getHeight()];
-        Board board = new Board(positions, battle);
+        Board board = new Board(positions, battle, startPosition);
         PriorityQueue<Node> queue = new PriorityQueue<>(Comparator.comparingInt(a -> a.expected));
         queue.add(new Node(startPosition, targetPosition, 0));
         while(!queue.isEmpty()) {
@@ -26,7 +26,7 @@ public class AStarDistanceEvaluator implements DistanceEvaluator {
                 continue;
             }
             check[next.getX()][next.getY()] = true;
-            if(board.isBlocked(next.position) && !next.samePosition(startPosition)) {
+            if(board.isBlocked(next.position)) {
                 continue;
             }
             if(next.samePosition(targetPosition)) {
@@ -92,7 +92,7 @@ public class AStarDistanceEvaluator implements DistanceEvaluator {
         boolean[][] blocked;
         int[][] cost;
 
-        public Board(List<Position> positions, Battle battle) {
+        public Board(List<Position> positions, Battle battle, Position startPosition) {
             blocked = new boolean[battle.getWidth()][battle.getHeight()];
             cost = new int[battle.getWidth()][battle.getHeight()];
             for(int i=0; i<battle.getWidth(); i++){
@@ -102,7 +102,10 @@ public class AStarDistanceEvaluator implements DistanceEvaluator {
                 }
             }
             for(Position pos : positions) {
-                if(pos.getShip() != null || pos.getTerrain().isBlocked()) {
+                if((pos.getShip() != null && pos.getX() != startPosition.getX() && pos.getY() != startPosition.getY())) {
+                    blocked[pos.getX()][pos.getY()] = true;
+                }
+                if(pos.getTerrain()!= null && pos.getTerrain().isBlocked()) {
                     blocked[pos.getX()][pos.getY()] = true;
                 }
                 if(pos.getTerrain() != null) {
