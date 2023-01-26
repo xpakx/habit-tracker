@@ -1,5 +1,6 @@
 package io.github.xpakx.habitgame.battle;
 
+import io.github.xpakx.habitgame.battle.distance.DistanceEvaluator;
 import io.github.xpakx.habitgame.battle.dto.*;
 import io.github.xpakx.habitgame.battle.error.*;
 import io.github.xpakx.habitgame.battle.evaluator.BattleResultEvaluator;
@@ -25,6 +26,7 @@ public class BattleServiceImpl implements BattleService {
     private final PositionRepository positionRepository;
     private final List<BattleResultEvaluator> resultEvaluators;
     private final List<BattleGenerator> battleGenerators;
+    private final DistanceEvaluator distanceEvaluator;
 
     @Override
     public BattleResponse getBattle(Long expeditionId, Long userId) {
@@ -163,7 +165,14 @@ public class BattleServiceImpl implements BattleService {
         if(taxiLength(ship.getPosition().getX(), ship.getPosition().getY(), request.getX(), request.getY()) > 3) {
             throw new WrongMoveException("Your move is too long!");
         }
-        // List<Position> positions = positionRepository.findByBattleId(battleId);
+        List<Position> positions = positionRepository.findByBattleId(battle.getId());
+        int realLength = distanceEvaluator.shortestPath(positions, ship.getPosition(), request.toPosition(), battle);
+        if(realLength == -1) {
+            throw new WrongMoveException("Target is unreachable!");
+        }
+        if(realLength > 3) {
+            throw new WrongMoveException("Your move is too long!");
+        }
     }
 
     private int taxiLength(Integer x1, Integer y1, Integer x2, Integer y2) {
