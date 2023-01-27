@@ -33,4 +33,6 @@ public class Ship implements Serializable {
     private Integer strength;
     private Integer hitRate;
     private Integer criticalRate;
+    private Integer movement;
+    private Integer range;
 }

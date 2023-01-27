@@ -60,6 +60,8 @@ public class ExpeditionPublisher {
         shipForEvent.setStrength(shipFromDb.getStrength());
         shipForEvent.setHitRate(shipFromDb.getHitRate());
         shipForEvent.setCriticalRate(shipFromDb.getCriticalRate());
+        shipForEvent.setMovement(shipFromDb.getMovement());
+        shipForEvent.setRange(shipForEvent.getRange());
         return shipForEvent;
     }
 
