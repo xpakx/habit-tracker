@@ -328,12 +328,12 @@ public class BattleServiceImpl implements BattleService {
     private List<MoveResponse> makeEnemyMove(List<Ship> playerShips, List<Ship> enemyShips) {
         List<MoveResponse> moves = new ArrayList<>();
         for(Ship ship : enemyShips) {
-            Ship target = chooseTarget(ship, playerShips);
+            EnemyMoveTarget target = chooseTarget(ship, playerShips);
             if(target != null) {
                 moveTowards(ship, target);
-                int damage = applyDamage(ship, target);
+                int damage = applyDamage(ship, target.getTarget());
                 moves.add(responseForMove(ship));
-                moves.add(responseForAttack(ship, target, damage));
+                moves.add(responseForAttack(ship, target.getTarget(), damage));
             }
         }
         return moves;
@@ -364,11 +364,11 @@ public class BattleServiceImpl implements BattleService {
         return response;
     }
 
-    private void moveTowards(Ship ship, Ship target) {
+    private void moveTowards(Ship ship, EnemyMoveTarget target) {
         // TODO add better movement
         Position position = ship.getPosition();
-        position.setX((ship.getPosition().getX()+target.getPosition().getX())/2);
-        position.setY((ship.getPosition().getY()+target.getPosition().getY())/2);
+        position.setX((ship.getPosition().getX()+target.getTarget().getPosition().getX())/2);
+        position.setY((ship.getPosition().getY()+target.getTarget().getPosition().getY())/2);
     }
 
     private int applyDamage(Ship ship, Ship target) {
@@ -388,15 +388,17 @@ public class BattleServiceImpl implements BattleService {
         return 0;
     }
 
-    private Ship chooseTarget(Ship ship, List<Ship> playerShips) {
-        List<Ship> targets = playerShips.stream()
-                .filter((a) -> isInRange(ship, a))
+    private EnemyMoveTarget chooseTarget(Ship ship, List<Ship> playerShips) {
+        List<EnemyMoveTarget> targets = playerShips.stream()
                 .filter((a) -> !a.isDestroyed())
+                .map((a) -> getPotentialMove(ship, a))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .toList();
-        Ship target = null;
+        EnemyMoveTarget target = null;
         int maxDamage = 0;
-        for(Ship potentialTarget : targets) {
-            int damage = calculateDamage(ship, potentialTarget);
+        for(EnemyMoveTarget potentialTarget : targets) {
+            int damage = calculateDamage(ship, potentialTarget.getTarget());
             boolean targetDies = damage < 0;
             if(targetDies) {
                 return potentialTarget;
@@ -407,8 +409,11 @@ public class BattleServiceImpl implements BattleService {
         return target;
     }
 
-    private boolean isInRange(Ship ship, Ship target) {
-        return taxiLength(ship.getPosition().getX(), ship.getPosition().getY(), target.getPosition().getX(), target.getPosition().getY()) < 6;
+    private Optional<EnemyMoveTarget> getPotentialMove(Ship ship, Ship target) {
+        if(taxiLength(ship.getPosition().getX(), ship.getPosition().getY(), target.getPosition().getX(), target.getPosition().getY()) < 6) {
+            return Optional.of(new EnemyMoveTarget(null, target));
+        }
+        return Optional.empty();
     }
 
     private int calculateDamage(Ship ship, Ship target) {
