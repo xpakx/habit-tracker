@@ -126,6 +126,8 @@ public class DefaultBattleGenerator implements BattleGenerator{
         ship.setStrength(prototype.getStrength());
         ship.setCriticalRate(prototype.getCriticalRate());
         ship.setHitRate(prototype.getHitRate());
+        ship.setMovementRange(prototype.getMovementRange());
+        ship.setAttackRange(prototype.getAttackRange());
         return ship;
     }
 

@@ -28,4 +28,6 @@ public class ShipType {
     private Integer criticalRate;
     private Integer hitRate;
     private Integer hp;
+    private Integer movementRange;
+    private Integer attackRange;
 }

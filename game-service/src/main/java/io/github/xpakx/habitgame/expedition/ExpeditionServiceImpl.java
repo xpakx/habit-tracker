@@ -79,6 +79,8 @@ public class ExpeditionServiceImpl implements ExpeditionService {
         ship.setStrength(eventShip.getStrength());
         ship.setCriticalRate(eventShip.getCriticalRate());
         ship.setHitRate(eventShip.getHitRate());
+        ship.setMovementRange(eventShip.getMovement());
+        ship.setAttackRange(eventShip.getRange());
         return ship;
     }
 
