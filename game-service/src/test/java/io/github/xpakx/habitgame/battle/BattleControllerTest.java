@@ -1329,6 +1329,8 @@ class BattleControllerTest {
         ship.setHitRate(100);
         ship.setCriticalRate(0);
         ship.setDestroyed(destroyed);
+        ship.setAttackRange(3);
+        ship.setMovementRange(3);
         return shipRepository.save(ship).getId();
     }
 

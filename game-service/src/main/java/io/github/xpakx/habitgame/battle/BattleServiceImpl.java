@@ -330,13 +330,19 @@ public class BattleServiceImpl implements BattleService {
         for(Ship ship : enemyShips) {
             EnemyMoveTarget target = chooseTarget(ship, playerShips);
             if(target != null) {
-                moveTowards(ship, target);
+                if(target.getPosition() != null && positionsAreDifferent(ship, target)) {
+                    moveTowards(ship, target);
+                    moves.add(responseForMove(ship));
+                }
                 int damage = applyDamage(ship, target.getTarget());
-                moves.add(responseForMove(ship));
                 moves.add(responseForAttack(ship, target.getTarget(), damage));
             }
         }
         return moves;
+    }
+
+    private boolean positionsAreDifferent(Ship ship, EnemyMoveTarget target) {
+        return !Objects.equals(target.getPosition().getX(), ship.getPosition().getX()) || !Objects.equals(target.getPosition().getY(), ship.getPosition().getY());
     }
 
     private MoveResponse responseForMove(Ship ship) {
@@ -365,10 +371,13 @@ public class BattleServiceImpl implements BattleService {
     }
 
     private void moveTowards(Ship ship, EnemyMoveTarget target) {
-        // TODO add better movement
+        if(target == null || target.getPosition() == null) {
+            return;
+        }
+        // TODO terrain
         Position position = ship.getPosition();
-        position.setX((ship.getPosition().getX()+target.getTarget().getPosition().getX())/2);
-        position.setY((ship.getPosition().getY()+target.getTarget().getPosition().getY())/2);
+        position.setX(target.getPosition().getX());
+        position.setY(target.getPosition().getY());
     }
 
     private int applyDamage(Ship ship, Ship target) {
@@ -410,8 +419,11 @@ public class BattleServiceImpl implements BattleService {
     }
 
     private Optional<EnemyMoveTarget> getPotentialMove(Ship ship, Ship target) {
+        if(taxiLength(ship.getPosition().getX(), ship.getPosition().getY(), target.getPosition().getX(), target.getPosition().getY()) < ship.getAttackRange()) {
+            return Optional.of(new EnemyMoveTarget(ship.getPosition(), target));
+        }
         if(taxiLength(ship.getPosition().getX(), ship.getPosition().getY(), target.getPosition().getX(), target.getPosition().getY()) < 6) {
-            return Optional.of(new EnemyMoveTarget(null, target));
+            return Optional.of(new EnemyMoveTarget(target.getPosition(), target)); // TODO
         }
         return Optional.empty();
     }
