@@ -429,7 +429,7 @@ public class BattleServiceImpl implements BattleService {
                 Position position = new Position();
                 position.setX(i);
                 position.setY(j);
-                if(taxiLength(target.getPosition().getX(), position.getX(), target.getPosition().getY(), position.getY()) == ship.getAttackRange()) {
+                if(taxiLength(target.getPosition().getX(), target.getPosition().getY(), position.getX(), position.getY()) == ship.getAttackRange()) {
                     positionsInRange.add(position);
                 }
             }
