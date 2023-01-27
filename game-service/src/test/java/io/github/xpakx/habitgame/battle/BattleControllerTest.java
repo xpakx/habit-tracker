@@ -1140,6 +1140,26 @@ class BattleControllerTest {
     }
 
     @Test
+    void shouldAttackPlayerShipWithoutMovement() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true, false);
+        Long attackedShipId = addShip(expeditionId, true, true);
+        placeShip(attackedShipId, 1, 1, battleId);
+        placeShip(addEnemyShip(expeditionId), 1, 1, battleId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .when()
+                .post(baseUrl + "/battle/{battleId}/turn/end", battleId)
+                .then()
+                .statusCode(OK.value())
+                .body("$", hasSize(1));
+        Optional<Ship> ship = shipRepository.findById(attackedShipId);
+        assertTrue(ship.isPresent());
+        assertThat(ship.get(), hasProperty("damaged", equalTo(true)));
+        assertThat(ship.get(), hasProperty("hp", equalTo(2)));
+    }
+
+    @Test
     void shouldAttackPlayerShip() {
         Long expeditionId = addExpedition();
         Long battleId = addBattle(expeditionId, true, false);
@@ -1192,7 +1212,7 @@ class BattleControllerTest {
         Long battleId = addBattle(expeditionId, true, false);
         Long attackedShipId = addShip(expeditionId, true, true);
         placeShip(attackedShipId, 1, 1, battleId);
-        placeShip(addEnemyShip(expeditionId), 10, 10, battleId);
+        placeShip(addEnemyShip(expeditionId), 9, 9, battleId);
         given()
                 .header(getHeaderForUserId(userId))
         .when()
@@ -1212,7 +1232,7 @@ class BattleControllerTest {
         placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
         placeShip(addShip(expeditionId, true, false), 1, 2, battleId);
         placeShip(addShip(expeditionId, false, true), 1, 3, battleId);
-        placeShip(addEnemyShip(expeditionId), 15, 15, battleId);
+        placeShip(addEnemyShip(expeditionId), 9, 9, battleId);
         given()
                 .header(getHeaderForUserId(userId))
                 .when()
@@ -1230,8 +1250,8 @@ class BattleControllerTest {
         placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
         placeShip(addShip(expeditionId, true, false), 1, 2, battleId);
         placeShip(addShip(expeditionId, false, true), 1, 3, battleId);
-        placeShip(addEnemyShip(expeditionId), 15, 15, battleId);
-        placeShip(addDestroyedEnemyShip(expeditionId), 15, 14, battleId);
+        placeShip(addEnemyShip(expeditionId), 9, 9, battleId);
+        placeShip(addDestroyedEnemyShip(expeditionId), 9, 8, battleId);
         given()
                 .header(getHeaderForUserId(userId))
         .when()
@@ -1249,7 +1269,7 @@ class BattleControllerTest {
         placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
         placeShip(addShip(expeditionId, true, false), 1, 2, battleId);
         placeShip(addShip(expeditionId, false, true), 1, 3, battleId);
-        placeShip(addDestroyedEnemyShip(expeditionId), 15, 15, battleId);
+        placeShip(addDestroyedEnemyShip(expeditionId), 9, 9, battleId);
         given()
                 .header(getHeaderForUserId(userId))
         .when()
@@ -1267,7 +1287,7 @@ class BattleControllerTest {
         placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
         placeShip(addShip(expeditionId, true, false), 1, 2, battleId);
         placeShip(addShip(expeditionId, false, true), 1, 3, battleId);
-        placeShip(addDestroyedEnemyShip(expeditionId), 15, 15, battleId);
+        placeShip(addDestroyedEnemyShip(expeditionId), 9, 9, battleId);
         given()
                 .header(getHeaderForUserId(userId))
         .when()
@@ -1302,8 +1322,8 @@ class BattleControllerTest {
         placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
         placeShip(addShip(expeditionId, true, false), 1, 2, battleId);
         placeShip(addShip(expeditionId, false, true), 1, 3, battleId);
-        placeShip(addEnemyShip(expeditionId), 15, 15, battleId);
-        placeShip(addBoss(expeditionId, false), 15, 15, battleId);
+        placeShip(addEnemyShip(expeditionId), 9, 9, battleId);
+        placeShip(addBoss(expeditionId, false), 9, 9, battleId);
         given()
                 .header(getHeaderForUserId(userId))
                 .when()
@@ -1341,8 +1361,8 @@ class BattleControllerTest {
         placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
         placeShip(addShip(expeditionId, true, false), 1, 2, battleId);
         placeShip(addShip(expeditionId, false, true), 1, 3, battleId);
-        placeShip(addEnemyShip(expeditionId), 15, 15, battleId);
-        placeShip(addBoss(expeditionId, true), 15, 15, battleId);
+        placeShip(addEnemyShip(expeditionId), 9, 9, battleId);
+        placeShip(addBoss(expeditionId, true), 9, 9, battleId);
         given()
                 .header(getHeaderForUserId(userId))
         .when()
@@ -1360,7 +1380,7 @@ class BattleControllerTest {
         placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
         placeShip(addShip(expeditionId, true, false), 1, 2, battleId);
         placeShip(addShip(expeditionId, false, true), 1, 3, battleId);
-        placeShip(addEnemyShip(expeditionId), 15, 15, battleId);
+        placeShip(addEnemyShip(expeditionId), 9, 9, battleId);
         given()
                 .header(getHeaderForUserId(userId))
                 .when()
@@ -1378,7 +1398,7 @@ class BattleControllerTest {
         placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
         placeShip(addShip(expeditionId, true, false), 1, 2, battleId);
         placeShip(addShip(expeditionId, false, true), 1, 3, battleId);
-        placeShip(addDestroyedEnemyShip(expeditionId), 15, 15, battleId);
+        placeShip(addDestroyedEnemyShip(expeditionId), 9, 9, battleId);
         given()
                 .header(getHeaderForUserId(userId))
         .when()
@@ -1396,7 +1416,7 @@ class BattleControllerTest {
         placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
         placeShip(addShip(expeditionId, true, false), 1, 2, battleId);
         placeShip(addShip(expeditionId, false, true), 1, 3, battleId);
-        placeShip(addEnemyShip(expeditionId), 15, 15, battleId);
+        placeShip(addEnemyShip(expeditionId), 9, 9, battleId);
         given()
                 .header(getHeaderForUserId(userId))
         .when()
@@ -1414,7 +1434,7 @@ class BattleControllerTest {
         placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
         placeShip(addShip(expeditionId, true, false), 1, 2, battleId);
         placeShip(addShip(expeditionId, false, true), 1, 3, battleId);
-        placeShip(addEnemyShip(expeditionId), 15, 15, battleId);
+        placeShip(addEnemyShip(expeditionId), 9, 9, battleId);
         given()
                 .header(getHeaderForUserId(userId))
         .when()
@@ -1432,7 +1452,7 @@ class BattleControllerTest {
         placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
         placeShip(addShip(expeditionId, true, false), 1, 2, battleId);
         placeShip(addShip(expeditionId, false, true), 1, 3, battleId);
-        placeShip(addEnemyShip(expeditionId), 15, 15, battleId);
+        placeShip(addEnemyShip(expeditionId), 9, 9, battleId);
         given()
                 .header(getHeaderForUserId(userId))
         .when()
@@ -1450,7 +1470,7 @@ class BattleControllerTest {
         placeShip(addShip(expeditionId, true, true), 1, 1, battleId);
         placeShip(addShip(expeditionId, true, false), 1, 2, battleId);
         placeShip(addShip(expeditionId, false, true), 1, 3, battleId);
-        placeShip(addDestroyedEnemyShip(expeditionId), 15, 15, battleId);
+        placeShip(addDestroyedEnemyShip(expeditionId), 9, 9, battleId);
         given()
                 .header(getHeaderForUserId(userId))
         .when()

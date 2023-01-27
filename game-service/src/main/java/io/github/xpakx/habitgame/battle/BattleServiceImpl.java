@@ -298,7 +298,7 @@ public class BattleServiceImpl implements BattleService {
                 ship.setMovement(false);
                 ship.setAction(false);
             }
-            moves = makeEnemyMove(playerShips, enemyShips.stream().filter((s) -> !s.isDestroyed()).toList());
+            moves = makeEnemyMove(playerShips, enemyShips.stream().filter((s) -> !s.isDestroyed()).toList(), battle);
             shipRepository.saveAll(playerShips);
             if(evaluateObjective(battle, enemyShips)) {
                 battle.setFinished(true);
@@ -325,10 +325,11 @@ public class BattleServiceImpl implements BattleService {
                 .findFirst().orElse(false);
     }
 
-    private List<MoveResponse> makeEnemyMove(List<Ship> playerShips, List<Ship> enemyShips) {
+    private List<MoveResponse> makeEnemyMove(List<Ship> playerShips, List<Ship> enemyShips, Battle battle) {
         List<MoveResponse> moves = new ArrayList<>();
+        List<Position> positions = positionRepository.findByBattleId(battle.getId());
         for(Ship ship : enemyShips) {
-            EnemyMoveTarget target = chooseTarget(ship, playerShips);
+            EnemyMoveTarget target = chooseTarget(ship, playerShips, battle, positions);
             if(target != null) {
                 if(target.getPosition() != null && positionsAreDifferent(ship, target)) {
                     moveTowards(ship, target);
@@ -397,10 +398,10 @@ public class BattleServiceImpl implements BattleService {
         return 0;
     }
 
-    private EnemyMoveTarget chooseTarget(Ship ship, List<Ship> playerShips) {
+    private EnemyMoveTarget chooseTarget(Ship ship, List<Ship> playerShips, Battle battle, List<Position> positions) {
         List<EnemyMoveTarget> targets = playerShips.stream()
                 .filter((a) -> !a.isDestroyed())
-                .map((a) -> getPotentialMove(ship, a))
+                .map((a) -> getPotentialMove(ship, a, battle, positions))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
@@ -418,14 +419,25 @@ public class BattleServiceImpl implements BattleService {
         return target;
     }
 
-    private Optional<EnemyMoveTarget> getPotentialMove(Ship ship, Ship target) {
+    private Optional<EnemyMoveTarget> getPotentialMove(Ship ship, Ship target, Battle battle, List<Position> positions) {
         if(taxiLength(ship.getPosition().getX(), ship.getPosition().getY(), target.getPosition().getX(), target.getPosition().getY()) < ship.getAttackRange()) {
             return Optional.of(new EnemyMoveTarget(ship.getPosition(), target));
         }
-        if(taxiLength(ship.getPosition().getX(), ship.getPosition().getY(), target.getPosition().getX(), target.getPosition().getY()) < 6) {
-            return Optional.of(new EnemyMoveTarget(target.getPosition(), target)); // TODO
+        List<Position> positionsInRange = new ArrayList<>();
+        for(int i=0; i<battle.getWidth(); i++) {
+            for(int j=0; j<battle.getHeight(); j++) {
+                Position position = new Position();
+                position.setX(i);
+                position.setY(j);
+                if(taxiLength(target.getPosition().getX(), position.getX(), target.getPosition().getY(), position.getY()) == ship.getAttackRange()) {
+                    positionsInRange.add(position);
+                }
+            }
         }
-        return Optional.empty();
+        return positionsInRange.stream()
+                .filter((a) -> distanceEvaluator.shortestPath(positions, ship.getPosition(), a, battle) < ship.getMovementRange())
+                .map((a) -> new EnemyMoveTarget(a, target))
+                .findAny();
     }
 
     private int calculateDamage(Ship ship, Ship target) {
