@@ -289,6 +289,8 @@ class BattleControllerTest {
         ship.setStrength(1);
         ship.setHitRate(100);
         ship.setCriticalRate(0);
+        ship.setAttackRange(3);
+        ship.setMovementRange(3);
         return shipRepository.save(ship).getId();
     }
 
@@ -306,6 +308,8 @@ class BattleControllerTest {
         ship.setStrength(1);
         ship.setHitRate(100);
         ship.setCriticalRate(0);
+        ship.setAttackRange(3);
+        ship.setMovementRange(3);
         return shipRepository.save(ship).getId();
     }
 
@@ -329,6 +333,8 @@ class BattleControllerTest {
         ship.setStrength(1);
         ship.setHitRate(100);
         ship.setCriticalRate(0);
+        ship.setAttackRange(3);
+        ship.setMovementRange(3);
         return shipRepository.save(ship).getId();
     }
 
@@ -342,6 +348,8 @@ class BattleControllerTest {
         ship.setHp(0);
         ship.setDestroyed(true);
         ship.setDamaged(true);
+        ship.setAttackRange(3);
+        ship.setMovementRange(3);
         return shipRepository.save(ship).getId();
     }
 

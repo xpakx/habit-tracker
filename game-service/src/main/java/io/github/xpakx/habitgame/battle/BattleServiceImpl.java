@@ -162,7 +162,7 @@ public class BattleServiceImpl implements BattleService {
         if(request.getX() < 0 || request.getY() < 0 || request.getX() > battle.getWidth() || request.getY() > battle.getHeight()) {
             throw new WrongMoveException("Position is outside the board!");
         }
-        if(taxiLength(ship.getPosition().getX(), ship.getPosition().getY(), request.getX(), request.getY()) > 3) {
+        if(taxiLength(ship.getPosition().getX(), ship.getPosition().getY(), request.getX(), request.getY()) > ship.getMovementRange()) {
             throw new WrongMoveException("Your move is too long!");
         }
         List<Position> positions = positionRepository.findByBattleId(battle.getId());
@@ -170,7 +170,7 @@ public class BattleServiceImpl implements BattleService {
         if(realLength == -1) {
             throw new WrongMoveException("Target is unreachable!");
         }
-        if(realLength > 3) {
+        if(realLength > ship.getMovementRange()) {
             throw new WrongMoveException("Your move is too long!");
         }
     }
@@ -184,7 +184,7 @@ public class BattleServiceImpl implements BattleService {
         if(position.getShip() == null) {
             throw new WrongMoveException("Nothing to attack!");
         }
-        if(taxiLength(ship.getPosition().getX(), ship.getPosition().getY(), request.getX(), request.getY()) > 3) {
+        if(taxiLength(ship.getPosition().getX(), ship.getPosition().getY(), request.getX(), request.getY()) > ship.getAttackRange()) {
             throw new WrongMoveException("Target is too far away!");
         }
         if(ship.isAction()) {
