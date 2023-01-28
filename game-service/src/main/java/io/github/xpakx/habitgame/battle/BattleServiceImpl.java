@@ -328,17 +328,20 @@ public class BattleServiceImpl implements BattleService {
     private List<MoveResponse> makeEnemyMove(List<Ship> playerShips, List<Ship> enemyShips, Battle battle) {
         List<MoveResponse> moves = new ArrayList<>();
         List<Position> positions = positionRepository.findByBattleId(battle.getId());
+        List<Position> positionsToDelete = new ArrayList<>();
         for(Ship ship : enemyShips) {
             EnemyMoveTarget target = chooseTarget(ship, playerShips, battle, positions);
             if(target != null) {
                 if(target.getPosition() != null && positionsAreDifferent(ship, target)) {
-                    moveTowards(ship, target);
+                    Optional<Position> oldPosition = moveTowards(ship, target, positions);
+                    oldPosition.ifPresent(positionsToDelete::add);
                     moves.add(responseForMove(ship));
                 }
                 int damage = applyDamage(ship, target.getTarget());
                 moves.add(responseForAttack(ship, target.getTarget(), damage));
             }
         }
+        positionRepository.deleteAll(positionsToDelete);
         return moves;
     }
 
@@ -371,14 +374,18 @@ public class BattleServiceImpl implements BattleService {
         return response;
     }
 
-    private void moveTowards(Ship ship, EnemyMoveTarget target) {
+    private Optional<Position> moveTowards(Ship ship, EnemyMoveTarget target, List<Position> positions) {
         if(target == null || target.getPosition() == null) {
-            return;
+            return Optional.empty();
         }
-        // TODO terrain
+        Optional<Position> oldPosition = positions.stream()
+                .filter((a) -> Objects.equals(target.getPosition().getX(), a.getX()) && Objects.equals(target.getPosition().getY(), a.getY()))
+                .findFirst();
         Position position = ship.getPosition();
         position.setX(target.getPosition().getX());
         position.setY(target.getPosition().getY());
+        oldPosition.ifPresent((a) -> position.setTerrain(oldPosition.get().getTerrain()));
+        return oldPosition;
     }
 
     private int applyDamage(Ship ship, Ship target) {
