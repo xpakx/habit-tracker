@@ -343,12 +343,22 @@ public class BattleServiceImpl implements BattleService {
                     moves.add(responseForMove(ship));
                 }
                 int damage = applyDamage(ship, target.getTarget());
+                updatePositionsIfDestroyed(target, positions);
                 moves.add(responseForAttack(ship, target.getTarget(), damage));
             }
         }
         positionRepository.deleteAll(positionsToDelete);
         shipRepository.saveAll(enemyShips);
         return moves;
+    }
+
+    private void updatePositionsIfDestroyed(EnemyMoveTarget target, List<Position> positions) {
+        if(target.getTarget().isDestroyed()) {
+            positions.stream()
+                    .filter((a) -> Objects.equals(target.getPosition().getX(), a.getX()) && Objects.equals(target.getPosition().getY(), a.getY()))
+                    .findFirst()
+                    .ifPresent((a) -> a.getShip().setDestroyed(true));
+        }
     }
 
     private boolean positionsAreDifferent(Ship ship, EnemyMoveTarget target) {
