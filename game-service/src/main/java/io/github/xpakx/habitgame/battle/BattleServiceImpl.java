@@ -337,7 +337,9 @@ public class BattleServiceImpl implements BattleService {
                     Optional<Position> oldShipPosition = getPositionOfShip(ship, positions);
                     moveTowards(ship, target, targetPosition.map(Position::getTerrain).orElse(null));
                     updatePositionsAfterMovement(positions, targetPosition, oldShipPosition);
-                    targetPosition.ifPresent(positionsToDelete::add);
+                    if(targetPosition.isPresent() && targetPosition.get().getTerrain() != null) {
+                        positionsToDelete.add(targetPosition.get());
+                    }
                     moves.add(responseForMove(ship));
                 }
                 int damage = applyDamage(ship, target.getTarget());
