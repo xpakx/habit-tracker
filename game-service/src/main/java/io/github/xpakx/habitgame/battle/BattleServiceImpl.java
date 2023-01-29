@@ -333,13 +333,11 @@ public class BattleServiceImpl implements BattleService {
             EnemyMoveTarget target = chooseTarget(ship, playerShips, battle, positions);
             if(target != null) {
                 if(target.getPosition() != null && positionsAreDifferent(ship, target)) {
-                    Optional<Position> oldPosition = moveTowards(ship, target, positions);
-                    oldPosition.ifPresent(positionsToDelete::add);
-                    if(oldPosition.isPresent()) {
-                        positions = positions.stream()
-                                .filter((a) -> !Objects.equals(a.getId(), oldPosition.get().getId()))
-                                .toList();
-                    }
+                    Optional<Position> targetPosition = getPositionOfTarget(target, positions);
+                    Optional<Position> oldShipPosition = getPositionOfShip(ship, positions);
+                    moveTowards(ship, target, targetPosition.map(Position::getTerrain).orElse(null));
+                    updatePositionsAfterMovement(positions, targetPosition, oldShipPosition);
+                    targetPosition.ifPresent(positionsToDelete::add);
                     moves.add(responseForMove(ship));
                 }
                 int damage = applyDamage(ship, target.getTarget());
@@ -352,11 +350,23 @@ public class BattleServiceImpl implements BattleService {
         return moves;
     }
 
+    private void updatePositionsAfterMovement(List<Position> positions, Optional<Position> oldPosition, Optional<Position> shipPosition) {
+        oldPosition.ifPresent(positions::remove);
+        if(shipPosition.isPresent() && oldPosition.isPresent()) {
+            Position newPosition = new Position();
+            newPosition.setX(shipPosition.get().getX());
+            newPosition.setY(shipPosition.get().getY());
+            newPosition.setTerrain(shipPosition.get().getTerrain());
+            positions.add(newPosition);
+            shipPosition.get().setTerrain(oldPosition.get().getTerrain());
+            shipPosition.get().setX(oldPosition.get().getX());
+            shipPosition.get().setY(oldPosition.get().getY());
+        }
+    }
+
     private void updatePositionsIfDestroyed(EnemyMoveTarget target, List<Position> positions) {
         if(target.getTarget().isDestroyed()) {
-            positions.stream()
-                    .filter((a) -> Objects.equals(target.getPosition().getX(), a.getX()) && Objects.equals(target.getPosition().getY(), a.getY()))
-                    .findFirst()
+            getPositionOfTarget(target, positions)
                     .ifPresent((a) -> a.getShip().setDestroyed(true));
         }
     }
@@ -390,18 +400,26 @@ public class BattleServiceImpl implements BattleService {
         return response;
     }
 
-    private Optional<Position> moveTowards(Ship ship, EnemyMoveTarget target, List<Position> positions) {
+    private void moveTowards(Ship ship, EnemyMoveTarget target, TerrainType terrain) {
         if(target == null || target.getPosition() == null) {
-            return Optional.empty();
+            return;
         }
-        Optional<Position> oldPosition = positions.stream()
-                .filter((a) -> Objects.equals(target.getPosition().getX(), a.getX()) && Objects.equals(target.getPosition().getY(), a.getY()))
-                .findFirst();
         Position position = ship.getPosition();
         position.setX(target.getPosition().getX());
         position.setY(target.getPosition().getY());
-        oldPosition.ifPresent((a) -> position.setTerrain(oldPosition.get().getTerrain()));
-        return oldPosition;
+        position.setTerrain(terrain);
+    }
+
+    private Optional<Position> getPositionOfTarget(EnemyMoveTarget target, List<Position> positions) {
+        return positions.stream()
+                .filter((a) -> Objects.equals(target.getPosition().getX(), a.getX()) && Objects.equals(target.getPosition().getY(), a.getY()))
+                .findFirst();
+    }
+
+    private Optional<Position> getPositionOfShip(Ship ship, List<Position> positions) {
+        return positions.stream()
+                .filter((a) -> Objects.equals(ship.getPosition().getX(), a.getX()) && Objects.equals(ship.getPosition().getY(), a.getY()))
+                .findFirst();
     }
 
     private int applyDamage(Ship ship, Ship target) {
