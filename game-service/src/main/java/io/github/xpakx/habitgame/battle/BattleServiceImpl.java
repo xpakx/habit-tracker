@@ -260,13 +260,14 @@ public class BattleServiceImpl implements BattleService {
 
     private void savePosition(MoveRequest request, Ship ship, Optional<Position> newPosition) {
         TerrainType terrain = newPosition.map(Position::getTerrain).orElse(null);
-        boolean deleteOldPosition = ship.getPosition() == null || ship.getPosition().getTerrain() == null;
         if(ship.getPosition() != null && ship.getPosition().getTerrain() != null) {
             Position oldPosition = newPosition.orElse(new Position());
             oldPosition.setX(ship.getPosition().getX());
             oldPosition.setY(ship.getPosition().getY());
             oldPosition.setTerrain(ship.getPosition().getTerrain());
             positionRepository.save(oldPosition);
+        } else {
+            newPosition.ifPresent(positionRepository::delete);
         }
         Position position = ship.getPosition() == null ? new Position() : ship.getPosition();
         position.setShip(ship);
@@ -274,9 +275,6 @@ public class BattleServiceImpl implements BattleService {
         position.setY(request.getY());
         position.setTerrain(terrain);
         positionRepository.save(position);
-        if(deleteOldPosition) {
-            newPosition.ifPresent(positionRepository::delete);
-        }
     }
 
     private MoveResponse prepareMoveResponse(MoveAction action) {
