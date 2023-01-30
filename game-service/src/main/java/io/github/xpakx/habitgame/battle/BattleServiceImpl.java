@@ -259,13 +259,24 @@ public class BattleServiceImpl implements BattleService {
     }
 
     private void savePosition(MoveRequest request, Ship ship, Optional<Position> newPosition) {
+        TerrainType terrain = newPosition.map(Position::getTerrain).orElse(null);
+        boolean deleteOldPosition = ship.getPosition() == null || ship.getPosition().getTerrain() == null;
+        if(ship.getPosition() != null && ship.getPosition().getTerrain() != null) {
+            Position oldPosition = newPosition.orElse(new Position());
+            oldPosition.setX(ship.getPosition().getX());
+            oldPosition.setY(ship.getPosition().getY());
+            oldPosition.setTerrain(ship.getPosition().getTerrain());
+            positionRepository.save(oldPosition);
+        }
         Position position = ship.getPosition() == null ? new Position() : ship.getPosition();
         position.setShip(ship);
         position.setX(request.getX());
         position.setY(request.getY());
-        newPosition.ifPresent((a) -> position.setTerrain(a.getTerrain()));
+        position.setTerrain(terrain);
         positionRepository.save(position);
-        newPosition.ifPresent(positionRepository::delete);
+        if(deleteOldPosition) {
+            newPosition.ifPresent(positionRepository::delete);
+        }
     }
 
     private MoveResponse prepareMoveResponse(MoveAction action) {
@@ -337,7 +348,7 @@ public class BattleServiceImpl implements BattleService {
                     Optional<Position> oldShipPosition = getPositionOfShip(ship, positions);
                     moveTowards(ship, target, targetPosition.map(Position::getTerrain).orElse(null));
                     updatePositionsAfterMovement(positions, targetPosition, oldShipPosition);
-                    if(targetPosition.isPresent() && targetPosition.get().getTerrain() != null) {
+                    if(targetPosition.isPresent() && targetPosition.get().getId() != null) {
                         positionsToDelete.add(targetPosition.get());
                     }
                     moves.add(responseForMove(ship));
