@@ -44,6 +44,8 @@ class BattleControllerTest {
     PositionRepository positionRepository;
     @Autowired
     ShipTypeRepository typeRepository;
+    @Autowired
+    TerrainTypeRepository terrainRepository;
 
     @BeforeEach
     void setUp() {
@@ -59,6 +61,7 @@ class BattleControllerTest {
         resultRepository.deleteAll();
         shipRepository.deleteAll();
         expeditionRepository.deleteAll();
+        terrainRepository.deleteAll();
     }
 
     private Header getHeaderForUserId(Long userId) {
@@ -1479,5 +1482,148 @@ class BattleControllerTest {
                 .statusCode(OK.value());
         Battle battle = battleRepository.findById(battleId).get();
         assertTrue(battle.isFinished());
+    }
+
+    @Test
+    void shouldChangeShipPositionInDbIfShipNorTargetHasTerrain() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId);
+        placeShip(shipId, 1, 1, battleId);
+        MoveRequest request = getMoveRequest(2,2, MoveAction.MOVE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+                .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId);
+        List<Position> positions = positionRepository.findAll();
+        assertThat(positions, hasItem(
+                both(hasProperty("x", equalTo(2)))
+                        .and(
+                                both(hasProperty("y", equalTo(2)))
+                                        .and(both(hasProperty("ship", hasProperty("id", equalTo(shipId))))
+                                                .and(hasProperty("terrain", nullValue())))
+                        )
+        ));
+    }
+
+
+    private void placeShipWithTerrain(Long shipId, int x, int y, Long battleId, Long terrainId) {
+        Position position = new Position();
+        position.setY(y);
+        position.setX(x);
+        position.setShip(shipRepository.getReferenceById(shipId));
+        position.setBattle(battleRepository.getReferenceById(battleId));
+        position.setTerrain(terrainRepository.getReferenceById(terrainId));
+        positionRepository.save(position);
+    }
+    private void placeTerrain(Long terrainId, int x, int y, Long battleId) {
+        Position position = new Position();
+        position.setY(y);
+        position.setX(x);
+        position.setTerrain(terrainRepository.getReferenceById(terrainId));
+        position.setBattle(battleRepository.getReferenceById(battleId));
+        positionRepository.save(position);
+    }
+
+    @Test
+    void shouldChangeShipPositionInDbIfShipHasTerrain() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId);
+        Long terrainId = addTerrain();
+        placeShipWithTerrain(shipId, 1, 1, battleId, terrainId);
+        MoveRequest request = getMoveRequest(2,2, MoveAction.MOVE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+                .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId);
+        List<Position> positions = positionRepository.findAll();
+        assertThat(positions, hasItem(
+                both(hasProperty("x", equalTo(2)))
+                        .and(
+                                both(hasProperty("y", equalTo(2)))
+                                        .and(both(hasProperty("ship", hasProperty("id", equalTo(shipId))))
+                                                .and(hasProperty("terrain", nullValue())))
+                        )
+        ));
+        assertThat(positions, hasItem(
+                both(hasProperty("x", equalTo(1)))
+                        .and(
+                                both(hasProperty("y", equalTo(1)))
+                                        .and(both(hasProperty("terrain", hasProperty("id", equalTo(terrainId))))
+                                                .and(hasProperty("ship", nullValue())))
+                        )
+        ));
+    }
+
+    private Long addTerrain() {
+        TerrainType terrainType = new TerrainType();
+        terrainType.setMove(2);
+        return terrainRepository.save(terrainType).getId();
+    }
+
+    @Test
+    void shouldChangeShipPositionInDbIfTargetHasTerrain() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId);
+        Long terrainId = addTerrain();
+        placeShip(shipId, 1, 1, battleId);
+        placeTerrain(terrainId, 2, 2, battleId);
+        MoveRequest request = getMoveRequest(2,2, MoveAction.MOVE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+                .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId);
+        List<Position> positions = positionRepository.findAll();
+        assertThat(positions, hasItem(
+                both(hasProperty("x", equalTo(2)))
+                        .and(
+                                both(hasProperty("y", equalTo(2)))
+                                        .and(both(hasProperty("ship", hasProperty("id", equalTo(shipId))))
+                                                .and(hasProperty("terrain", hasProperty("id", equalTo(terrainId)))))
+                        )
+        ));
+    }
+
+    @Test
+    void shouldChangeShipPositionInDbIfBothShipAndTargetHasTerrain() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId);
+        Long terrain1Id = addTerrain();
+        Long terrain2Id = addTerrain();
+        placeShipWithTerrain(shipId, 1, 1, battleId, terrain1Id);
+        placeTerrain(terrain2Id, 2, 2, battleId);
+        MoveRequest request = getMoveRequest(2,2, MoveAction.MOVE, shipId);
+        given()
+                .header(getHeaderForUserId(userId))
+                .contentType(ContentType.JSON)
+                .body(request)
+                .when()
+                .post(baseUrl + "/battle/{battleId}/move", battleId);
+        List<Position> positions = positionRepository.findAll();
+        assertThat(positions, hasItem(
+                both(hasProperty("x", equalTo(2)))
+                        .and(
+                                both(hasProperty("y", equalTo(2)))
+                                        .and(both(hasProperty("ship", hasProperty("id", equalTo(shipId))))
+                                                .and(hasProperty("terrain", hasProperty("id", equalTo(terrain2Id)))))
+                        )
+        ));
+        assertThat(positions, hasItem(
+                both(hasProperty("x", equalTo(1)))
+                        .and(
+                                both(hasProperty("y", equalTo(1)))
+                                        .and(both(hasProperty("terrain", hasProperty("id", equalTo(terrain1Id))))
+                                                .and(hasProperty("ship", nullValue())))
+                        )
+        ));
     }
 }
