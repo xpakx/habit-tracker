@@ -361,7 +361,7 @@ public class BattleServiceImpl implements BattleService {
             }
         }
         positionRepository.deleteAll(positionsToDelete);
-        shipRepository.saveAll(enemyShips);
+        positionRepository.saveAll(enemyShips.stream().map(Ship::getPosition).toList());
         return moves;
     }
 

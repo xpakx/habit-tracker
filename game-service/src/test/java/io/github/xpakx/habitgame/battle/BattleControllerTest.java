@@ -1648,6 +1648,9 @@ class BattleControllerTest {
         .when()
                 .post(baseUrl + "/battle/{battleId}/turn/end", battleId);
         List<Position> positions = positionRepository.findAll();
+        for(Position pos: positions) {
+            System.out.println("<"+pos.getX()+","+pos.getY()+">");
+        }
         assertThat(positions, hasItem(
                 both(hasProperty("x", equalTo(2)))
                         .and(
