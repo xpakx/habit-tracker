@@ -491,9 +491,14 @@ public class BattleServiceImpl implements BattleService {
             }
         }
         return positionsInRange.stream()
-                .filter((a) -> distanceEvaluator.shortestPath(positions, ship.getPosition(), a, battle) < ship.getMovementRange())
+                .filter((a) -> canBeReached(ship, battle, positions, a))
                 .map((a) -> new EnemyMoveTarget(a, target))
                 .findAny();
+    }
+
+    private boolean canBeReached(Ship ship, Battle battle, List<Position> positions, Position a) {
+        int distance = distanceEvaluator.shortestPath(positions, ship.getPosition(), a, battle);
+        return distance != -1 && distance < ship.getMovementRange();
     }
 
     private int calculateDamage(Ship ship, Ship target) {
