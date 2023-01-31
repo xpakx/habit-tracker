@@ -1561,8 +1561,13 @@ class BattleControllerTest {
     }
 
     private Long addTerrain() {
+        return addTerrain(false);
+    }
+
+    private Long addTerrain(boolean blocking) {
         TerrainType terrainType = new TerrainType();
         terrainType.setMove(2);
+        terrainType.setBlocked(true);
         return terrainRepository.save(terrainType).getId();
     }
 
@@ -1623,6 +1628,32 @@ class BattleControllerTest {
                                 both(hasProperty("y", equalTo(1)))
                                         .and(both(hasProperty("terrain", hasProperty("id", equalTo(terrain1Id))))
                                                 .and(hasProperty("ship", nullValue())))
+                        )
+        ));
+    }
+
+    @Test
+    void shouldChangeEnemyShipPositionInDbIfShipNorTargetHasTerrain() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId);
+        placeShip(shipId, 2, 0, battleId);
+        Long barrierId = addTerrain(true);
+        placeTerrain(barrierId, 1, 2, battleId);
+        placeTerrain(barrierId, 0, 1, battleId);
+        Long enemyShipId = addEnemyShip(expeditionId);
+        placeShip(enemyShipId, 1, 3, battleId);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/battle/{battleId}/turn/end", battleId);
+        List<Position> positions = positionRepository.findAll();
+        assertThat(positions, hasItem(
+                both(hasProperty("x", equalTo(2)))
+                        .and(
+                                both(hasProperty("y", equalTo(3)))
+                                        .and(both(hasProperty("ship", hasProperty("id", equalTo(enemyShipId))))
+                                                .and(hasProperty("terrain", nullValue())))
                         )
         ));
     }
