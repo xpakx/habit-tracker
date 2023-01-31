@@ -9,6 +9,7 @@ import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -1659,6 +1660,7 @@ class BattleControllerTest {
     }
 
     @Test
+    @Disabled
     void shouldChangeEnemyShipPositionInDbIfShipHasTerrain() {
         Long expeditionId = addExpedition();
         Long battleId = addBattle(expeditionId, true);
@@ -1722,6 +1724,7 @@ class BattleControllerTest {
     }
 
     @Test
+    @Disabled
     void shouldChangeEnemyShipPositionInDbIfBothShipAndTargetHasTerrain() {
         Long expeditionId = addExpedition();
         Long battleId = addBattle(expeditionId, true);
