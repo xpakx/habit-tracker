@@ -64,6 +64,7 @@ export class BattleComponent implements OnInit {
     if(!this.battle) {
       return;
     }
+    this.battle.turn += 1;
     for(let ship of this.battle?.ships) {
       ship.action = false;
       ship.movement = false;
