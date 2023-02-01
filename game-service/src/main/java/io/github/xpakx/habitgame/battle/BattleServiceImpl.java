@@ -354,7 +354,7 @@ public class BattleServiceImpl implements BattleService {
                     Integer y = oldShipPosition.map(Position::getY).orElse(null);
                     TerrainType terrain = oldShipPosition.map(Position::getTerrain).orElse(null);
                     moveTowards(ship, target, targetPosition.map(Position::getTerrain).orElse(null));
-                    updateLists(positionsToDelete, positionsToUpdate, targetPosition, updateTargetPosition, x, y, terrain);
+                    updateLists(positionsToDelete, positionsToUpdate, targetPosition, updateTargetPosition, x, y, terrain, target);
                     updatePositionsAfterMovement(positions, targetPosition, oldShipPosition);
                     moves.add(responseForMove(ship));
                 }
@@ -369,17 +369,27 @@ public class BattleServiceImpl implements BattleService {
         return moves;
     }
 
-    private void updateLists(List<Position> positionsToDelete, List<Position> positionsToUpdate, Optional<Position> targetPosition, boolean updateTargetPosition, Integer x, Integer y, TerrainType terrain) {
-        if(updateTargetPosition) {
+    private void updateLists(List<Position> positionsToDelete, List<Position> positionsToUpdate, Optional<Position> targetPosition, boolean updateTargetPosition, Integer x, Integer y, TerrainType terrain, EnemyMoveTarget target) {
+        if(target != null && target.getPosition() != null && onList(positionsToUpdate, target.getPosition().getX(), target.getPosition().getY())) {
+            Optional<Position> position = positionsToUpdate.stream()
+                    .filter((a) -> Objects.equals(target.getPosition().getX(), a.getX()) && Objects.equals(target.getPosition().getY(), a.getY()))
+                    .findFirst();
+            position.ifPresent(positionsToUpdate::remove);
+        }
+        if(updateTargetPosition && !onList(positionsToUpdate, x, y)) {
             Position position = targetPosition.orElse(new Position());
             position.setX(x);
             position.setY(y);
             position.setTerrain(terrain);
-            positionsToUpdate.add(position); // add only if no position with same coordinates already on list
-        } else {
-            targetPosition.ifPresent(positionsToDelete::add); // add only if position has id
+            positionsToUpdate.add(position);
+        } else if(!updateTargetPosition && targetPosition.isPresent() && targetPosition.get().getId() != null) {
+            positionsToDelete.add(targetPosition.get());
         }
-        //also delete from positionsToUpdate if ships moved to given position
+    }
+
+    private boolean onList(List<Position> positions, Integer x, Integer y) {
+        return positions.stream()
+                .anyMatch((a) -> Objects.equals(x, a.getX()) && Objects.equals(y, a.getY()));
     }
 
     private void updatePositionsAfterMovement(List<Position> positions, Optional<Position> oldPosition, Optional<Position> shipPosition) {
