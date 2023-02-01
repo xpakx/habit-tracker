@@ -1660,7 +1660,6 @@ class BattleControllerTest {
     }
 
     @Test
-    @Disabled
     void shouldChangeEnemyShipPositionInDbIfShipHasTerrain() {
         Long expeditionId = addExpedition();
         Long battleId = addBattle(expeditionId, true);
@@ -1724,7 +1723,6 @@ class BattleControllerTest {
     }
 
     @Test
-    @Disabled
     void shouldChangeEnemyShipPositionInDbIfBothShipAndTargetHasTerrain() {
         Long expeditionId = addExpedition();
         Long battleId = addBattle(expeditionId, true);

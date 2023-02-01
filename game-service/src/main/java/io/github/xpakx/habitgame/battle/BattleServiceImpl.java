@@ -342,17 +342,29 @@ public class BattleServiceImpl implements BattleService {
         List<MoveResponse> moves = new ArrayList<>();
         List<Position> positions = positionRepository.findByBattleId(battle.getId());
         List<Position> positionsToDelete = new ArrayList<>();
+        List<Position> positionsToUpdate = new ArrayList<>();
         for(Ship ship : enemyShips) {
             EnemyMoveTarget target = chooseTarget(ship, playerShips, battle, positions);
             if(target != null) {
                 if(target.getPosition() != null && positionsAreDifferent(ship, target)) {
                     Optional<Position> targetPosition = getPositionOfTarget(target, positions);
                     Optional<Position> oldShipPosition = getPositionOfShip(ship, positions);
+                    boolean updateTargetPosition = oldShipPosition.isPresent() && oldShipPosition.get().getTerrain() != null;
+                    Integer x = oldShipPosition.map(Position::getX).orElse(null);
+                    Integer y = oldShipPosition.map(Position::getY).orElse(null);
+                    TerrainType terrain = oldShipPosition.map(Position::getTerrain).orElse(null);
                     moveTowards(ship, target, targetPosition.map(Position::getTerrain).orElse(null));
-                    updatePositionsAfterMovement(positions, targetPosition, oldShipPosition);
-                    if(targetPosition.isPresent() && targetPosition.get().getId() != null) {
-                        positionsToDelete.add(targetPosition.get());
+                    if(updateTargetPosition) {
+                        Position position = targetPosition.orElse(new Position());
+                        position.setX(x);
+                        position.setY(y);
+                        position.setTerrain(terrain);
+                        positionsToUpdate.add(position);
+
+                    } else {
+                        targetPosition.ifPresent(positionsToDelete::add);
                     }
+                    updatePositionsAfterMovement(positions, targetPosition, oldShipPosition);
                     moves.add(responseForMove(ship));
                 }
                 int damage = applyDamage(ship, target.getTarget());
@@ -361,6 +373,7 @@ public class BattleServiceImpl implements BattleService {
             }
         }
         positionRepository.deleteAll(positionsToDelete);
+        positionRepository.saveAll(positionsToUpdate);
         positionRepository.saveAll(enemyShips.stream().map(Ship::getPosition).toList());
         return moves;
     }
