@@ -354,16 +354,7 @@ public class BattleServiceImpl implements BattleService {
                     Integer y = oldShipPosition.map(Position::getY).orElse(null);
                     TerrainType terrain = oldShipPosition.map(Position::getTerrain).orElse(null);
                     moveTowards(ship, target, targetPosition.map(Position::getTerrain).orElse(null));
-                    if(updateTargetPosition) {
-                        Position position = targetPosition.orElse(new Position());
-                        position.setX(x);
-                        position.setY(y);
-                        position.setTerrain(terrain);
-                        positionsToUpdate.add(position);
-
-                    } else {
-                        targetPosition.ifPresent(positionsToDelete::add);
-                    }
+                    updateLists(positionsToDelete, positionsToUpdate, targetPosition, updateTargetPosition, x, y, terrain);
                     updatePositionsAfterMovement(positions, targetPosition, oldShipPosition);
                     moves.add(responseForMove(ship));
                 }
@@ -376,6 +367,19 @@ public class BattleServiceImpl implements BattleService {
         positionRepository.saveAll(positionsToUpdate);
         positionRepository.saveAll(enemyShips.stream().map(Ship::getPosition).toList());
         return moves;
+    }
+
+    private void updateLists(List<Position> positionsToDelete, List<Position> positionsToUpdate, Optional<Position> targetPosition, boolean updateTargetPosition, Integer x, Integer y, TerrainType terrain) {
+        if(updateTargetPosition) {
+            Position position = targetPosition.orElse(new Position());
+            position.setX(x);
+            position.setY(y);
+            position.setTerrain(terrain);
+            positionsToUpdate.add(position); // add only if no position with same coordinates already on list
+        } else {
+            targetPosition.ifPresent(positionsToDelete::add); // add only if position has id
+        }
+        //also delete from positionsToUpdate if ships moved to given position
     }
 
     private void updatePositionsAfterMovement(List<Position> positions, Optional<Position> oldPosition, Optional<Position> shipPosition) {
