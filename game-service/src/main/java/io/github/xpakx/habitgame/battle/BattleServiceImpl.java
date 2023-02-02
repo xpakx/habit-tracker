@@ -347,10 +347,9 @@ public class BattleServiceImpl implements BattleService {
             EnemyMoveTarget target = chooseTarget(ship, playerShips, battle, positions);
             if(target != null) {
                 if(target.getPosition() != null && positionsAreDifferent(ship, target)) {
-                    Optional<Position> targetPosition = getPositionOfTarget(target, positions);
                     Optional<Position> oldShipPosition = getPositionOfShip(ship, positions);
-                    moveTowards(ship, target, targetPosition.map(Position::getTerrain).orElse(null));
-                    updateRepoLists(positionsToDelete, positionsToUpdate, positions, targetPosition, oldShipPosition, target);
+                    moveTowards(ship, target.getPosition());
+                    updateRepoLists(positionsToDelete, positionsToUpdate, positions, oldShipPosition, target);
                     moves.add(responseForMove(ship));
                 }
                 int damage = applyDamage(ship, target.getTarget());
@@ -364,40 +363,49 @@ public class BattleServiceImpl implements BattleService {
         return moves;
     }
 
-    private void updateRepoLists(List<Position> positionsToDelete, List<Position> positionsToUpdate, List<Position> positions, Optional<Position> targetPosition, Optional<Position> oldShipPosition, EnemyMoveTarget target) {
+    private void updateRepoLists(List<Position> positionsToDelete, List<Position> positionsToUpdate, List<Position> positions, Optional<Position> oldShipPosition, EnemyMoveTarget target) {
         Integer x = oldShipPosition.map(Position::getX).orElse(null);
         Integer y = oldShipPosition.map(Position::getY).orElse(null);
-        boolean updateTargetPosition = oldShipPosition.isPresent() && oldShipPosition.get().getTerrain() != null;
-        if(target != null && target.getPosition() != null && onList(positionsToUpdate, target.getPosition().getX(), target.getPosition().getY())) {
+        if(hasPosition(target) && onList(positionsToUpdate, target.getPosition().getX(), target.getPosition().getY())) {
             Optional<Position> position = positionsToUpdate.stream()
                     .filter((a) -> Objects.equals(target.getPosition().getX(), a.getX()) && Objects.equals(target.getPosition().getY(), a.getY()))
                     .findFirst();
             position.ifPresent(positionsToUpdate::remove);
         }
-        if(updateTargetPosition && !onList(positionsToUpdate, x, y)) {
-            Position position = targetPosition.orElse(new Position());
+        if(hasTerrain(oldShipPosition) && !onList(positionsToUpdate, x, y)) {
+            Position position = target.getPosition();
             position.setX(x);
             position.setY(y);
             position.setTerrain(oldShipPosition.map(Position::getTerrain).orElse(null));
             positionsToUpdate.add(position);
-        } else if(!updateTargetPosition && targetPosition.isPresent() && targetPosition.get().getId() != null) {
-            positionsToDelete.add(targetPosition.get());
+        } else if(!hasTerrain(oldShipPosition) && target.getPosition() != null && target.getPosition().getId() != null) {
+            positionsToDelete.add(target.getPosition());
         }
-        updateWorkingList(positions, targetPosition, oldShipPosition);
+        updateWorkingList(positions, target.getPosition(), oldShipPosition);
     }
 
-    private void updateWorkingList(List<Position> positions, Optional<Position> oldPosition, Optional<Position> shipPosition) {
-        oldPosition.ifPresent(positions::remove);
-        if(shipPosition.isPresent() && oldPosition.isPresent()) {
+    private boolean hasPosition(EnemyMoveTarget target) {
+        return target != null && target.getPosition() != null;
+    }
+
+    private boolean hasTerrain(Optional<Position> oldShipPosition) {
+        return oldShipPosition.isPresent() && oldShipPosition.get().getTerrain() != null;
+    }
+
+    private void updateWorkingList(List<Position> positions, Position oldPosition, Optional<Position> shipPosition) {
+        if(oldPosition != null) {
+            positions.remove(oldPosition);
+        }
+        if(shipPosition.isPresent() && oldPosition != null) {
             Position newPosition = new Position();
             newPosition.setX(shipPosition.get().getX());
             newPosition.setY(shipPosition.get().getY());
             newPosition.setTerrain(shipPosition.get().getTerrain());
             newPosition.setShip(shipPosition.get().getShip());
             positions.add(newPosition);
-            shipPosition.get().setTerrain(oldPosition.get().getTerrain());
-            shipPosition.get().setX(oldPosition.get().getX());
-            shipPosition.get().setY(oldPosition.get().getY());
+            shipPosition.get().setTerrain(oldPosition.getTerrain());
+            shipPosition.get().setX(oldPosition.getX());
+            shipPosition.get().setY(oldPosition.getY());
             shipPosition.get().setShip(null);
         }
     }
@@ -443,14 +451,14 @@ public class BattleServiceImpl implements BattleService {
         return response;
     }
 
-    private void moveTowards(Ship ship, EnemyMoveTarget target, TerrainType terrain) {
-        if(target == null || target.getPosition() == null) {
+    private void moveTowards(Ship ship, Position target) {
+        if(target == null) {
             return;
         }
         Position position = ship.getPosition();
-        position.setX(target.getPosition().getX());
-        position.setY(target.getPosition().getY());
-        position.setTerrain(terrain);
+        position.setX(target.getX());
+        position.setY(target.getY());
+        position.setTerrain(target.getTerrain());
     }
 
     private Optional<Position> getPositionOfTarget(EnemyMoveTarget target, List<Position> positions) {
@@ -495,12 +503,21 @@ public class BattleServiceImpl implements BattleService {
             int damage = calculateDamage(ship, potentialTarget.getTarget());
             boolean targetDies = damage < 0;
             if(targetDies) {
-                return potentialTarget;
+                return toRealTarget(potentialTarget, positions);
             } else if(damage > maxDamage) {
                 target = potentialTarget;
             }
         }
-        return target;
+        return toRealTarget(target, positions);
+    }
+
+    private EnemyMoveTarget toRealTarget(EnemyMoveTarget potentialTarget, List<Position> positions) {
+        if(potentialTarget == null) {
+            return null;
+        }
+        return new EnemyMoveTarget(
+                getPositionOfTarget(potentialTarget, positions).orElse(potentialTarget.getPosition()),
+                potentialTarget.getTarget());
     }
 
     private Optional<EnemyMoveTarget> getPotentialMove(Ship ship, Ship target, Battle battle, List<Position> positions) {
