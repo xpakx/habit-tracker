@@ -349,13 +349,8 @@ public class BattleServiceImpl implements BattleService {
                 if(target.getPosition() != null && positionsAreDifferent(ship, target)) {
                     Optional<Position> targetPosition = getPositionOfTarget(target, positions);
                     Optional<Position> oldShipPosition = getPositionOfShip(ship, positions);
-                    boolean updateTargetPosition = oldShipPosition.isPresent() && oldShipPosition.get().getTerrain() != null;
-                    Integer x = oldShipPosition.map(Position::getX).orElse(null);
-                    Integer y = oldShipPosition.map(Position::getY).orElse(null);
-                    TerrainType terrain = oldShipPosition.map(Position::getTerrain).orElse(null);
                     moveTowards(ship, target, targetPosition.map(Position::getTerrain).orElse(null));
-                    updateRepoLists(positionsToDelete, positionsToUpdate, targetPosition, updateTargetPosition, x, y, terrain, target);
-                    updateWorkingList(positions, targetPosition, oldShipPosition);
+                    updateRepoLists(positionsToDelete, positionsToUpdate, positions, targetPosition, oldShipPosition, target);
                     moves.add(responseForMove(ship));
                 }
                 int damage = applyDamage(ship, target.getTarget());
@@ -369,7 +364,10 @@ public class BattleServiceImpl implements BattleService {
         return moves;
     }
 
-    private void updateRepoLists(List<Position> positionsToDelete, List<Position> positionsToUpdate, Optional<Position> targetPosition, boolean updateTargetPosition, Integer x, Integer y, TerrainType terrain, EnemyMoveTarget target) {
+    private void updateRepoLists(List<Position> positionsToDelete, List<Position> positionsToUpdate, List<Position> positions, Optional<Position> targetPosition, Optional<Position> oldShipPosition, EnemyMoveTarget target) {
+        Integer x = oldShipPosition.map(Position::getX).orElse(null);
+        Integer y = oldShipPosition.map(Position::getY).orElse(null);
+        boolean updateTargetPosition = oldShipPosition.isPresent() && oldShipPosition.get().getTerrain() != null;
         if(target != null && target.getPosition() != null && onList(positionsToUpdate, target.getPosition().getX(), target.getPosition().getY())) {
             Optional<Position> position = positionsToUpdate.stream()
                     .filter((a) -> Objects.equals(target.getPosition().getX(), a.getX()) && Objects.equals(target.getPosition().getY(), a.getY()))
@@ -380,16 +378,12 @@ public class BattleServiceImpl implements BattleService {
             Position position = targetPosition.orElse(new Position());
             position.setX(x);
             position.setY(y);
-            position.setTerrain(terrain);
+            position.setTerrain(oldShipPosition.map(Position::getTerrain).orElse(null));
             positionsToUpdate.add(position);
         } else if(!updateTargetPosition && targetPosition.isPresent() && targetPosition.get().getId() != null) {
             positionsToDelete.add(targetPosition.get());
         }
-    }
-
-    private boolean onList(List<Position> positions, Integer x, Integer y) {
-        return positions.stream()
-                .anyMatch((a) -> Objects.equals(x, a.getX()) && Objects.equals(y, a.getY()));
+        updateWorkingList(positions, targetPosition, oldShipPosition);
     }
 
     private void updateWorkingList(List<Position> positions, Optional<Position> oldPosition, Optional<Position> shipPosition) {
@@ -408,6 +402,11 @@ public class BattleServiceImpl implements BattleService {
         }
     }
 
+
+    private boolean onList(List<Position> positions, Integer x, Integer y) {
+        return positions.stream()
+                .anyMatch((a) -> Objects.equals(x, a.getX()) && Objects.equals(y, a.getY()));
+    }
     private void updatePositionsIfDestroyed(EnemyMoveTarget target, List<Position> positions) {
         if(target.getTarget().isDestroyed()) {
             getPositionOfTarget(target, positions)
