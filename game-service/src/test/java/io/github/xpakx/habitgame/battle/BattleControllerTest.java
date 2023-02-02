@@ -1738,7 +1738,7 @@ class BattleControllerTest {
         placeTerrain(terrain2Id, 2, 3, battleId);
         given()
                 .header(getHeaderForUserId(userId))
-                .when()
+        .when()
                 .post(baseUrl + "/battle/{battleId}/turn/end", battleId);
         List<Position> positions = positionRepository.findAll();
         assertThat(positions, hasItem(
@@ -1754,6 +1754,58 @@ class BattleControllerTest {
                         .and(
                                 both(hasProperty("y", equalTo(3)))
                                         .and(both(hasProperty("terrain", hasProperty("id", equalTo(terrain1Id))))
+                                                .and(hasProperty("ship", nullValue())))
+                        )
+        ));
+    }
+
+    @Test
+    void shouldCorrectlyChangeMultipleEnemyShips() {
+        Long expeditionId = addExpedition();
+        Long battleId = addBattle(expeditionId, true);
+        Long shipId = addShip(expeditionId, true, true, 1);
+        Long strongerShipId = addShip(expeditionId, true, true, 3);
+        placeShip(shipId, 2, 0, battleId);
+        placeShip(strongerShipId, 4, 3, battleId);
+        Long barrierId = addTerrain(true);
+        placeTerrain(barrierId, 1, 2, battleId);
+        placeTerrain(barrierId, 0, 1, battleId);
+        placeTerrain(barrierId, 0, 5, battleId);
+        placeTerrain(barrierId, 1, 4, battleId);
+        Long terrain1Id = addTerrain();
+        Long terrain2Id = addTerrain();
+        Long terrain3Id = addTerrain();
+        Long enemyShipId = addEnemyShip(expeditionId);
+        Long enemyShip2Id = addEnemyShip(expeditionId);
+        placeShipWithTerrain(enemyShipId, 1, 3, battleId, terrain1Id);
+        placeShipWithTerrain(enemyShip2Id, 0, 4, battleId, terrain3Id);
+        placeTerrain(terrain2Id, 2, 3, battleId);
+        given()
+                .header(getHeaderForUserId(userId))
+        .when()
+                .post(baseUrl + "/battle/{battleId}/turn/end", battleId);
+        List<Position> positions = positionRepository.findAll();
+        assertThat(positions, hasItem(
+                both(hasProperty("x", equalTo(2)))
+                        .and(
+                                both(hasProperty("y", equalTo(3)))
+                                        .and(both(hasProperty("ship", hasProperty("id", equalTo(enemyShipId))))
+                                                .and(hasProperty("terrain", hasProperty("id", equalTo(terrain2Id)))))
+                        )
+        ));
+        assertThat(positions, hasItem(
+                both(hasProperty("x", equalTo(1)))
+                        .and(
+                                both(hasProperty("y", equalTo(3)))
+                                        .and(both(hasProperty("terrain", hasProperty("id", equalTo(terrain1Id))))
+                                                .and(hasProperty("ship", hasProperty("id", equalTo(enemyShip2Id)))))
+                        )
+        ));
+        assertThat(positions, hasItem(
+                both(hasProperty("x", equalTo(0)))
+                        .and(
+                                both(hasProperty("y", equalTo(4)))
+                                        .and(both(hasProperty("terrain", hasProperty("id", equalTo(terrain3Id))))
                                                 .and(hasProperty("ship", nullValue())))
                         )
         ));
