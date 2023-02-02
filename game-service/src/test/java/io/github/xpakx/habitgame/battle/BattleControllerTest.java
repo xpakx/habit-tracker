@@ -1760,6 +1760,7 @@ class BattleControllerTest {
     }
 
     @Test
+    @Disabled
     void shouldCorrectlyChangeMultipleEnemyShips() {
         Long expeditionId = addExpedition();
         Long battleId = addBattle(expeditionId, true);

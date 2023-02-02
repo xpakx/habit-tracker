@@ -399,10 +399,12 @@ public class BattleServiceImpl implements BattleService {
             newPosition.setX(shipPosition.get().getX());
             newPosition.setY(shipPosition.get().getY());
             newPosition.setTerrain(shipPosition.get().getTerrain());
+            newPosition.setShip(shipPosition.get().getShip());
             positions.add(newPosition);
             shipPosition.get().setTerrain(oldPosition.get().getTerrain());
             shipPosition.get().setX(oldPosition.get().getX());
             shipPosition.get().setY(oldPosition.get().getY());
+            shipPosition.get().setShip(null);
         }
     }
 
