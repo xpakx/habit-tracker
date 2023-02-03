@@ -343,18 +343,25 @@ public class BattleServiceImpl implements BattleService {
         List<Position> positions = positionRepository.findByBattleId(battle.getId());
         List<Position> positionsToDelete = new ArrayList<>();
         List<Position> positionsToUpdate = new ArrayList<>();
-        for(Ship ship : enemyShips) {
-            EnemyMoveTarget target = chooseTarget(ship, playerShips, battle, positions);
-            if(target != null) {
-                if(target.getPosition() != null && positionsAreDifferent(ship, target)) {
-                    Position shipPosition = getPositionOfShip(ship, positions);
-                    moveTowards(ship, target.getPosition());
-                    updateLists(positionsToDelete, positionsToUpdate, positions, shipPosition, target);
-                    moves.add(responseForMove(ship));
+        boolean shipMoved = true;
+        while(shipMoved) {
+            List<Ship> shipsForMovement = enemyShips.stream().filter(s -> !s.isMovement()).toList();
+            shipMoved = false;
+            for (Ship ship : shipsForMovement) {
+                EnemyMoveTarget target = chooseTarget(ship, playerShips, battle, positions);
+                if (target != null) {
+                    if (target.getPosition() != null && positionsAreDifferent(ship, target)) {
+                        Position shipPosition = getPositionOfShip(ship, positions);
+                        moveTowards(ship, target.getPosition());
+                        updateLists(positionsToDelete, positionsToUpdate, positions, shipPosition, target);
+                        moves.add(responseForMove(ship));
+                    }
+                    int damage = applyDamage(ship, target.getTarget());
+                    updatePositionsIfDestroyed(target, positions);
+                    moves.add(responseForAttack(ship, target.getTarget(), damage));
+                    shipMoved = true;
+                    ship.setMovement(true);
                 }
-                int damage = applyDamage(ship, target.getTarget());
-                updatePositionsIfDestroyed(target, positions);
-                moves.add(responseForAttack(ship, target.getTarget(), damage));
             }
         }
         positionRepository.deleteAll(positionsToDelete);
