@@ -347,18 +347,26 @@ public class BattleServiceImpl implements BattleService {
         while(shipMoved) {
             List<Ship> shipsForMovement = enemyShips.stream().filter(s -> !s.isMovement()).toList();
             shipMoved = false;
-            for (Ship ship : shipsForMovement) {
+            for(Ship ship : shipsForMovement) {
                 EnemyMoveTarget target = chooseTarget(ship, playerShips, battle, positions);
-                if (target != null) {
-                    if (target.getPosition() != null && positionsAreDifferent(ship, target)) {
+                System.out.println("Ship at position <"+ship.getPosition().getX()+","+ship.getPosition().getY()+">");
+                if(target != null) {
+                    System.out.println("Target found");
+                    if(target.getPosition() != null && positionsAreDifferent(ship, target)) {
+                        System.out.println("Moving…");
+                        System.out.println("Moving at <"+target.getPosition().getX()+","+target.getPosition().getY()+">");
                         Position shipPosition = getPositionOfShip(ship, positions);
                         moveTowards(ship, target.getPosition());
                         updateLists(positionsToDelete, positionsToUpdate, positions, shipPosition, target);
                         moves.add(responseForMove(ship));
                     }
+
+                    System.out.println("Attacking…");
+                    Position targetPosition = target.getTarget().getPosition();
                     int damage = applyDamage(ship, target.getTarget());
-                    updatePositionsIfDestroyed(target, positions);
-                    moves.add(responseForAttack(ship, target.getTarget(), damage));
+                    System.out.println("Attacking position <"+targetPosition.getX()+","+targetPosition.getY()+">");
+                    updatePositionsIfDestroyed(target, targetPosition, positions);
+                    moves.add(responseForAttack(ship, targetPosition, damage));
                     shipMoved = true;
                     ship.setMovement(true);
                 }
@@ -420,9 +428,11 @@ public class BattleServiceImpl implements BattleService {
         return positions.stream()
                 .anyMatch((a) -> Objects.equals(x, a.getX()) && Objects.equals(y, a.getY()));
     }
-    private void updatePositionsIfDestroyed(EnemyMoveTarget target, List<Position> positions) {
+    private void updatePositionsIfDestroyed(EnemyMoveTarget target, Position targetPosition, List<Position> positions) {
         if(target.getTarget().isDestroyed()) {
-            getPositionOfTarget(target, positions)
+            positions.stream()
+                    .filter((a) -> Objects.equals(targetPosition.getX(), a.getX()) && Objects.equals(targetPosition.getY(), a.getY()))
+                    .findFirst()
                     .ifPresent((a) -> a.getShip().setDestroyed(true));
         }
     }
@@ -443,13 +453,13 @@ public class BattleServiceImpl implements BattleService {
         return response;
     }
 
-    private MoveResponse responseForAttack(Ship ship, Ship target, int damage) {
+    private MoveResponse responseForAttack(Ship ship, Position target, int damage) {
         MoveResponse response = new MoveResponse();
         response.setSuccess(damage > 0);
         response.setAction(MoveAction.ATTACK);
         AttackResult result = new AttackResult();
-        result.setX(target.getPosition().getX());
-        result.setY(target.getPosition().getY());
+        result.setX(target.getX());
+        result.setY(target.getY());
         result.setShipId(ship.getId());
         result.setDamage(damage);
         response.setAttack(result);
