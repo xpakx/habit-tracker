@@ -554,7 +554,7 @@ public class BattleServiceImpl implements BattleService {
 
     private int calculateDamage(Ship ship, Ship target) {
         int damage = (int) ((int) (ship.getStrength() + CRITICAL_MULTI*ship.getStrength()*(ship.getCriticalRate()/100.0))*(ship.getHitRate()/100.0));
-        if(target.getHp() < damage) {
+        if(target.getHp() <= damage) {
             return -1;
         }
         return damage;
