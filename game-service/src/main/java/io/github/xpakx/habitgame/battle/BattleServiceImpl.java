@@ -295,6 +295,7 @@ public class BattleServiceImpl implements BattleService {
     }
 
     @Override
+    @Transactional
     public List<MoveResponse> endTurn(Long battleId, Long userId) {
         Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId, userId).orElseThrow(BattleNotFoundException::new);
         if(battle.isFinished()) {
