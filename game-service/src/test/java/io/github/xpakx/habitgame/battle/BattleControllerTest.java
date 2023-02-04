@@ -1784,8 +1784,12 @@ class BattleControllerTest {
         given()
                 .header(getHeaderForUserId(userId))
         .when()
-                .post(baseUrl + "/battle/{battleId}/turn/end", battleId);
+                .post(baseUrl + "/battle/{battleId}/turn/end", battleId)
+                .then().log().all();
         List<Position> positions = positionRepository.findAll();
+        for(Position pos: positions) {
+            System.out.println("<"+pos.getX()+","+pos.getY()+">" + (pos.getShip() != null ? pos.getShip().isEnemy() ? " E" : " S" : "") + (pos.getTerrain() != null ? pos.getTerrain().isBlocked() ? " B" : " T" : "") );
+        }
         assertThat(positions, hasItem(
                 both(hasProperty("x", equalTo(2)))
                         .and(

@@ -349,22 +349,15 @@ public class BattleServiceImpl implements BattleService {
             shipMoved = false;
             for(Ship ship : shipsForMovement) {
                 EnemyMoveTarget target = chooseTarget(ship, playerShips, battle, positions);
-                System.out.println("Ship at position <"+ship.getPosition().getX()+","+ship.getPosition().getY()+">");
                 if(target != null) {
-                    System.out.println("Target found");
                     if(target.getPosition() != null && positionsAreDifferent(ship, target)) {
-                        System.out.println("Moving…");
-                        System.out.println("Moving at <"+target.getPosition().getX()+","+target.getPosition().getY()+">");
                         Position shipPosition = getPositionOfShip(ship, positions);
                         moveTowards(ship, target.getPosition());
                         updateLists(positionsToDelete, positionsToUpdate, positions, shipPosition, target);
                         moves.add(responseForMove(ship));
                     }
-
-                    System.out.println("Attacking…");
                     Position targetPosition = target.getTarget().getPosition();
                     int damage = applyDamage(ship, target.getTarget());
-                    System.out.println("Attacking position <"+targetPosition.getX()+","+targetPosition.getY()+">");
                     updatePositionsIfDestroyed(target, targetPosition, positions);
                     moves.add(responseForAttack(ship, targetPosition, damage));
                     shipMoved = true;
