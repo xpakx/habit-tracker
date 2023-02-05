@@ -313,15 +313,19 @@ public class BattleServiceImpl implements BattleService {
             advanceTurn(battle, enemyShips);
         } else {
             List<Ship> ships = shipRepository.findByExpeditionIdAndEnemyFalse(battle.getExpedition().getId());
-            if(allPrepared(ships)) {
-                throw new WrongMoveException("Not all ships are placed!");
-            }
-            battle.setStarted(true);
-            battle.setTurn(1);
+            endPreparePhase(battle, ships);
         }
         battleRepository.save(battle);
 
         return moves;
+    }
+
+    private void endPreparePhase(Battle battle, List<Ship> ships) {
+        if(notAllPrepared(ships)) {
+            throw new WrongMoveException("Not all ships are placed!");
+        }
+        battle.setStarted(true);
+        battle.setTurn(1);
     }
 
     private void advanceTurn(Battle battle, List<Ship> enemyShips) {
@@ -571,7 +575,7 @@ public class BattleServiceImpl implements BattleService {
         return damage;
     }
 
-    private boolean allPrepared(List<Ship> ships) {
+    private boolean notAllPrepared(List<Ship> ships) {
         return ships.stream().anyMatch((s) -> !s.isPrepared());
     }
 }
