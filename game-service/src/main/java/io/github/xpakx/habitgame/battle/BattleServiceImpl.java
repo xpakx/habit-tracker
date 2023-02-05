@@ -210,9 +210,7 @@ public class BattleServiceImpl implements BattleService {
         if(!battle.isStarted()) {
             throw new WrongBattleStateException("Battle hasn't started yet!");
         }
-        if(battle.isFinished()) {
-            throw new WrongBattleStateException("Battle is already finished!");
-        }
+        testIfBattleIsActive(battle);
     }
 
     @Override
@@ -297,30 +295,37 @@ public class BattleServiceImpl implements BattleService {
     @Override
     public List<MoveResponse> endTurn(Long battleId, Long userId) {
         Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId, userId).orElseThrow(BattleNotFoundException::new);
-        if(battle.isFinished()) {
-            throw new WrongBattleStateException("Battle is already finished!");
-        }
-
+        testIfBattleIsActive(battle);
         List<MoveResponse> moves = new ArrayList<>();
-
         if(battle.isStarted()) {
-            List<Ship> ships = shipRepository.findByExpeditionId(battle.getExpedition().getId());
-            List<Ship> playerShips = filterPlayerShips(ships).toList();
-            List<Ship> enemyShips = filterEnemyShips(ships).toList();
-            resetAvailableActions(playerShips);
-            moves = makeEnemyMove(playerShips, enemyShips.stream().filter((s) -> !s.isDestroyed()).toList(), battle);
-            shipRepository.saveAll(playerShips);
-            advanceTurn(battle, enemyShips);
+            moves = finishCurrentTurn(battle);
         } else {
-            List<Ship> ships = shipRepository.findByExpeditionIdAndEnemyFalse(battle.getExpedition().getId());
-            endPreparePhase(battle, ships);
+            endPreparePhase(battle);
         }
         battleRepository.save(battle);
-
         return moves;
     }
 
-    private void endPreparePhase(Battle battle, List<Ship> ships) {
+    private void testIfBattleIsActive(Battle battle) {
+        if(battle.isFinished()) {
+            throw new WrongBattleStateException("Battle is already finished!");
+        }
+    }
+
+    private List<MoveResponse> finishCurrentTurn(Battle battle) {
+        List<MoveResponse> moves;
+        List<Ship> ships = shipRepository.findByExpeditionId(battle.getExpedition().getId());
+        List<Ship> playerShips = filterPlayerShips(ships).toList();
+        List<Ship> enemyShips = filterEnemyShips(ships).toList();
+        resetAvailableActions(playerShips);
+        moves = makeEnemyMove(playerShips, enemyShips.stream().filter((s) -> !s.isDestroyed()).toList(), battle);
+        shipRepository.saveAll(playerShips);
+        advanceTurn(battle, enemyShips);
+        return moves;
+    }
+
+    private void endPreparePhase(Battle battle) {
+        List<Ship> ships = shipRepository.findByExpeditionIdAndEnemyFalse(battle.getExpedition().getId());
         if(notAllPrepared(ships)) {
             throw new WrongMoveException("Not all ships are placed!");
         }
