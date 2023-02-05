@@ -558,7 +558,7 @@ public class BattleServiceImpl implements BattleService {
     }
 
     private Optional<EnemyMoveTarget> getPotentialMove(Ship ship, Ship target, Battle battle, List<Position> positions) {
-        if(taxiLength(ship.getPosition().getX(), ship.getPosition().getY(), target.getPosition().getX(), target.getPosition().getY()) < ship.getAttackRange()) {
+        if(taxiLength(ship.getPosition().getX(), ship.getPosition().getY(), target.getPosition().getX(), target.getPosition().getY()) <= ship.getAttackRange()) {
             return Optional.of(new EnemyMoveTarget(ship.getPosition(), target));
         }
         List<Position> positionsInRange = new ArrayList<>();
@@ -580,7 +580,7 @@ public class BattleServiceImpl implements BattleService {
 
     private boolean canBeReached(Ship ship, Battle battle, List<Position> positions, Position a) {
         int distance = distanceEvaluator.shortestPath(positions, ship.getPosition(), a, battle);
-        return distance != -1 && distance < ship.getMovementRange();
+        return distance != -1 && distance <= ship.getMovementRange();
     }
 
     private int calculateDamage(Ship ship, Ship target) {
