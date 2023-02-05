@@ -326,11 +326,15 @@ public class BattleServiceImpl implements BattleService {
 
     private void endPreparePhase(Battle battle) {
         List<Ship> ships = shipRepository.findByExpeditionIdAndEnemyFalse(battle.getExpedition().getId());
+        testIfPlayerPlacedAllShips(ships);
+        battle.setStarted(true);
+        battle.setTurn(1);
+    }
+
+    private void testIfPlayerPlacedAllShips(List<Ship> ships) {
         if(notAllPrepared(ships)) {
             throw new WrongMoveException("Not all ships are placed!");
         }
-        battle.setStarted(true);
-        battle.setTurn(1);
     }
 
     private void advanceTurn(Battle battle, List<Ship> enemyShips) {
@@ -362,7 +366,7 @@ public class BattleServiceImpl implements BattleService {
         List<Position> positionsToUpdate = new ArrayList<>();
         boolean shipMoved = true;
         while(shipMoved) {
-            List<Ship> shipsForMovement = enemyShips.stream().filter(s -> !s.isMovement()).toList();
+            List<Ship> shipsForMovement = filterUnmovedShips(enemyShips);
             shipMoved = false;
             for(Ship ship : shipsForMovement) {
                 EnemyMoveTarget target = chooseTarget(ship, playerShips, battle, positions);
@@ -377,8 +381,8 @@ public class BattleServiceImpl implements BattleService {
                     int damage = applyDamage(ship, target.getTarget());
                     updatePositionsIfDestroyed(target, targetPosition, positions);
                     moves.add(responseForAttack(ship, targetPosition, damage));
-                    shipMoved = true;
                     ship.setMovement(true);
+                    shipMoved = true;
                 }
             }
         }
@@ -386,6 +390,10 @@ public class BattleServiceImpl implements BattleService {
         positionRepository.saveAll(positionsToUpdate);
         positionRepository.saveAll(enemyShips.stream().map(Ship::getPosition).toList());
         return moves;
+    }
+
+    private List<Ship> filterUnmovedShips(List<Ship> enemyShips) {
+        return enemyShips.stream().filter(s -> !s.isMovement()).toList();
     }
 
     private void updateLists(List<Position> positionsToDelete, List<Position> positionsToUpdate, List<Position> positions, Position oldShipPosition, EnemyMoveTarget target) {
