@@ -295,7 +295,6 @@ public class BattleServiceImpl implements BattleService {
     }
 
     @Override
-    @Transactional
     public List<MoveResponse> endTurn(Long battleId, Long userId) {
         Battle battle = battleRepository.findByIdAndExpeditionUserId(battleId, userId).orElseThrow(BattleNotFoundException::new);
         if(battle.isFinished()) {
@@ -308,16 +307,10 @@ public class BattleServiceImpl implements BattleService {
             List<Ship> ships = shipRepository.findByExpeditionId(battle.getExpedition().getId());
             List<Ship> playerShips = filterPlayerShips(ships).toList();
             List<Ship> enemyShips = filterEnemyShips(ships).toList();
-            for(Ship ship : playerShips) {
-                ship.setMovement(false);
-                ship.setAction(false);
-            }
+            resetAvailableActions(playerShips);
             moves = makeEnemyMove(playerShips, enemyShips.stream().filter((s) -> !s.isDestroyed()).toList(), battle);
             shipRepository.saveAll(playerShips);
-            if(evaluateObjective(battle, enemyShips)) {
-                battle.setFinished(true);
-            }
-            battle.setTurn(battle.getTurn()+1);
+            advanceTurn(battle, enemyShips);
         } else {
             List<Ship> ships = shipRepository.findByExpeditionIdAndEnemyFalse(battle.getExpedition().getId());
             if(allPrepared(ships)) {
@@ -329,6 +322,20 @@ public class BattleServiceImpl implements BattleService {
         battleRepository.save(battle);
 
         return moves;
+    }
+
+    private void advanceTurn(Battle battle, List<Ship> enemyShips) {
+        if(evaluateObjective(battle, enemyShips)) {
+            battle.setFinished(true);
+        }
+        battle.setTurn(battle.getTurn()+1);
+    }
+
+    private void resetAvailableActions(List<Ship> playerShips) {
+        for(Ship ship : playerShips) {
+            ship.setMovement(false);
+            ship.setAction(false);
+        }
     }
 
     private boolean evaluateObjective(Battle battle, List<Ship> enemyShips) {
