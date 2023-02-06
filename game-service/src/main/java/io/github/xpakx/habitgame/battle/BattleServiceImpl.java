@@ -407,23 +407,29 @@ public class BattleServiceImpl implements BattleService {
     private void updateLists(List<Position> positionsToDelete, List<Position> positionsToUpdate, List<Position> positions, Position oldShipPosition, EnemyMoveTarget target) {
         if(target.getPosition() != null) {
             positions.remove(target.getPosition());
-            if(target.getPosition().getId() != null) {
-                positionsToDelete.add(target.getPosition());
-            }
+            addToListIfHasId(positionsToDelete, target);
         }
-
         if(hasTerrain(oldShipPosition)) {
-            Position position = new Position();
-            position.setX(oldShipPosition.getX());
-            position.setY(oldShipPosition.getY());
-            position.setTerrain(oldShipPosition.getTerrain());
-            changeOnList(position, positions);
-            changeOnList(position, positionsToUpdate);
+            updateOldPositionOnLists(positionsToUpdate, positions, oldShipPosition);
         }
-
         if(oldShipPosition != null && target.getPosition() != null) {
             getShipPositionFromList(oldShipPosition, positions)
                     .ifPresent((a) -> copyCoordinates(target, a));
+        }
+    }
+
+    private void updateOldPositionOnLists(List<Position> positionsToUpdate, List<Position> positions, Position oldShipPosition) {
+        Position position = new Position();
+        position.setX(oldShipPosition.getX());
+        position.setY(oldShipPosition.getY());
+        position.setTerrain(oldShipPosition.getTerrain());
+        changeOnList(position, positions);
+        changeOnList(position, positionsToUpdate);
+    }
+
+    private void addToListIfHasId(List<Position> positionsToDelete, EnemyMoveTarget target) {
+        if(target.getPosition().getId() != null) {
+            positionsToDelete.add(target.getPosition());
         }
     }
 
