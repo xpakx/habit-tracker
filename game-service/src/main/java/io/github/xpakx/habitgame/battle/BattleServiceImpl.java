@@ -386,6 +386,11 @@ public class BattleServiceImpl implements BattleService {
                 }
             }
         }
+        savePositions(enemyShips, positionsToDelete, positionsToUpdate);
+        return moves;
+    }
+
+    private void savePositions(List<Ship> enemyShips, List<Position> positionsToDelete, List<Position> positionsToUpdate) {
         if(positionsToDelete.size() > 0) {
             positionRepository.deleteAll(positionsToDelete);
         }
@@ -393,7 +398,6 @@ public class BattleServiceImpl implements BattleService {
             positionRepository.saveAll(positionsToUpdate);
         }
         positionRepository.saveAll(enemyShips.stream().map(Ship::getPosition).toList());
-        return moves;
     }
 
     private List<Ship> filterUnmovedShips(List<Ship> enemyShips) {
