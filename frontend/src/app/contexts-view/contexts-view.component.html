@@ -1,7 +1,9 @@
-
+<h2>Contexts</h2>
 <div class="contexts">
     <button class="context-button" *ngFor="let context of contexts" [routerLink]="'/context/'+context.id">{{ context.name }}</button>
 </div>
 
-<app-add-button (clicked)="displayContextModal()"></app-add-button>
-<app-context-modal *ngIf="showContextModal"></app-context-modal>
+<div class="controls">
+    <app-add-button (clicked)="displayContextModal()"></app-add-button>
+</div>
+<app-context-modal *ngIf="showContextModal" (close)="closeModal()"></app-context-modal>

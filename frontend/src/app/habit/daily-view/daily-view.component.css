@@ -1,3 +1,13 @@
 h2 {
-    color: white;
+    font-size: 24px;
+    font-weight: 600;
+    color: #f4f4f4;
+    margin-bottom: 20px;
+}
+
+.controls {
+    width: 100%;
+    display: flex;
+    justify-content: end;
+    margin-top: 20px;
 }

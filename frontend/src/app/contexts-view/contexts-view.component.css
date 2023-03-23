@@ -5,15 +5,39 @@ button {
     margin: 0;
 }
 
-.context-button {
-    margin-right: 20px;
-    border-radius: 10px;
+.contexts {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 75px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+  
+.context-button {
     background-color: #353340;
-    padding: 10px 15px;
-    color: white;
+    border-radius: 5px;
+    color: #fff;
     text-transform: capitalize;
+    font-size: 16px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    transition: all 0.2s ease-in-out;
+}
+  
+.context-button:hover {
+    background-color: #2b2b2b;
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #f4f4f4;
+    margin-bottom: 20px;
+}
+
+.controls {
+    width: 100%;
+    display: flex;
+    justify-content: end;
+    margin-top: 20px;
 }

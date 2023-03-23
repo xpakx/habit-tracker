@@ -1,31 +1,111 @@
 
-
-button {
-    cursor: pointer;
-    background-color: transparent;
-    border: none;
-    margin: 0;
-}
-
-.context-button {
-    margin-right: 20px;
-    border-radius: 10px;
+.modal-background {
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 75px;
-    background-color: #353340;
-    padding: 10px 15px;
+}
+
+.modal {
+    background-color: #1c2331;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 500px;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #b9b9b9;
+}
+
+input {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #f5f5f5;
+    box-shadow: 0px 0px 0px 1px #2b2b2b;
+    margin-bottom: 10px;
+}
+
+input:focus {
+    outline: none;
+    box-shadow: 0px 0px 0px 2px #8cb3d9;
+}
+
+.contexts {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.context-button {
+    background-color: #d7d6d9;
+    color: #2b2b2b;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.no-context {
+    background-color: #b9b9b9;
     color: white;
-    text-transform: capitalize;
 }
 
 .context-button.selected {
     background-color: #ff5c00;
+    color: white;
     font-weight: 700;
 }
 
-.no-context {
-    background-color: #494758;
-    color: gray;
+.btns {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn {
+    background-color: #b9b9b9;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+    flex-grow: 1;
+}
+
+.btn-accept {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-accept:hover {
+    background-color: #218838;
+}
+
+.btn-cancel {
+    background-color: #a73728;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background-color: #882121;
 }

@@ -1,17 +1,25 @@
-<button *ngFor="let item of items" class="eq-cell" [dndDraggable]="item.id" (dndStart)="onDragStart(item)" (dndEnd)="onDragEnd()" (click)="onItemClick(item)">
-    <img [src]="'/assets/'+ item.icon +'.png'" alt="" class="icon">
-    <div class="amount">{{item.amount}}</div>
-</button>
+<h2>Equipment</h2>
 
-<div class="craft-container">
-        <button *ngFor="let slot of craftSlots; index as num" dndDropzone (dndDrop)="onDrop($event, num)" (click)="reset(num)" class="craft-cell">
-            <img [src]="'/assets/'+ slot.icon +'.png'" alt="" class="icon" *ngIf="slot.id > -1">
-        </button>
+<div class="equipment">
+    <button *ngFor="let item of items" class="eq-cell" [dndDraggable]="item.id" (dndStart)="onDragStart(item)" (dndEnd)="onDragEnd()" (click)="onItemClick(item)">
+        <img [src]="'/assets/'+ item.icon +'.png'" alt="" class="icon">
+        <div class="amount">{{item.amount}}</div>
+    </button>
 </div>
 
-<button class="craft" (click)="craft()">Craft</button>
-<button class="craft" (click)="craft(10)">Craft 10</button>
-<button class="craft" (click)="craft(100)">Craft 100</button>
+<div class="craft-container">
+    <div class="crafting-table">
+            <button *ngFor="let slot of craftSlots; index as num" dndDropzone (dndDrop)="onDrop($event, num)" (click)="reset(num)" class="craft-cell">
+                <img [src]="'/assets/'+ slot.icon +'.png'" alt="" class="icon" *ngIf="slot.id > -1">
+            </button>
+    </div>
+    <div class="craft-buttons">
+        <button class="craft" (click)="craft()">Craft</button>
+        <button class="craft" (click)="craft(10)">Craft 10</button>
+        <button class="craft" (click)="craft(100)">Craft 100</button>
+    </div>
+
+</div>
 
 <div class="building-container" *ngIf="activeBuilding">
     <app-cities-list (choice)="onCityChoice($event)"></app-cities-list>

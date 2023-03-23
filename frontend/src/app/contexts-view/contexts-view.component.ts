@@ -26,4 +26,8 @@ export class ContextsViewComponent implements OnInit {
   displayContextModal(): void {
     this.showContextModal = true;
   }
+
+  closeModal(): void {
+    this.showContextModal = false;
+  }
 }

@@ -49,7 +49,7 @@
     font-size: 12px;
     top: 200%;
     left: 50%;
-    margin-left: -60px; 
+    transform: translateX(-50%);
 }
 
 .field:hover .tooltip {

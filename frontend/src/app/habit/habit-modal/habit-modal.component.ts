@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ContextService } from '../context.service';
 import { ContextDetails } from '../dto/context-details';
@@ -25,6 +25,7 @@ export class HabitModalComponent implements OnInit {
   form: FormGroup<HabitForm>;
   contexts: ContextDetails[] = [];
   @Input('context') selectedContext?: number;
+  @Output('close') closeEvent = new EventEmitter<boolean>();
 
   constructor(private habitService: HabitService, private contextService: ContextService, private fb: FormBuilder) {
     this.form = this.fb.nonNullable.group({
@@ -69,6 +70,7 @@ export class HabitModalComponent implements OnInit {
 
   onSuccess(response: Habit): void {
     //TODO
+    this.close();
   }
 
   onError(error: HttpErrorResponse): void {
@@ -77,5 +79,9 @@ export class HabitModalComponent implements OnInit {
 
   selectContext(id: number | undefined) {
     this.selectedContext = id;
+  }
+
+  close(): void {
+    this.closeEvent.emit(true);
   }
 }

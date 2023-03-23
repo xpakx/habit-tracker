@@ -1,9 +1,10 @@
 <div class="habit" *ngIf="habit">
-    <button class="complete-btn" (click)="completeHabit()">
-        <div class="completion-field">
-            <div class="check-mark" *ngIf="habit.completions >= habit.dailyCompletions">✔</div>
-        </div>
-    </button>
+
+    <div class="completion-field">
+        <button class="complete-btn" (click)="completeHabit()" [class.checked]="habit.completions >= habit.dailyCompletions">
+            <div class="check-mark">✔</div>
+        </button>
+    </div>
     <div class="habit-content">
         <div class="habit-name">{{ habit.name }}</div>
         <div class="habit-trigger" *ngIf="habit.trigger">{{ habit.trigger.name }}</div>

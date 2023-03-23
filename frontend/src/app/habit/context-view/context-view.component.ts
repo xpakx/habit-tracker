@@ -47,4 +47,8 @@ export class ContextViewComponent implements OnInit {
   displayHabitModal(): void {
     this.showHabitModal = true;
   }
+
+  closeModal(): void {
+    this.showHabitModal = false;
+  }
 }

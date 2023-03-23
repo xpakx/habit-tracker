@@ -1,8 +1,15 @@
 .add-button {
-    color: white;
-    width: 30px;
-    height: 30px;
+    background-color: #ff5c00;
+    border: none;
     border-radius: 50%;
-    background-color: green;
-    font-size: 20px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 15px;
+    height: 30px;
+    width: 30px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+}
+  
+.add-button:hover {
+    background-color: #ff7f2a;
 }

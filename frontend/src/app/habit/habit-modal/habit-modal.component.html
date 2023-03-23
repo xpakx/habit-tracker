@@ -1,44 +1,53 @@
-<form id="form" [formGroup]="form">
-    <div>
-        <label for="name">Name</label>
-    </div>
-    <input id="name" formControlName="name"/>
+<div class="modal-background">
+    <div class="modal">
+        <form id="form" [formGroup]="form">
+            <div>
+                <label for="name">Name</label>
+            </div>
+            <input id="name" formControlName="name"/>
 
-    <div>
-        <label for="description">Description</label>
-    </div>
-    <input id="description" formControlName="description"/>
+            <div>
+                <label for="description">Description</label>
+            </div>
+            <input id="description" formControlName="description"/>
 
-    <div>
-        <label for="interval">Interval</label>
-    </div>
-    <input id="interval" formControlName="interval"/>
+            <div>
+                <label for="interval">Interval</label>
+            </div>
+            <input id="interval" formControlName="interval"/>
 
-    <div>
-        <label for="dailyCompletions">Daily completions</label>
-    </div>
-    <input id="dailyCompletions" formControlName="dailyCompletions"/>
+            <div>
+                <label for="dailyCompletions">Daily completions</label>
+            </div>
+            <input id="dailyCompletions" formControlName="dailyCompletions"/>
 
-    <div>
-        <label for="start">Start date</label>
-    </div>
-    <input id="start" formControlName="start"/>
+            <div>
+                <label for="start">Start date</label>
+            </div>
+            <input id="start" formControlName="start"/>
 
-    <div>
-        <label for="triggerName">Trigger</label>
-    </div>
-    <input id="triggerName" formControlName="triggerName"/>
+            <div>
+                <label for="triggerName">Trigger</label>
+            </div>
+            <input id="triggerName" formControlName="triggerName"/>
 
 
-    <div>
-        <label>Context</label>
-    </div>
-    <div class="contexts">
-        <button class="context-button no-context" (click)="selectContext(undefined)">No context</button>
-        <button class="context-button" *ngFor="let context of contexts" (click)="selectContext(context.id)" [class.selected]="context.id == selectedContext">{{ context.name }}</button>
-    </div>
+            <div>
+                <label>Context</label>
+            </div>
+            <div class="contexts">
+                <button class="context-button no-context" (click)="selectContext(undefined)">No context</button>
+                <button class="context-button" *ngFor="let context of contexts" (click)="selectContext(context.id)" [class.selected]="context.id == selectedContext">{{ context.name }}</button>
+            </div>
 
-</form>
-<button class="btn" (click)="addHabit()">
-    Add
-</button>
+        </form>
+        <div class="btns">
+            <button class="btn btn-cancel" (click)="close()">
+                Cancel
+            </button>
+            <button class="btn btn-accept" (click)="addHabit()">
+                Add
+            </button>
+        </div>
+    </div>
+</div>

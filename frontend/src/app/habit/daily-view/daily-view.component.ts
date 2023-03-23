@@ -36,4 +36,7 @@ export class DailyViewComponent implements OnInit {
     this.showHabitModal = true;
   }
 
+  closeModal(): void {
+    this.showHabitModal = false;
+  }
 }
