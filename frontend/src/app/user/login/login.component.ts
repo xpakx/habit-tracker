@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { AuthenticationResponse } from '../dto/authentication-response';
 import { LoginForm } from '../form/login-form';
@@ -13,7 +14,7 @@ import { LoginForm } from '../form/login-form';
 export class LoginComponent implements OnInit {
   form: FormGroup<LoginForm>;
 
-  constructor(private authService: AuthService, private fb: FormBuilder) { 
+  constructor(private authService: AuthService, private fb: FormBuilder, private router: Router) { 
     this.form = this.fb.nonNullable.group({
       username: [new String(''), Validators.required],
       password: [new String(''), Validators.required]
@@ -25,6 +26,7 @@ export class LoginComponent implements OnInit {
 
   saveToken(response: AuthenticationResponse): void {
     localStorage.setItem("token", response.token);
+    this.router.navigate(['/']);
   }
 
   showError(error: HttpErrorResponse): void {

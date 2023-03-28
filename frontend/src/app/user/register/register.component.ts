@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { AuthenticationResponse } from '../dto/authentication-response';
 import { RegisterForm } from '../form/register-form';
@@ -13,7 +14,7 @@ import { RegisterForm } from '../form/register-form';
 export class RegisterComponent implements OnInit {
   form: FormGroup<RegisterForm>;
 
-  constructor(private authService: AuthService, private fb: FormBuilder) { 
+  constructor(private authService: AuthService, private fb: FormBuilder, private router: Router) { 
     this.form = this.fb.nonNullable.group({
       username: [new String(''), Validators.required],
       password: [new String(''), Validators.required],
@@ -26,6 +27,7 @@ export class RegisterComponent implements OnInit {
 
   saveToken(response: AuthenticationResponse): void {
     localStorage.setItem("token", response.token);
+    this.router.navigate(['/']);
   }
 
   showError(error: HttpErrorResponse): void {
