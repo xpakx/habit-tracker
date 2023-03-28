@@ -18,9 +18,8 @@ export class CityComponent implements OnInit {
   buildings: Building[] = [];
   plans: EquipmentEntry[] = [];
   shipsToDeploy: EquipmentEntry[] = [];
-  showPlans: boolean = false;
-  showShips: boolean = false;
   cityId?: number;
+  tab:number = 0;
 
   constructor(private cityService: CityService, private eqService: EquipmentService, private route: ActivatedRoute) { }
 
@@ -62,7 +61,11 @@ export class CityComponent implements OnInit {
   }
 
   switchBuildContainer(): void {
-    this.showPlans = !this.showPlans;
+    if(this.tab == 1) {
+      this.tab = 0;
+      return;
+    }
+    this.tab = 1;
     this.eqService.getBuildings().subscribe({
       next: (response: EquipmentResponse) => this.updatePlans(response),
       error: (error: HttpErrorResponse) => this.onError(error)
@@ -92,7 +95,11 @@ export class CityComponent implements OnInit {
   }
 
   switchShipContainer(): void {
-    this.showShips = !this.showShips;
+    if(this.tab == 2) {
+      this.tab = 0;
+      return;
+    }
+    this.tab = 2;
     this.eqService.getShips().subscribe({
       next: (response: EquipmentResponse) => this.updateShips(response),
       error: (error: HttpErrorResponse) => this.onError(error)

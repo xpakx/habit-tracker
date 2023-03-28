@@ -1,0 +1,41 @@
+.cities {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+button {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    margin: 0;
+}
+
+.city {
+    background-color: #353340;
+    border-radius: 5px;
+    color: #fff;
+    text-transform: capitalize;
+    font-size: 16px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    transition: all 0.2s ease-in-out;
+}
+  
+.city:hover {
+    background-color: #2b2b2b;
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #f4f4f4;
+    margin-bottom: 20px;
+}
+
+.size {
+    color: #949494;
+
+}

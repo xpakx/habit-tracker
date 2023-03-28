@@ -1,0 +1,54 @@
+
+  
+.eq-cell {
+    width: 30px;
+    height: 30px;
+    position: relative;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    overflow: hidden;
+}
+  
+.icon {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    top: 0;
+    left: 0;
+}
+
+
+.btn {
+    background-color: #4CAF50;
+    border: none;
+    color: #fff;
+    padding: 8px;
+    margin-right: 10px;
+    border-radius: 3px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+  
+.btn:hover, .btn:focus {
+    background-color: #388E3C;
+}
+  
+h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #f4f4f4;
+    margin-bottom: 20px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.controls {
+    margin-bottom: 10px;
+}

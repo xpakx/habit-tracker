@@ -22,7 +22,7 @@ export class SendExpeditionComponent implements OnInit {
   showShips: boolean = false;
   ships: DeployedShip[] = [];
   shipsToSend: DeployedShip[] = [];
-  cargo: Map<number, ExpeditionEquipment[]> = new Map();
+  cargo: Map<number, EquipmentEntry[]> = new Map();
   equipment: EquipmentEntry[] = [];
   eqView: number|undefined;
   islandId: number | undefined;
@@ -78,7 +78,7 @@ export class SendExpeditionComponent implements OnInit {
     if(this.cityId) {
       let request: ExpeditionRequest = {islandId: this.islandId, ships: []};
       for(let ship of this.shipsToSend) {
-        let cargoForShip: ExpeditionEquipment[] | undefined = this.cargo.get(ship.id);
+        let cargoForShip: ExpeditionEquipment[] | undefined = this.cargo.get(ship.id)?.map((item: EquipmentEntry) => { return {id: item.id, amount: item.amount}});
         request.ships.push({shipId: ship.id, equipment: cargoForShip ? cargoForShip : []});
       }
       this.cityService.sendExpedition(request, this.cityId).subscribe({
@@ -88,11 +88,11 @@ export class SendExpeditionComponent implements OnInit {
     }
   }
 
-  addCargoToShip(shipId: number, itemId: number, amount: number) {
+  addCargoToShip(shipId: number, item: EquipmentEntry) {
     if(!this.cargo.get(shipId)) {
       this.cargo.set(shipId, []);
     }
-    this.cargo.get(shipId)?.push({id: itemId, amount: amount});
+    this.cargo.get(shipId)?.push(item);
   }
 
   unloadCargo(shipId: number) {
@@ -120,6 +120,7 @@ export class SendExpeditionComponent implements OnInit {
   }
 
   openEquipment(shipId: number): void {
+    this.eqView = shipId;
     this.eqService.getEquipment().subscribe({
       next: (response: EquipmentResponse) => this.saveEquipment(response, shipId)
     });
@@ -131,10 +132,10 @@ export class SendExpeditionComponent implements OnInit {
 
   saveEquipment(response: EquipmentResponse, shipId: number): void {
     this.equipment = response.items;
-    this.eqView = shipId;
   }
 
   getIslands() {
+    this.islandsLoaded = true;
     this.islandService.getAllIslands().subscribe({
       next: (response: IslandResponse[]) => this.updateIslands(response),
       error: (error: HttpErrorResponse) => this.onError(error)
@@ -143,10 +144,10 @@ export class SendExpeditionComponent implements OnInit {
 
   updateIslands(response: IslandResponse[]): void {
     this.islands = response;
-    this.islandsLoaded = true;
   }
 
   chooseIsland(id: number | undefined) {
     this.islandId = id;
+    this.islandsLoaded = false;
   }
 }

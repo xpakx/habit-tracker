@@ -1,41 +1,64 @@
-<p>send-expedition works!</p>
+<h2>Send expedition</h2>
 
-
-<div class="ships">
-    <div class="ship" *ngFor="let ship of ships" [class.blocked]="ship.blocked">
-        <div class="name">{{ ship. name}}</div>
-        <button class="ship-btn" (click)="addShip(ship)">Add</button>
-    </div>
-</div>
-
-<div class="islands" *ngIf="islandsLoaded">
-    <div class="island" *ngFor="let island of islands" [class.island-choice]="island.id==islandId">
-        {{island.name}}
-        <button class="island-btn" (click)="chooseIsland(island.id)">Choose</button>
-    </div>
-    <button class="island-btn" (click)="chooseIsland(undefined)">None</button>
-</div>
-<button class="islands-btn" *ngIf="!islandsLoaded" (click)="getIslands()">Load islands</button>
-
-<div class="ships ships-to-send">
-    <div class="ship" *ngFor="let ship of shipsToSend">
-        <div class="name">{{ ship. name}}</div>
-
-        <div class="equipment cargo">
-            <button *ngFor="let item of cargo.get(ship.id)" class="eq-cell" (click)="subtractCargoFromShip(ship.id, item.id)">
-                <!-- <img [src]="'/assets/'+ item.icon +'.png'" alt="" class="icon"> -->
-                <div class="amount">{{item.amount}}</div>
-            </button>
+<div class="container">
+    <div class="ship-container">
+        <div class="ships">
+            <div class="ship" *ngFor="let ship of ships" [class.blocked]="ship.blocked">
+                <div class="ship-portrait">
+                    <img [src]="'/assets/'+ship.code+'.png'" alt="">
+                    <div class="name">{{ ship. name}}</div>
+                </div>
+                <button class="ship-btn btn" (click)="addShip(ship)">Add</button>
+            </div>
         </div>
-        <button class="unload-btn" (click)="unloadCargo(ship.id)">Unload</button>
-        <button class="ship-btn" (click)="switchEquipment(ship.id)">Equip</button>
-        <div class="equipment">
-            <button *ngFor="let item of equipment" class="eq-cell" (click)="addCargoToShip(ship.id, item.itemId, item.amount)">
-                <img [src]="'/assets/'+ item.icon +'.png'" alt="" class="icon">
-                <div class="amount">{{item.amount}}</div>
-            </button>
+    </div>
+
+    <div class="controls">
+        <button class="islands-btn btn" (click)="getIslands()">{{this.islandId? 'Change island' : 'Load islands'}}</button>
+        <button class="send-btn btn" (click)="sendExpedition()">Send expedition</button>
+    </div>
+
+    <div class="choice">
+        <div class="islands-container" *ngIf="islandsLoaded">
+            <div class="islands">
+                <div class="island" *ngFor="let island of islands" [class.island-choice]="island.id==islandId">
+                    {{island.name}}
+                    <button class="island-btn btn" (click)="chooseIsland(island.id)">Choose</button>
+                </div>
+            </div>
         </div>
-        <button class="ship-btn" (click)="cancelShip(ship)">Cancel</button>
+        
+        <div class="ships ships-to-send">
+            <div class="ship-long" *ngFor="let ship of shipsToSend">
+                <div class="ship-portrait">
+                    <img [src]="'/assets/'+ship.code+'.png'" alt="">
+                    <div class="name">{{ ship. name}}</div>
+                </div>
+        
+                <div class="cargo-container">
+                    <div class="equipment cargo">
+                        <h3>Cargo</h3>
+                        <button *ngFor="let item of cargo.get(ship.id)" class="eq-cell" (click)="subtractCargoFromShip(ship.id, item.id)">
+                            <img [src]="'/assets/'+ item.icon +'.png'" alt="" class="icon">
+                            <div class="amount">{{item.amount}}</div>
+                        </button>
+                    </div>
+                    <div class="equipment" *ngIf ='eqView == ship.id'>
+                        <h3>Equipment</h3>
+                        <button *ngFor="let item of equipment" class="eq-cell" (click)="addCargoToShip(ship.id, item)">
+                            <img [src]="'/assets/'+ item.icon +'.png'" alt="" class="icon">
+                            <div class="amount">{{item.amount}}</div>
+                        </button>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="unload-btn btn" (click)="unloadCargo(ship.id)">Unload</button>
+                    <button class="ship-btn btn" (click)="switchEquipment(ship.id)">Equip</button>
+                    <button class="ship-btn btn" (click)="cancelShip(ship)">Cancel</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-<button class="send-btn" (click)="sendExpedition()">Send expedition</button>
+
+

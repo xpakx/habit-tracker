@@ -1,0 +1,125 @@
+
+  
+.eq-cell {
+    width: 30px;
+    height: 30px;
+    position: relative;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    overflow: hidden;
+}
+  
+.icon {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    top: 0;
+    left: 0;
+}
+
+
+.btn {
+    background-color: #4CAF50;
+    border: none;
+    color: #fff;
+    padding: 8px;
+    margin-right: 10px;
+    border-radius: 3px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+  
+.btn:hover, .btn:focus {
+    background-color: #388E3C;
+}
+  
+h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #f4f4f4;
+    margin-bottom: 20px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.controls {
+    margin-bottom: 10px;
+}
+
+.ships, .islands {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 20px;
+}
+  
+.ship {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 10px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #1C2331;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+  
+.ship.blocked {
+    opacity: 0.5;
+}
+  
+.ship-portrait {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+}
+  
+.ship-portrait .name {
+    font-size: 18px;
+    text-align: center;
+    margin-top: 5px;
+    font-style: italic;
+}
+  
+.ship-long {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin: 10px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #1C2331;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    width: 100%;
+}
+
+.cargo-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+  
+.island {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #1C2331;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}

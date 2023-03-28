@@ -1,4 +1,7 @@
-<div class="city" *ngFor="let city of cities">
-    <a [routerLink]="'/city/'+city.id">Open</a>
-    size: {{city.maxSize}}
+<h2>Cities</h2>
+<div class="cities">
+    <button class="city" *ngFor="let city of cities" [routerLink]="'/city/'+city.id">
+        City {{city.id}}
+        <span class="size">({{city.maxSize}})</span>
+    </button>
 </div>

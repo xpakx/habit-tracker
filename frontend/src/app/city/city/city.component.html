@@ -1,17 +1,25 @@
-<p>city works!</p>
+<h2>City {{ cityId ? cityId : ''}}</h2>
 
 
-<button class="build-button" (click)="switchBuildContainer()">Build</button>
-<div class="build-container" *ngIf="showPlans">
-    <button *ngFor="let item of plans" class="eq-cell" (click)="onBuildingClick(item)">
-        <img [src]="'/assets/'+ item.icon +'.png'" alt="" class="icon">
-    </button>
+<div class="container">
+    <div class="city"></div>
+        
+    <div class="controls">
+        <button class="build-button btn" (click)="switchBuildContainer()">Build</button>
+        <button class="build-button btn" (click)="switchShipContainer()">Deploy</button>
+        <button class="expeditionBtn btn" [routerLink]="'/city/'+cityId+'/expeditions'">Expeditions</button>
+    </div>
+    
+    <div class="choice">
+        <div class="build-container" *ngIf="tab == 1">
+            <button *ngFor="let item of shipsToDeploy" class="eq-cell" (click)="onShipClick(item)">
+                <img [src]="'/assets/'+ item.icon +'.png'" alt="" class="icon">
+            </button>
+        </div>
+        <div class="build-container" *ngIf="tab == 2">
+            <button *ngFor="let item of plans" class="eq-cell" (click)="onBuildingClick(item)">
+                <img [src]="'/assets/'+ item.icon +'.png'" alt="" class="icon">
+            </button>
+        </div>
+    </div>
 </div>
-<button class="build-button" (click)="switchShipContainer()">Deploy</button>
-<div class="build-container" *ngIf="showShips">
-    <button *ngFor="let item of shipsToDeploy" class="eq-cell" (click)="onShipClick(item)">
-        <img [src]="'/assets/'+ item.icon +'.png'" alt="" class="icon">
-    </button>
-</div>
-
-<button class="expeditionBtn" [routerLink]="'/city/'+cityId+'/expeditions'">Expeditions</button>
