@@ -1,15 +1,26 @@
+.board {
+    margin: 20px 0;
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+}
+
 .field {
-    display: inline-block;
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
     margin: 0;
     text-decoration: none;
     background: #0069ed;
     width: 40px;
     height: 40px;
     border: none;
-    line-height: 1;
     cursor: pointer;
     transition: background 250ms ease-in-out, transform 150ms ease;
-    position: relative;
+    outline: none;
 }
 
 .field:hover,
@@ -32,9 +43,22 @@
 }
 
 .icon {
-    position: absolute;
     width: 36px;
     height: 36px;
-    top: 0;
-    left: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@media screen and (max-width: 768px) {
+    .field {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .icon {
+        width: 26px;
+        height: 26px;
+    }
 }

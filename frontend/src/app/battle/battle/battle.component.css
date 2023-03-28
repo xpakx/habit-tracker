@@ -1,3 +1,10 @@
+h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #f4f4f4;
+    margin-bottom: 20px;
+}
+
 .turn-btn {
     margin: 0;
     text-decoration: none;

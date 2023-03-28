@@ -59,9 +59,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: all 0.3s ease;
 }
 
-.icon.active {
+.item.active .icon {
     background-color: #ff5c00;
     color: white;
 }
