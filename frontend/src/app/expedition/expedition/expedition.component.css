@@ -1,0 +1,79 @@
+.expedition {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    padding: 20px;
+    background-color: #1C2331;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.expedition.finished {
+    opacity: 0.5;
+}
+
+.expedition-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.expedition-start, .expedition-arrival, .expedition-result {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.expedition-result {
+    color: #ff5c00;
+}
+
+.expedition-actions {
+    display: flex;
+    align-items: center;
+}
+
+.battle-actions, .treasure-actions, .island-actions {
+    margin-right: 20px;
+}
+
+.battle-btn, .treasure-btn, .island-btn {
+    background-color: #ff5c00;
+    border: none;
+    color: #fff;
+    padding: 8px;
+    margin-right: 10px;
+    border-radius: 3px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.battle-btn:hover, .treasure-btn:hover, .island-btn:hover {
+    background-color: #cc0000;
+}
+
+.complete-btn, .return-btn {
+    background-color: #4CAF50;
+    border: none;
+    color: #fff;
+    padding: 8px;
+    margin-right: 10px;
+    border-radius: 3px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.complete-btn:hover, .return-btn:hover {
+    background-color: #006600;
+}
+
+.return-btn {
+margin-left: 20px;
+}
+
+.return-btn:hover {
+background-color: #004d00;
+}

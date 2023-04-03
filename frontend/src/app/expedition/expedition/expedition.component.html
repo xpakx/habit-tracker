@@ -1,16 +1,24 @@
 <div class="expedition" [class.finished]="expedition.finished" *ngIf="expedition">
-    <span>Started: {{ expedition.start }}</span>
-    <span>Time of arrival: {{ expedition.returning ? expedition.end : expedition.returnEnd }}</span>
-    <span class="result" *ngIf="expedition.result">{{expedition.result}}</span>
-    <ng-container *ngIf="result">
-        <!-- TODO: more info about result -->
-        <button class="battle-btn" *ngIf="expedition.result == 'BATTLE' || expedition.result == 'MONSTER'" [routerLink]="'/expedition/'+expedition.id+'/battle'">To Battle</button>
-        <ng-container *ngIf="expedition.completed">
-            <button class="battle-btn" *ngIf="expedition.result == 'TREASURE'" (click)="revealIsland()">Island</button>
-            <button class="battle-btn" *ngIf="expedition.result == 'ISLAND'" (click)="revealTreasure()">Treasure</button>
+    <div class="expedition-info">
+        <span class="expedition-start">Started: {{ expedition.start | date:'MMMM d, HH:mm' }}</span>
+        <span class="expedition-arrival">Time of arrival: {{ expedition.returning ? expedition.end : expedition.returnEnd  | date:'MMMM d, HH:mm' }}</span>
+        <span class="expedition-result" *ngIf="expedition.result">{{expedition.result}}</span>
+    </div>
+    <div class="expedition-actions">
+        <ng-container *ngIf="result">
+            <div class="battle-actions" *ngIf="expedition.result == 'BATTLE' || expedition.result == 'MONSTER'">
+                <button class="battle-btn" [routerLink]="'/expedition/'+expedition.id+'/battle'">To Battle</button>
+            </div>
+            <ng-container *ngIf="expedition.completed">
+                <div class="treasure-actions" *ngIf="expedition.result == 'TREASURE'">
+                    <button class="treasure-btn" (click)="revealIsland()">Island</button>
+                </div>
+                <div class="island-actions" *ngIf="expedition.result == 'ISLAND'">
+                    <button class="island-btn" (click)="revealTreasure()">Treasure</button>
+                </div>
+            </ng-container>
         </ng-container>
-    </ng-container>
-
-    <button class="btn" (click)="complete()">Complete</button>
-    <button class="btn" *ngIf="expedition.finished" (click)="return()">Return</button>
+        <button class="complete-btn" (click)="complete()">Complete</button>
+        <button class="return-btn" *ngIf="expedition.finished" (click)="return()">Return</button>
+    </div>
 </div>
