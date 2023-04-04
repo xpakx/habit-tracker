@@ -5,24 +5,21 @@ h2 {
     margin-bottom: 20px;
 }
 
+
 .turn-btn {
-    margin: 0;
-    text-decoration: none;
-    border: 1px white;
-    color: white;
-    border-radius: 15px;
-    background-color: green;
+    background-color: #4CAF50;
+    border: none;
+    color: #fff;
+    padding: 8px;
+    margin-right: 10px;
+    border-radius: 3px;
+    font-size: 14px;
     cursor: pointer;
-    padding: 2px 5px;
+    transition: background-color 0.2s ease-in-out;
 }
 
-.turn-btn:hover,
-.turn-btn:focus {
-    opacity: 0.9;
-}
-
-.turn-btn:active {
-    outline: 1px solid #fff;
+.turn-btn:hover {
+    background-color: #006600;
 }
 
 .controls {
@@ -49,4 +46,44 @@ h2 {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+
+.ships {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 20px;
+}
+  
+.ship {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 10px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #1C2331;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+  
+.ship-portrait {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+}
+  
+.ship-portrait .name {
+    font-size: 18px;
+    text-align: center;
+    margin-top: 5px;
+    font-style: italic;
+}
+
+.ship-portrait img {
+    width: 36px;
+    height: 36px;
 }
