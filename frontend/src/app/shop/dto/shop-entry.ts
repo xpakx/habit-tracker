@@ -3,4 +3,5 @@ export interface ShopEntry {
     amount: number;
     price: number;
     name: String;
+    icon: String;
 }

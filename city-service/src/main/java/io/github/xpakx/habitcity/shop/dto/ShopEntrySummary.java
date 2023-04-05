@@ -11,4 +11,9 @@ public interface ShopEntrySummary {
             "(target.ship != null ? target.ship.name : " +
             "(target.resource != null ? target.resource.name : ''))}")
     String getName();
+    
+    @Value("#{target.building != null ? target.building.code : " +
+            "(target.ship != null ? target.ship.code : " +
+            "(target.resource != null ? target.resource.code : ''))}")
+    String getIcon();
 }
