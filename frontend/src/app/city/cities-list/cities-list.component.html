@@ -1,4 +1,4 @@
 <button class="city" *ngFor="let city of cities" (click)="choose(city.id)">
     City {{city.id}},
-    size: {{city.maxSize}}
+    <span class="size">({{city.maxSize}})</span>
 </button>
