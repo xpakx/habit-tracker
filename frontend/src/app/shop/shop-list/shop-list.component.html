@@ -1,4 +1,7 @@
-<div class="shop" *ngFor="let shop of shops">
-    <a [routerLink]="'/shop/'+shop.id">Open</a>
-    size: {{shop.maxSize}} | rarity: {{shop.maxRarity}}
+<h2>Shops</h2>
+<div class="shops">
+    <button class="shop" *ngFor="let shop of shops" [routerLink]="'/shop/'+shop.id">
+        Shop {{ shop.id }}
+        <span class="data">size: {{shop.maxSize}} | rarity: {{shop.maxRarity}}</span>
+    </button> 
 </div>

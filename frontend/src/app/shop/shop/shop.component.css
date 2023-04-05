@@ -1,0 +1,67 @@
+ 
+.eq-cell {
+    width: 30px;
+    height: 30px;
+    position: relative;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    overflow: hidden;
+}
+  
+.eq-cell .amount {
+    color: black;
+    text-shadow: -1px 0 aliceblue, 0 1px aliceblue, 1px 0 aliceblue, 0 -1px aliceblue;
+    font-size: 9px;
+    font-weight: 600;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+  
+.icon {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    top: 0;
+    left: 0;
+}
+  
+.buy-btn {
+    background-color: #4CAF50;
+    border: none;
+    color: #fff;
+    padding: 8px;
+    margin-right: 10px;
+    border-radius: 3px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+  
+.buy-btn:hover, .buy-btn:focus {
+    background-color: #388E3C;
+}
+
+h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #f4f4f4;
+    margin-bottom: 20px;
+}
+
+.item-data {
+    display: flex;
+    margin-bottom: 5px;
+}
+
+.item-data .name {
+    font-weight: 700;
+    color: #f4f4f4;
+}
+
+.item {
+    margin-bottom: 15px;
+}

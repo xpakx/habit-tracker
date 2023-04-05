@@ -1,7 +1,16 @@
-<div *ngFor="let item of items">
-    {{item.name}}
-    <div class="amount">{{item.amount}}</div>
-    <div class="price">{{item.price}}</div>
+<h2>Shop</h2>
+
+<div *ngFor="let item of items" class="item">
+    <div class="item-data">
+        <button class="eq-cell" [dndDraggable]="item.id">
+            <img [src]="'/assets/'+ item.icon +'.png'" alt="" class="icon">
+            <div class="amount">{{item.amount}}</div>
+        </button>
+        <div class="additional-data">
+            <div class="name">{{item.name}}</div>
+            <div class="price">price: {{item.price}}</div>
+        </div>
+    </div>
     <button class="buy-btn" (click)="buy(item.id)">Buy</button>
     <button class="buy-btn" (click)="buy(item.id, 10)">Buy 10</button>
     <button class="buy-btn" (click)="buy(item.id, item.amount)">Buy all</button>
