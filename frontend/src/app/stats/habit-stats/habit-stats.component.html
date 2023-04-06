@@ -1,4 +1,5 @@
+<h2>Habit summary</h2>
 <div class="stats-container" *ngIf="stats">
-    <div>{{ stats.completions }} Completions</div>
+    <div class="summary"><span class="completions">{{ stats.completions }}</span> Completions</div>
     <app-heatmap [days]="stats.days"></app-heatmap>
 </div>

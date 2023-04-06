@@ -9,7 +9,7 @@
 
 .field {
     background-color: #161b22;
-    border-radius: 3px;
+    border-radius: var(--field-border-radius);
     width: var(--field-size);
     height: var(--field-size);
     position: relative;

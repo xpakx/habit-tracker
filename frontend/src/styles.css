@@ -8,4 +8,22 @@ html, body {
 :root {
     --field-size: 13px;
     --gap-size: 2px;
+    --field-border-radius: 3px;
+}
+
+
+
+@media screen and (max-width: 1100px) {
+    :root {
+        --field-size: 10px;
+        --gap-size: 2px;
+    }
+}
+
+@media screen and (max-width: 885px) {
+    :root {
+        --field-size: 7px;
+        --gap-size: 1px;
+        --field-border-radius: 1px;
+    }
 }
