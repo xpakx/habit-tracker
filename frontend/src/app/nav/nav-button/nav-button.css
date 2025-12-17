@@ -1,0 +1,24 @@
+.nav-btn {
+  width: 44px; height: 34px;
+  border: none; background: transparent;
+  color: var(--text-muted);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+  position: relative;
+}
+
+.nav-btn:hover {
+  color: var(--text-main);
+  background: rgba(255,255,255,0.03);
+}
+
+.nav-btn.active {
+  color: var(--accent-blue);
+  background: rgba(36, 111, 224, 0.1);
+}
+

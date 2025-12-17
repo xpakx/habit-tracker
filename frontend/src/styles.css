@@ -1,1 +1,35 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --bg-body: #17171d;
+  --bg-glass: rgba(23, 23, 29, 0.90);
+  --bg-card: #1e1e24;
+  --bg-hover: #2a2a30;
+  --bg-input: #121216;
+  --bg-pill: #0f0f12;
+
+  --text-main: #e0e0e0;
+  --text-muted: #888;
+
+  --accent-blue: #246fe0;
+  --accent-orange: #ff5c00;
+  --accent-red: #d1453b;
+  --accent-green: #2ecc71;
+
+  --border: rgba(255,255,255,0.08);
+  --shadow-tray: 0 15px 40px rgba(0,0,0,0.6);
+}
+
+* {
+  box-sizing: border-box;
+  outline: none;
+}
+
+body {
+  background-color: var(--bg-body);
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding-top: 100px;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
