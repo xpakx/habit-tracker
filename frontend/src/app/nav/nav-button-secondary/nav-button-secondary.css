@@ -1,0 +1,28 @@
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.icon-btn:hover, .icon-btn.active {
+  color: var(--text-main);
+  background: rgba(255,255,255,0.05);
+}
+
+.badge {
+  position: absolute;
+  top: 6px;
+  right: 7px;
+  width: 8px;
+  height: 8px;
+  background: var(--accent-red);
+  border-radius: 50%;
+  border: 2px solid var(--bg-glass);
+}
+

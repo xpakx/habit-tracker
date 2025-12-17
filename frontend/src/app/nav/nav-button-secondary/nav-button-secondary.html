@@ -1,0 +1,12 @@
+<button
+  class="icon-btn"
+  [attr.data-tooltip]="hint() ? hint() : null"
+  (click)="activateNav()" >
+
+  <fa-icon [icon]="icon()" />
+    @if (badge()) {
+    <span class="badge"></span>
+    }
+</button>
+
+
