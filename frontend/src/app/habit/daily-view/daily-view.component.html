@@ -1,7 +1,0 @@
-<h2>Daily Habits</h2>
-<app-habit-list [habits]="habits"></app-habit-list>
-
-<div class="controls">
-    <app-add-button (clicked)="displayHabitModal()"></app-add-button>
-</div>
-<app-habit-modal *ngIf="showHabitModal" (close)="closeModal()"></app-habit-modal>
