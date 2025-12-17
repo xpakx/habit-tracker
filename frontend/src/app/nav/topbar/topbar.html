@@ -1,7 +1,6 @@
 <nav class="topbar" #nav>
 
   <div class="brand-section">
-    <!-- TODO: icon + name -->
     <app-nav-brand />
   </div>
 
@@ -11,10 +10,10 @@
 
   <div class="right-section">
     <div class="search-container">
-      <!-- TODO: search -->
+      <app-nav-search />
     </div>
-    <app-nav-button-secondary [icon]="add" hint="Add Task"></app-nav-button-secondary>
-    <app-nav-button-secondary [icon]="notif" hint="Notifications" [badge]="true"></app-nav-button-secondary>
+    <app-nav-button-secondary [icon]="add" hint="Add Task" />
+    <app-nav-button-secondary [icon]="notif" hint="Notifications" [badge]="true" />
 
     <app-nav-user />
   </div>

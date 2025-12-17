@@ -6,10 +6,11 @@ import { NavUser } from '../nav-user/nav-user';
 import { NavButtonSecondary } from '../nav-button-secondary/nav-button-secondary';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faBell } from '@fortawesome/free-regular-svg-icons';
+import { NavSearch } from '../nav-search/nav-search';
 
 @Component({
   selector: 'app-topbar',
-  imports: [NavBrand, NavPill, NavButtonSecondary, NavUser],
+  imports: [NavBrand, NavPill, NavSearch, NavButtonSecondary, NavUser],
   templateUrl: './topbar.html',
   styleUrl: './topbar.css',
 })
