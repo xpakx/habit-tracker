@@ -1,0 +1,9 @@
+@if (tooltip.state().visible) {
+  <div
+    class="tooltip-box"
+    [style.top.px]="tooltip.state().y"
+    [style.left.px]="tooltip.state().x">
+    {{ tooltip.state().text }}
+  </div>
+}
+
