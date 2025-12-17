@@ -1,10 +1,11 @@
 import { afterNextRender, Component } from '@angular/core';
 import { NavPill } from '../nav-pill/nav-pill';
 import gsap from 'gsap';
+import { NavBrand } from '../nav-brand/nav-brand';
 
 @Component({
   selector: 'app-topbar',
-  imports: [NavPill],
+  imports: [NavBrand, NavPill],
   templateUrl: './topbar.html',
   styleUrl: './topbar.css',
 })
