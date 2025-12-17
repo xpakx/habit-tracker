@@ -2,11 +2,11 @@ import { Component, DOCUMENT, Inject, NgZone, Renderer2, signal, viewChild } fro
 import { RouterOutlet } from '@angular/router';
 import { TooltipService } from './tooltip/tooltip-service';
 import { Tooltip } from './tooltip/tooltip/tooltip';
-import { NavPill } from './nav/nav-pill/nav-pill';
+import { Topbar } from './nav/topbar/topbar';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Tooltip, NavPill],
+  imports: [RouterOutlet, Tooltip, Topbar],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

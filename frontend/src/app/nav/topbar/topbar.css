@@ -1,0 +1,28 @@
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 72px;
+  background-color: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 250px 1fr 250px;
+  align-items: center;
+  padding: 0 30px;
+  z-index: 1000;
+}
+
+.center-nav-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 15px;
+}
+

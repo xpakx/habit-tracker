@@ -1,6 +1,6 @@
 import { Component, viewChildren } from '@angular/core';
 import { NavButton } from '../nav-button/nav-button';
-import { faChartPie, faCog, faHome, faShip } from '@fortawesome/free-solid-svg-icons';
+import { faAnchor, faChartPie, faCog, faHome } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-nav-pill',
@@ -10,7 +10,7 @@ import { faChartPie, faCog, faHome, faShip } from '@fortawesome/free-solid-svg-i
 })
 export class NavPill {
   home = faHome;
-  ship = faShip;
+  game = faAnchor;
   chart = faChartPie;
   settings = faCog;
 
