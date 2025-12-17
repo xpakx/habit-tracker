@@ -1,27 +1,17 @@
 import { Component, DOCUMENT, Inject, NgZone, Renderer2, signal, viewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NavButton } from './nav/nav-button/nav-button';
 import { TooltipService } from './tooltip/tooltip-service';
 import { Tooltip } from './tooltip/tooltip/tooltip';
+import { NavPill } from './nav/nav-pill/nav-pill';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Tooltip, NavButton],
+  imports: [RouterOutlet, Tooltip, NavPill],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
   protected readonly title = signal('frontend');
-
-  // TODO: remove
-  btn = viewChild(NavButton);
-  button() {
-    const btn = this.btn();
-    if (!btn) return;
-    if (btn.active) btn.deactivate();
-    else btn.activate();
-  }
-
 
   private unlistenMouseOver?: () => void;
   private unlistenMouseOut?: () => void;
