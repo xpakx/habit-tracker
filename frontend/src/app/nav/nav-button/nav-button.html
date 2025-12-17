@@ -1,6 +1,6 @@
 <button
   class="nav-btn" [class.active]="active"
-  data-tooltip="Dashboard" (click)="activateNav()" #btn>
+  [attr.data-tooltip]="hint() ? hint() : null" (click)="activateNav()" #btn>
   <fa-icon [icon]="icon()" />
 </button>
 

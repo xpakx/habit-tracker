@@ -10,10 +10,13 @@ import { gsap } from 'gsap';
   styleUrl: './nav-button.css',
 })
 export class NavButton {
-  active: boolean;
   icon = input<IconDefinition>(faWarning);
+  hint = input<string>();
+
   action = output<boolean>();
+
   btn = viewChild<ElementRef<HTMLButtonElement>>("btn");
+  active: boolean;
 
   constructor() {
     this.active = false;
