@@ -2,7 +2,7 @@ package io.github.xpakx.habitcity.shop;
 
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Getter

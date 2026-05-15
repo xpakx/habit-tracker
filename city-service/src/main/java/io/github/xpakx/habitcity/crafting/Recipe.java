@@ -6,7 +6,7 @@ import io.github.xpakx.habitcity.resource.Resource;
 import io.github.xpakx.habitcity.ship.Ship;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 

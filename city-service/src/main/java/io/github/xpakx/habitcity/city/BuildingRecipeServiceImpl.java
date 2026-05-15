@@ -2,7 +2,6 @@ package io.github.xpakx.habitcity.city;
 
 import io.github.xpakx.habitcity.building.BuildingRecipeElem;
 import io.github.xpakx.habitcity.building.BuildingRecipeElemRepository;
-import io.github.xpakx.habitcity.building.dto.CraftBuildingElem;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
