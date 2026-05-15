@@ -59,7 +59,7 @@ public class CityServiceImpl implements CityService {
 
         BuildingResponse response = new BuildingResponse();
         response.setName(building.getName());
-        return null;
+        return response;
     }
 
     @Override
