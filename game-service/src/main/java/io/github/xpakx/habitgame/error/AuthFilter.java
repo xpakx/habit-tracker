@@ -1,16 +1,17 @@
 package io.github.xpakx.habitgame.error;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+
 import io.github.xpakx.habitgame.error.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
@@ -29,7 +30,7 @@ public class AuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String constructErrorBody() throws JsonProcessingException {
+    private String constructErrorBody() throws JacksonException {
         ErrorResponse errorBody = new ErrorResponse();
         errorBody.setMessage("User unauthorized!");
         errorBody.setStatus(HttpStatus.UNAUTHORIZED.getReasonPhrase());

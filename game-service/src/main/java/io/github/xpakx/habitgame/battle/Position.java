@@ -4,7 +4,7 @@ import io.github.xpakx.habitgame.expedition.Ship;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Getter
