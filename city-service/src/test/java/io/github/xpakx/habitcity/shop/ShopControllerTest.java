@@ -19,8 +19,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,7 +53,7 @@ class ShopControllerTest {
     EquipmentEntryRepository eqEntryRepository;
     @Autowired
     MoneyRepository moneyRepository;
-    @MockBean
+    @MockitoBean
     SchedulerConfig config;
 
     @BeforeEach
