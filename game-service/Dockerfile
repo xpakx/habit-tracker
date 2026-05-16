@@ -1,11 +1,11 @@
 # Build stage
-FROM maven:3.8.1-openjdk-17-slim  AS build
+FROM maven:3.9-eclipse-temurin-25-noble  AS build
 WORKDIR /app
 COPY . /app
 RUN mvn clean package -DskipTests
 
 # Run stage
-FROM openjdk:17-alpine
+FROM eclipse-temurin:25-noble
 MAINTAINER xpakx.github.io
 EXPOSE 8086
 COPY --from=build app/target/habitgame-0.0.1-SNAPSHOT.jar application.jar
